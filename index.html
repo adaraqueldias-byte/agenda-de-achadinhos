@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#e83e8c" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  <meta name="apple-mobile-web-app-title" content="Achadinhos" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="manifest" href="manifest.json" />
+  <title>Agenda de Achadinhos</title>
+  <style>
+    :root{
+      --bg:#fff1f6;
+      --card:#ffffff;
+      --text:#2b1720;
+      --muted:#7a5d69;
+      --line:#f1c9d8;
+      --accent:#e83e8c;
+      --accent-dark:#b91c63;
+      --accent-soft:#ffe0ec;
+      --ok:#1f9d66;
+      --danger:#c62828;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      font-family:Arial,Helvetica,sans-serif;
+      background:linear-gradient(180deg,#fff0f6 0%,#fff8fb 45%,#f7f3ff 100%);
+      color:var(--text)
+    }
+    .wrap{max-width:760px;margin:auto;padding:16px}
+    .hero{
+      background:linear-gradient(135deg,#e83e8c,#8b5cf6);
+      color:#fff;
+      border-radius:22px;
+      padding:20px;
+      margin-bottom:14px;
+      display:flex;
+      align-items:center;
+      gap:14px;
+      box-shadow:0 10px 24px rgba(232,62,140,.22)
+    }
+    .hero img{width:64px;height:64px;border-radius:16px}
+    h1{font-size:23px;margin:0 0 4px}
+    .hero p{margin:0;color:#ddd;font-size:14px;line-height:1.4}
+    .card{
+      background:rgba(255,255,255,.96);
+      border:1px solid var(--line);
+      border-radius:18px;
+      padding:15px;
+      margin-bottom:13px;
+      box-shadow:0 6px 18px rgba(139,92,246,.08)
+    }
+    label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
+    input,textarea{
+      width:100%;
+      border:1px solid var(--line);
+      border-radius:12px;
+      padding:12px;
+      font-size:15px;
+      background:#fffafb
+    }
+    input:focus,textarea:focus{
+      outline:2px solid var(--accent-soft);
+      border-color:var(--accent)
+    }
+    textarea{min-height:88px;resize:vertical}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .field{margin-bottom:11px}
+    .post-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+    .badge{
+      background:linear-gradient(135deg,#ffe0ec,#ede4ff);
+      color:#8d2858;
+      border-radius:999px;
+      padding:6px 10px;
+      font-size:12px;
+      font-weight:700
+    }
+    .buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+    button,a.btn{border:none;border-radius:12px;padding:12px 14px;font-size:14px;font-weight:700;text-decoration:none;text-align:center;cursor:pointer}
+    .primary{
+      background:linear-gradient(135deg,var(--accent),#8b5cf6);
+      color:#fff;
+      box-shadow:0 6px 14px rgba(232,62,140,.22)
+    }
+    .secondary{
+      background:var(--accent-soft);
+      color:#7d214f
+    }
+    .success{background:var(--ok);color:#fff}
+    .danger{background:#ffe2e2;color:var(--danger)}
+    .socials{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
+    .socials a:nth-child(1){background:#1f1f1f;color:#fff}
+    .socials a:nth-child(2){background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff}
+    .socials a:nth-child(3){background:#1877f2;color:#fff}
+    .status{font-size:13px;color:var(--muted);margin-top:9px}
+    #installBox{display:none}
+    .tip{font-size:13px;line-height:1.5;color:#555}
+    @media(max-width:620px){.grid,.buttons,.socials{grid-template-columns:1fr}.hero{align-items:flex-start}}
+  </style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <img src="icon-192.png" alt="Ícone do aplicativo">
+    <div>
+      <h1>Agenda de Achadinhos</h1>
+      <p>Seus 3 produtos do dia, com legendas, hashtags, links e horários.</p>
+    </div>
+  </section>
+
+  <section id="installBox" class="card">
+    <strong>Colocar na tela inicial</strong>
+    <p class="tip">Toque no botão abaixo para instalar o aplicativo no celular.</p>
+    <button id="installBtn" class="primary">Instalar no celular</button>
+  </section>
+
+  <section class="card">
+    <div class="grid">
+      <div class="field"><label>Data</label><input id="date" type="date"></div>
+      <div class="field"><label>Nome do perfil</label><input id="profile" placeholder="Achadinhos da SHEIN Brasil"></div>
+    </div>
+    <div class="buttons">
+      <button class="primary" onclick="saveAll()">Salvar agenda</button>
+      <button class="secondary" onclick="loadDay()">Carregar agenda</button>
+    </div>
+    <button class="danger" style="width:100%;margin-top:8px" onclick="clearDay()">Limpar este dia</button>
+    <div id="globalStatus" class="status"></div>
+  </section>
+
+  <div id="posts"></div>
+
+  <section class="card">
+    <strong>Como colocar na página inicial</strong>
+    <p class="tip">Abra este aplicativo pelo Google Chrome. Depois toque nos três pontinhos do Chrome e escolha <b>Adicionar à tela inicial</b> ou <b>Instalar aplicativo</b>.</p>
+  </section>
+</div>
+
+<script>
+const defaultTimes=["11:30","18:30","21:00"];let deferredPrompt=null;
+function todayISO(){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);return local.toISOString().slice(0,10)}
+function postTemplate(i){return `<section class="card"><div class="post-title"><strong>Produto ${i+1}</strong><span class="badge">${defaultTimes[i]}</span></div>
+<div class="grid"><div class="field"><label>Nome do produto</label><input id="name${i}" placeholder="Ex.: Jaqueta masculina"></div><div class="field"><label>Horário</label><input id="time${i}" type="time" value="${defaultTimes[i]}"></div></div>
+<div class="field"><label>Link de afiliada</label><input id="link${i}" type="url" placeholder="Cole o link aqui"></div>
+<div class="field"><label>Legenda</label><textarea id="caption${i}" placeholder="Escreva a legenda"></textarea></div>
+<div class="field"><label>Hashtags</label><input id="tags${i}" placeholder="#shein #achadinhos"></div>
+<div class="field"><label>Observação do vídeo</label><textarea id="notes${i}" placeholder="Ex.: vídeo de 15 segundos"></textarea></div>
+<div class="buttons"><button class="secondary" onclick="copyText(${i})">Copiar texto</button><button class="success" onclick="markPosted(${i})">Marcar como postado</button></div>
+<div class="socials"><a class="btn secondary" href="https://www.tiktok.com/" target="_blank">TikTok</a><a class="btn secondary" href="https://www.instagram.com/" target="_blank">Instagram</a><a class="btn secondary" href="https://www.facebook.com/" target="_blank">Facebook</a></div>
+<div id="status${i}" class="status" data-posted="false">Ainda não postado.</div></section>`}
+function buildPosts(){document.getElementById("posts").innerHTML=[0,1,2].map(postTemplate).join("")}
+function storageKey(){return"agenda-achadinhos-"+document.getElementById("date").value}
+function collectData(){return{date:date.value,profile:profile.value,posts:[0,1,2].map(i=>({name:document.getElementById("name"+i).value,time:document.getElementById("time"+i).value,link:document.getElementById("link"+i).value,caption:document.getElementById("caption"+i).value,tags:document.getElementById("tags"+i).value,notes:document.getElementById("notes"+i).value,posted:document.getElementById("status"+i).dataset.posted==="true"}))}}
+function saveAll(){localStorage.setItem(storageKey(),JSON.stringify(collectData()));globalStatus.textContent="Agenda salva neste celular."}
+function loadDay(){const raw=localStorage.getItem(storageKey());if(!raw){globalStatus.textContent="Nenhuma agenda salva para esta data.";return}const data=JSON.parse(raw);profile.value=data.profile||"";data.posts.forEach((p,i)=>{document.getElementById("name"+i).value=p.name||"";document.getElementById("time"+i).value=p.time||defaultTimes[i];document.getElementById("link"+i).value=p.link||"";document.getElementById("caption"+i).value=p.caption||"";document.getElementById("tags"+i).value=p.tags||"";document.getElementById("notes"+i).value=p.notes||"";setPostedStatus(i,!!p.posted)});globalStatus.textContent="Agenda carregada."}
+function clearDay(){if(confirm("Apagar a agenda desta data?")){localStorage.removeItem(storageKey());buildPosts();globalStatus.textContent="Agenda apagada."}}
+async function copyText(i){const t=[document.getElementById("caption"+i).value.trim(),document.getElementById("tags"+i).value.trim(),document.getElementById("link"+i).value.trim()].filter(Boolean).join("\n\n");if(!t){alert("Preencha a legenda, hashtags ou link.");return}try{await navigator.clipboard.writeText(t);document.getElementById("status"+i).textContent="Texto copiado. Agora cole na rede social."}catch{alert("Não foi possível copiar.")}}
+function setPostedStatus(i,p){const e=document.getElementById("status"+i);e.dataset.posted=p?"true":"false";e.textContent=p?"Postado ✅":"Ainda não postado."}
+function markPosted(i){const e=document.getElementById("status"+i);setPostedStatus(i,e.dataset.posted!=="true");saveAll()}
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
+installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
+if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
+buildPosts();date.value=todayISO();loadDay();
+</script>
+</body>
+</html>
