@@ -122,6 +122,18 @@
       color:var(--accent-dark);text-decoration:none;
     }
 
+    /* Recomendação do dia */
+    .recomendacao{
+      background:linear-gradient(135deg,#fff8e1,#fffdf5);
+      border:1px solid #f0d98a;
+    }
+    .recomendacao-cabecalho{display:flex;gap:10px;align-items:center;margin-bottom:8px}
+    .recomendacao-icone{font-size:24px;flex:none}
+    .recomendacao-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9a7b1f;font-weight:700;display:block}
+    #recomendacao-tema{font-size:15px;color:#5c3d00}
+    .recomendacao p.tip{margin:0 0 10px}
+    #recomendacao-modelo{background:#fffdf2;border-color:#f0d98a;min-height:64px}
+
     @media(max-width:620px){.grid,.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}}
   </style>
 </head>
@@ -142,13 +154,29 @@
   </section>
 
   <section class="card">
-    <div class="field"><label>Data</label><input id="date" type="date"></div>
+    <div class="field"><label>Data</label><input id="date" type="date" onchange="atualizarRecomendacao()"></div>
     <div class="buttons">
       <button class="primary" onclick="saveAll()">Salvar agenda</button>
       <button class="secondary" onclick="loadDay()">Carregar agenda</button>
     </div>
     <button class="danger" style="width:100%;margin-top:8px" onclick="clearDay()">Limpar este dia</button>
     <div id="globalStatus" class="status"></div>
+  </section>
+
+  <section class="card recomendacao">
+    <div class="recomendacao-cabecalho">
+      <span class="recomendacao-icone">💡</span>
+      <div>
+        <span class="recomendacao-label">Recomendação de hoje pras suas 4 páginas</span>
+        <strong id="recomendacao-tema"></strong>
+      </div>
+    </div>
+    <p id="recomendacao-dica" class="tip"></p>
+    <button type="button" class="secondary" style="width:100%" onclick="toggleModelo()">Ver modelo de texto</button>
+    <div id="recomendacao-modelo-wrap" style="display:none;margin-top:10px">
+      <textarea id="recomendacao-modelo" readonly></textarea>
+      <button type="button" class="secondary" style="width:100%;margin-top:6px" onclick="copiarModelo()">Copiar modelo</button>
+    </div>
   </section>
 
   <div id="posts"></div>
@@ -171,6 +199,52 @@ const PAGINAS=[
 ];
 
 function todayISO(){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);return local.toISOString().slice(0,10)}
+
+// Calendário de recomendações — índice 0 = Domingo, igual ao Date.getDay()
+const ORIENTACOES=[
+  {tema:"Domingo — Bastidores da semana",
+   dica:"Mostre um resumo dos achadinhos da semana ou peça sugestões pros próximos posts. Conteúdo de bastidor humaniza a página e mantém o público por perto.",
+   modelo:"✨ Foi assim nossa semana de achadinhos! Qual desses produtos você quer ver com desconto na próxima semana? Comenta aqui 👇"},
+  {tema:"Segunda — Produção de conteúdo",
+   dica:"Reserve um tempo hoje pra fotografar e gravar os produtos da semana. Ter conteúdo pronto com antecedência melhora a qualidade dos próximos posts.",
+   modelo:"(Dia de produção — sem post público. Use o tempo pra fotografar e gravar os produtos da semana.)"},
+  {tema:"Terça — Comparação de produtos",
+   dica:"Poste comparando dois produtos parecidos (preço, qualidade, uso). Esse formato gera muito comentário e compartilhamento, ótimo pro alcance.",
+   modelo:"🆚 [Produto A] ou [Produto B]? Separei os dois pra te ajudar a escolher! Qual você prefere? Comenta aqui 👇"},
+  {tema:"Quarta — Prova social",
+   dica:"Mostre uma avaliação real, um antes/depois ou reação de quem comprou. Gera confiança e ajuda a converter em vendas.",
+   modelo:"😍 Olha essa avaliação de quem já comprou! Link nos comentários pra garantir o seu 💕"},
+  {tema:"Quinta — Combo de looks",
+   dica:"Monte um combo/kit com produtos que combinam entre si. Aumenta o valor percebido e incentiva a compra de mais de um item.",
+   modelo:"✨ Montei esse combo perfeito pra você: [produto 1] + [produto 2]! Dá uma olhada nos links 👇"},
+  {tema:"Sexta — Promoção do fim de semana",
+   dica:"Destaque um desconto ou oferta por tempo limitado, criando urgência pro fim de semana.",
+   modelo:"🚨 Só até domingo! [Produto] com desconto especial, corre que acaba rápido 🏃‍♀️💨"},
+  {tema:"Sábado — Enquete no Story",
+   dica:"Use um story com enquete ou quiz (\"essa ou essa outra?\"). Aumenta muito o engajamento e ajuda o alcance nos próximos posts.",
+   modelo:"Story: 💭 Qual te agradou mais: A ou B? Vota aí 👆 (enquete)"}
+];
+
+function atualizarRecomendacao(){
+  const valor=document.getElementById("date").value;
+  const d=valor?new Date(valor+"T00:00:00"):new Date();
+  const o=ORIENTACOES[d.getDay()];
+  document.getElementById("recomendacao-tema").textContent=o.tema;
+  document.getElementById("recomendacao-dica").textContent=o.dica;
+  document.getElementById("recomendacao-modelo").value=o.modelo;
+  document.getElementById("recomendacao-modelo-wrap").style.display="none";
+}
+
+function toggleModelo(){
+  const wrap=document.getElementById("recomendacao-modelo-wrap");
+  wrap.style.display=wrap.style.display==="none"?"block":"none";
+}
+
+async function copiarModelo(){
+  const t=document.getElementById("recomendacao-modelo").value;
+  try{await navigator.clipboard.writeText(t);globalStatus.textContent="Modelo copiado."}
+  catch{alert("Não foi possível copiar.")}
+}
 
 function postTemplate(pagina,i){
   const key=pagina.id+"-"+i;
@@ -339,7 +413,7 @@ function markPosted(key){
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
 if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
-buildPosts();date.value=todayISO();loadDay();
+buildPosts();date.value=todayISO();atualizarRecomendacao();loadDay();
 </script>
 </body>
 </html>
