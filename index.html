@@ -222,7 +222,7 @@ const SLOTS=[
   {id:"comparacao",dia:"Terça",hora:"12h",
    onde:"Instagram + Página Garimpo do Dia (agendado junto)",
    formato:"Carrossel (fotos do anúncio + texto no Canva)",
-   conteudo:"Comparação entre 2 produtos parecidos",tipo:"Valor",
+   conteudo:"Comparação entre 2 produtos parecidos",
    modelo:`[Categoria]: qual vale mais a pena - [Produto A] ou [Produto B]?
 
 Testei/pesquisei os dois pra te ajudar a decidir:
@@ -241,7 +241,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
 
   {id:"dica_uso",dia:"Terça",hora:"20h",
    onde:"Grupo Garimpo do Dia (manual)",
-   formato:"Foto + texto",conteudo:"Dica de uso de um produto",tipo:"Valor",
+   formato:"Foto + texto",conteudo:"Dica de uso de um produto",
    semLink:true,
    modelo:`Vocês sabiam que dá pra usar o [produto] assim?
 
@@ -256,7 +256,7 @@ Alguém aqui já tem um? Conta como usa!
 
   {id:"unboxing",dia:"Quarta",hora:"19h",
    onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
-   formato:"Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",tipo:"Valor",
+   formato:"Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",
    modelo:`Chegou! Vamos testar?
 [1 frase sobre a expectativa antes de abrir]
 
@@ -269,7 +269,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
   {id:"achadinhos_semana",dia:"Quinta",hora:"21h",
    onde:"Grupo Garimpo do Dia (manual)",
-   formato:"Carrossel ou foto",conteudo:"“3 achadinhos da semana”",tipo:"Valor",
+   formato:"Carrossel ou foto",conteudo:"“3 achadinhos da semana”",
    modelo:`3 achadinhos dessa semana por menos de R$[valor]
 
 1. [Produto 1] - o que resolve: [1 frase]
@@ -326,7 +326,7 @@ Comenta a letra! Quero saber o que a maioria usa.
 
   {id:"hack",dia:"Domingo",hora:"19h",
    onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
-   formato:"Vídeo (template CapCut)",conteudo:"Dica/hack rápido",tipo:"Valor",
+   formato:"Vídeo (template CapCut)",conteudo:"Dica/hack rápido",
    modelo:`Ninguém te contou esse truque com [produto/categoria]
 
 [Explicação do hack em 1-2 frases, direto ao ponto]
@@ -337,7 +337,7 @@ Salva pra lembrar depois!
 
   {id:"tutorial_problema",dia:"Bônus",hora:"quando fizer sentido, no lugar do unboxing",
    onde:"Instagram + Página Garimpo do Dia / Shopee Video",
-   formato:"Reels / Shopee Video",conteudo:"Tutorial baseado em problema",tipo:"Valor",
+   formato:"Reels / Shopee Video",conteudo:"Tutorial baseado em problema",
    nota:"O produto entra como ferramenta natural pra resolver o problema, não como o astro do post. Publique também no Shopee Video (mesmo clipe, sem gravar de novo).",
    modelo:`Como [resolver problema específico] sem [dor comum/gastar muito]
 
@@ -374,7 +374,7 @@ function slotTemplate(slot){
   return `<section class="card">
     <div class="slot-cabecalho">
       <div><span class="slot-dia-hora">${slot.dia}</span> <span class="slot-hora">${slot.hora}</span></div>
-      <span class="badge">${slot.tipo}</span>
+      ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
     <p class="slot-meta"><strong>Onde:</strong> ${slot.onde}</p>
     <p class="slot-meta"><strong>Formato:</strong> ${slot.formato} — ${slot.conteudo}</p>
