@@ -123,6 +123,25 @@
 
     .semana-titulo{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
 
+    /* Abas Semana / Banco de Produtos */
+    .abas{display:flex;gap:8px;margin-bottom:14px}
+    .aba{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center}
+    .aba.ativa{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:transparent}
+
+    /* Banco de produtos */
+    select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;background:#fffafb;font-family:inherit;color:var(--text)}
+    select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
+    .item-produto{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px;box-shadow:0 4px 10px rgba(139,92,246,.06)}
+    .item-produto-foto{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none;background:var(--accent-soft)}
+    .item-produto-foto.vazio{display:flex;align-items:center;justify-content:center;font-size:20px}
+    .item-produto-info{flex:1;min-width:0}
+    .item-produto-nome{display:block;font-weight:700;font-size:14px;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-produto-nome:hover{color:var(--accent-dark)}
+    .item-produto-link{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-produto-loja{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 8px;margin-top:3px}
+    .item-produto-lixeira{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#ffe2e2;color:var(--danger);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
+
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
   </style>
 </head>
@@ -142,59 +161,96 @@
     <button id="installBtn" class="primary">Instalar no celular</button>
   </section>
 
-  <section class="card">
-    <div class="field">
-      <label class="semana-titulo">Semana que começa em (segunda-feira)</label>
-      <input id="date" type="date">
-    </div>
-    <div class="buttons">
-      <button class="primary" onclick="salvarSemana()">Salvar semana</button>
-      <button class="secondary" onclick="carregarSemana()">Carregar semana</button>
-    </div>
-    <button class="danger" style="width:100%;margin-top:8px" onclick="novaSemana()">Nova semana (limpar)</button>
-    <div id="globalStatus" class="status"></div>
-  </section>
+  <div class="abas">
+    <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">📅 Semana</div>
+    <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
+  </div>
 
-  <div id="producao-segunda"></div>
+  <div id="view-semana">
+    <section class="card">
+      <div class="field">
+        <label class="semana-titulo">Semana que começa em (segunda-feira)</label>
+        <input id="date" type="date">
+      </div>
+      <div class="buttons">
+        <button class="primary" onclick="salvarSemana()">Salvar semana</button>
+        <button class="secondary" onclick="carregarSemana()">Carregar semana</button>
+      </div>
+      <button class="danger" style="width:100%;margin-top:8px" onclick="novaSemana()">Nova semana (limpar)</button>
+      <div id="globalStatus" class="status"></div>
+    </section>
 
-  <div id="slots-terca"></div>
+    <div id="producao-segunda"></div>
 
-  <div id="slots-quarta"></div>
+    <div id="slots-terca"></div>
 
-  <div id="producao-quinta"></div>
+    <div id="slots-quarta"></div>
 
-  <div id="slots-quinta"></div>
+    <div id="producao-quinta"></div>
 
-  <div id="slots-sexta"></div>
+    <div id="slots-quinta"></div>
 
-  <div id="slots-sabado"></div>
+    <div id="slots-sexta"></div>
 
-  <div id="slots-domingo"></div>
+    <div id="slots-sabado"></div>
 
-  <section class="card">
-    <div class="slot-dia-hora">📱 Todos os dias <span class="slot-hora">de manhã, 5 min</span></div>
-    <p class="slot-meta"><strong>Onde:</strong> Stories (Instagram + Página)</p>
-    <p class="slot-meta"><strong>Conteúdo:</strong> Foto/repost rápido — Bastidor ou enquete</p>
-    <p class="slot-nota">💡 Poste Story todos os dias, sem limite de quantidade — quanto mais story, melhor pro alcance. Esse calendário é a base mínima da semana, não um teto: poste mais sempre que quiser.</p>
-  </section>
+    <div id="slots-domingo"></div>
 
-  <div id="slots-bonus"></div>
+    <section class="card">
+      <div class="slot-dia-hora">📱 Todos os dias <span class="slot-hora">de manhã, 5 min</span></div>
+      <p class="slot-meta"><strong>Onde:</strong> Stories (Instagram + Página)</p>
+      <p class="slot-meta"><strong>Conteúdo:</strong> Foto/repost rápido — Bastidor ou enquete</p>
+      <p class="slot-nota">💡 Poste Story todos os dias, sem limite de quantidade — quanto mais story, melhor pro alcance. Esse calendário é a base mínima da semana, não um teto: poste mais sempre que quiser.</p>
+    </section>
 
-  <section class="card lembretes-card">
-    <strong>Lembretes rápidos</strong>
-    <ul>
-      <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
-      <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
-      <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
-      <li>Instagram + Página Garimpo do Dia agendam juntos no Meta Business Suite. Os Grupos (Garimpo do Dia e Achadinhos da Shein) precisam de publicação manual.</li>
-      <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
-    </ul>
-  </section>
+    <div id="slots-bonus"></div>
 
-  <section class="card">
-    <strong>Como colocar na página inicial</strong>
-    <p class="tip">Abra este aplicativo pelo Google Chrome. Depois toque nos três pontinhos do Chrome e escolha <b>Adicionar à tela inicial</b> ou <b>Instalar aplicativo</b>.</p>
-  </section>
+    <section class="card lembretes-card">
+      <strong>Lembretes rápidos</strong>
+      <ul>
+        <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
+        <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
+        <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
+        <li>Instagram + Página Garimpo do Dia agendam juntos no Meta Business Suite. Os Grupos (Garimpo do Dia e Achadinhos da Shein) precisam de publicação manual.</li>
+        <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
+      </ul>
+    </section>
+
+    <section class="card">
+      <strong>Como colocar na página inicial</strong>
+      <p class="tip">Abra este aplicativo pelo Google Chrome. Depois toque nos três pontinhos do Chrome e escolha <b>Adicionar à tela inicial</b> ou <b>Instalar aplicativo</b>.</p>
+    </section>
+  </div>
+
+  <div id="view-banco" style="display:none">
+    <section class="card">
+      <div class="foto-linha">
+        <img id="banco-foto-preview" class="foto-preview" alt="">
+        <div id="banco-foto-placeholder" class="item-produto-foto vazio" style="border:1px dashed var(--line)">📷</div>
+        <div class="foto-botoes">
+          <button type="button" class="secondary" onclick="document.getElementById('banco-foto-input').click()">📷 Escolher foto</button>
+        </div>
+        <input type="file" id="banco-foto-input" accept="image/*" style="display:none" onchange="onFotoBanco(this)">
+      </div>
+      <div class="field"><label>Nome do produto</label><input id="banco-nome" placeholder="Ex.: Jaqueta masculina"></div>
+      <div class="field">
+        <label>Loja / plataforma</label>
+        <select id="banco-loja">
+          <option value="">Selecione a loja</option>
+          <option value="shopee">Shopee</option>
+          <option value="mercadolivre">Mercado Livre</option>
+          <option value="amazon">Amazon</option>
+          <option value="magalu">Magalu</option>
+          <option value="shein">Shein</option>
+        </select>
+      </div>
+      <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
+      <button class="primary" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
+    </section>
+
+    <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados</div>
+    <div id="lista-banco"></div>
+  </div>
 </div>
 
 <script>
@@ -550,6 +606,80 @@ function marcarPostado(id){
   const e=document.getElementById("status-"+id);
   marcarStatus(id,e.dataset.posted!=="true");
   salvarSemana();
+}
+
+// ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
+const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",magalu:"Magalu",shein:"Shein"};
+let bancoFotoAtual="";
+
+function mostrarView(nome){
+  document.getElementById("view-semana").style.display=nome==="semana"?"block":"none";
+  document.getElementById("view-banco").style.display=nome==="banco"?"block":"none";
+  document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
+  document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
+  if(nome==="banco")renderizarBanco();
+}
+
+function onFotoBanco(input){
+  const file=input.files[0];
+  if(!file)return;
+  comprimirFoto(file,dataUrl=>{
+    bancoFotoAtual=dataUrl;
+    const prev=document.getElementById("banco-foto-preview");
+    prev.src=dataUrl;prev.style.display="block";
+    document.getElementById("banco-foto-placeholder").style.display="none";
+  });
+}
+
+function carregarBanco(){return JSON.parse(localStorage.getItem("agenda-achadinhos-banco-produtos")||"[]")}
+function salvarBanco(lista){
+  try{localStorage.setItem("agenda-achadinhos-banco-produtos",JSON.stringify(lista))}
+  catch(e){alert("⚠️ Memória cheia! Remova fotos de produtos antigos do banco e tente de novo.")}
+}
+
+function adicionarProdutoBanco(){
+  const nome=document.getElementById("banco-nome").value.trim();
+  const link=document.getElementById("banco-link").value.trim();
+  const loja=document.getElementById("banco-loja").value;
+  if(!nome){alert("Escreve o nome do produto.");return}
+  const lista=carregarBanco();
+  lista.unshift({id:Date.now(),nome,link,loja,foto:bancoFotoAtual||undefined});
+  salvarBanco(lista);
+  document.getElementById("banco-nome").value="";
+  document.getElementById("banco-link").value="";
+  document.getElementById("banco-loja").value="";
+  bancoFotoAtual="";
+  document.getElementById("banco-foto-preview").style.display="none";
+  document.getElementById("banco-foto-placeholder").style.display="flex";
+  renderizarBanco();
+}
+
+function removerProdutoBanco(id){
+  if(!confirm("Remover esse produto do banco?"))return;
+  salvarBanco(carregarBanco().filter(p=>p.id!==id));
+  renderizarBanco();
+}
+
+function escaparBanco(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
+
+function renderizarBanco(){
+  const lista=carregarBanco();
+  const cont=document.getElementById("lista-banco");
+  if(lista.length===0){
+    cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
+    return;
+  }
+  cont.innerHTML=lista.map(p=>`
+    <div class="item-produto">
+      ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
+      <div class="item-produto-info">
+        ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
+        ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
+        <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
+      </div>
+      <button class="item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
+    </div>
+  `).join("");
 }
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
