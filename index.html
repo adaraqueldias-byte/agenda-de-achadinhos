@@ -22,9 +22,6 @@
       --accent-soft:#ffe0ec;
       --ok:#1f9d66;
       --danger:#c62828;
-      --face:#1877f2;
-      --face-soft:#e8f0fe;
-      --insta1:#f58529;--insta2:#dd2a7b;--insta3:#8134af;
     }
     *{box-sizing:border-box}
     body{
@@ -63,23 +60,24 @@
       border-radius:12px;
       padding:12px;
       font-size:15px;
-      background:#fffafb
+      background:#fffafb;
+      font-family:inherit;
     }
     input:focus,textarea:focus{
       outline:2px solid var(--accent-soft);
       border-color:var(--accent)
     }
     textarea{min-height:88px;resize:vertical}
-    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .legenda-textarea{min-height:150px;font-size:14px;line-height:1.5}
     .field{margin-bottom:11px}
-    .post-title{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
     .badge{
       background:linear-gradient(135deg,#ffe0ec,#ede4ff);
       color:#8d2858;
       border-radius:999px;
       padding:6px 10px;
       font-size:12px;
-      font-weight:700
+      font-weight:700;
+      white-space:nowrap;
     }
     .buttons{display:grid;grid-template-columns:1fr 1fr;gap:8px}
     button,a.btn{border:none;border-radius:12px;padding:12px 14px;font-size:14px;font-weight:700;text-decoration:none;text-align:center;cursor:pointer}
@@ -98,43 +96,34 @@
     #installBox{display:none}
     .tip{font-size:13px;line-height:1.5;color:#555}
 
-    /* Blocos por página (Facebook/Instagram) */
-    .pagina-bloco{margin-bottom:22px}
-    .pagina-cabecalho{
-      display:flex;align-items:center;gap:10px;
-      padding:10px 14px;border-radius:14px;margin-bottom:10px;color:#fff;font-weight:700;
-    }
-    .pagina-cabecalho.rede-facebook{background:linear-gradient(135deg,var(--face),#3b5bdb)}
-    .pagina-cabecalho.rede-instagram{background:linear-gradient(135deg,var(--insta1),var(--insta2),var(--insta3))}
-    .pagina-rede-icone{font-size:18px}
-    .pagina-nome{font-size:15px}
-    .pagina-rede{font-size:11px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:.5px;display:block}
-    .banco-links label{color:var(--accent-dark)}
-    .banco-links textarea{min-height:64px}
+    /* Cabeçalho de cada slot de postagem */
+    .slot-cabecalho{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:8px}
+    .slot-dia-hora{font-size:16px;font-weight:800;color:var(--accent-dark)}
+    .slot-hora{font-size:12px;font-weight:600;color:var(--muted)}
+    .slot-meta{font-size:13px;color:#5a4550;margin:2px 0}
+    .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
 
     /* Foto do produto */
-    .foto-linha{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .foto-linha{display:flex;align-items:center;gap:10px;margin:10px 0}
     .foto-preview{width:56px;height:56px;border-radius:10px;object-fit:cover;border:1px solid var(--line);display:none}
     .foto-botoes{flex:1;display:flex;flex-direction:column;gap:4px}
     .foto-botoes button{width:100%}
-    .link-rede{
-      display:inline-block;margin-top:8px;font-size:12px;font-weight:700;
-      color:var(--accent-dark);text-decoration:none;
-    }
 
-    /* Recomendação do dia */
-    .recomendacao{
-      background:linear-gradient(135deg,#fff8e1,#fffdf5);
-      border:1px solid #f0d98a;
-    }
-    .recomendacao-cabecalho{display:flex;gap:10px;align-items:center;margin-bottom:8px}
-    .recomendacao-icone{font-size:24px;flex:none}
-    .recomendacao-label{font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:#9a7b1f;font-weight:700;display:block}
-    #recomendacao-tema{font-size:15px;color:#5c3d00}
-    .recomendacao p.tip{margin:0 0 10px}
-    #recomendacao-modelo{background:#fffdf2;border-color:#f0d98a;min-height:64px}
+    /* Sessão de produção */
+    .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7}
+    .producao-titulo{font-size:16px;font-weight:800;color:#5b21a6;margin-bottom:4px}
+    .passo-linha{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
+    .passo-linha:first-of-type{border-top:none}
+    .passo-linha input{width:auto;margin-top:3px}
+    .producao-total{font-size:12px;color:#5b21a6;font-weight:700;margin-top:8px}
 
-    @media(max-width:620px){.grid,.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}}
+    /* Lembretes finais */
+    .lembretes-card{background:linear-gradient(135deg,#fff8e1,#fffdf5);border:1px solid #f0d98a}
+    .lembretes-card ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#5c3d00}
+
+    .semana-titulo{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
+
+    @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
   </style>
 </head>
 <body>
@@ -143,7 +132,7 @@
     <img src="icon-192.png" alt="Ícone do aplicativo">
     <div>
       <h1>Agenda de Achadinhos</h1>
-      <p>Seu plano do dia pras suas 4 páginas, com legendas, hashtags, links, fotos e horários.</p>
+      <p>Plano semanal fixo — Garimpo do Dia (Instagram + Página + Grupo) e Dashein (Página + Grupo Achadinhos da Shein).</p>
     </div>
   </section>
 
@@ -154,32 +143,52 @@
   </section>
 
   <section class="card">
-    <div class="field"><label>Data</label><input id="date" type="date" onchange="atualizarRecomendacao()"></div>
-    <div class="buttons">
-      <button class="primary" onclick="saveAll()">Salvar agenda</button>
-      <button class="secondary" onclick="loadDay()">Carregar agenda</button>
+    <div class="field">
+      <label class="semana-titulo">Semana que começa em (segunda-feira)</label>
+      <input id="date" type="date">
     </div>
-    <button class="danger" style="width:100%;margin-top:8px" onclick="clearDay()">Limpar este dia</button>
+    <div class="buttons">
+      <button class="primary" onclick="salvarSemana()">Salvar semana</button>
+      <button class="secondary" onclick="carregarSemana()">Carregar semana</button>
+    </div>
+    <button class="danger" style="width:100%;margin-top:8px" onclick="novaSemana()">Nova semana (limpar)</button>
     <div id="globalStatus" class="status"></div>
   </section>
 
-  <section class="card recomendacao">
-    <div class="recomendacao-cabecalho">
-      <span class="recomendacao-icone">💡</span>
-      <div>
-        <span class="recomendacao-label">Recomendação de hoje pras suas 4 páginas</span>
-        <strong id="recomendacao-tema"></strong>
-      </div>
-    </div>
-    <p id="recomendacao-dica" class="tip"></p>
-    <button type="button" class="secondary" style="width:100%" onclick="toggleModelo()">Ver modelo de texto</button>
-    <div id="recomendacao-modelo-wrap" style="display:none;margin-top:10px">
-      <textarea id="recomendacao-modelo" readonly></textarea>
-      <button type="button" class="secondary" style="width:100%;margin-top:6px" onclick="copiarModelo()">Copiar modelo</button>
-    </div>
+  <div id="producao-segunda"></div>
+
+  <div id="slots-terca"></div>
+
+  <div id="slots-quarta"></div>
+
+  <div id="producao-quinta"></div>
+
+  <div id="slots-quinta"></div>
+
+  <div id="slots-sexta"></div>
+
+  <div id="slots-sabado"></div>
+
+  <div id="slots-domingo"></div>
+
+  <section class="card">
+    <div class="slot-dia-hora">📱 Qualquer dia <span class="slot-hora">de manhã, 5 min</span></div>
+    <p class="slot-meta"><strong>Onde:</strong> Stories (Instagram + Página)</p>
+    <p class="slot-meta"><strong>Conteúdo:</strong> Foto/repost rápido — Bastidor ou enquete</p>
   </section>
 
-  <div id="posts"></div>
+  <div id="slots-bonus"></div>
+
+  <section class="card lembretes-card">
+    <strong>Lembretes rápidos</strong>
+    <ul>
+      <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
+      <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
+      <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
+      <li>Instagram + Página Garimpo do Dia agendam juntos no Meta Business Suite. Os Grupos (Garimpo do Dia e Achadinhos da Shein) precisam de publicação manual.</li>
+      <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
+    </ul>
+  </section>
 
   <section class="card">
     <strong>Como colocar na página inicial</strong>
@@ -188,105 +197,236 @@
 </div>
 
 <script>
-const defaultTimes=["11:30","18:30","21:00"];
 let deferredPrompt=null;
 
-const PAGINAS=[
-  {id:"face_garimpodia", rede:"Facebook",  nome:"Garimpodia",       icone:"📘", link:"https://www.facebook.com/"},
-  {id:"face_dashein",    rede:"Facebook",  nome:"DaShein",          icone:"📘", link:"https://www.facebook.com/"},
-  {id:"insta_dashein",   rede:"Instagram", nome:"DaShein",          icone:"📸", link:"https://www.instagram.com/"},
-  {id:"insta_garimpo",   rede:"Instagram", nome:"Garimpo Digital",  icone:"📸", link:"https://www.instagram.com/"},
+// ===== Roteiro fixo de produção (Segunda e Quinta à tarde) =====
+const PASSOS=[
+  {titulo:"Selecionar produtos",tempo:"10 min",
+   texto:"Escolha os produtos da semana usando o filtro: comissão acima de 10%, nota 4,5+ e ticket médio entre R$50 e R$300."},
+  {titulo:"Carrosséis primeiro",tempo:"20-30 min",
+   texto:"Baixe as fotos do próprio anúncio (Shopee/Amazon/Magalu) → monte no Canva (modelo de carrossel pronto, só trocar foto e texto) → exporte tudo de uma vez."},
+  {titulo:"Gravar os vídeos crus, sem editar ainda",tempo:"15-20 min",
+   texto:"Grave os 2 vídeos da semana em sequência, sem se preocupar com corte. Prefira gravar pensando no problema que o produto resolve, em vez de só mostrar o produto."},
+  {titulo:"Editar os vídeos com template do CapCut",tempo:"15-20 min",
+   texto:"Encaixe os clipes no template pronto (corte, música e transição já vêm prontos) — isso substitui edição do zero."},
+  {titulo:"Agendar Instagram + Página Garimpo do Dia",tempo:"10 min",
+   texto:"No Meta Business Suite, use Conteúdo/Planejador → Criar publicação → marque Instagram e Facebook juntos → Agendar. Uma ação publica nos dois."},
+  {titulo:"Publicar manualmente nos Grupos",tempo:"5-10 min",
+   texto:"Copie o mesmo conteúdo já pronto e publique direto no Grupo Garimpo do Dia (e no Achadinhos da Shein, quando houver post Shein) no horário da tabela."},
+  {titulo:"Republicar no Shopee Video",tempo:"5 min",
+   texto:"Suba os mesmos 2 vídeos da semana também no Shopee Video, dentro do próprio app. Sem gravar de novo."}
 ];
 
-function todayISO(){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);return local.toISOString().slice(0,10)}
+// ===== Slots de conteúdo da semana (do estudo) =====
+const SLOTS=[
+  {id:"comparacao",dia:"Terça",hora:"12h",
+   onde:"Instagram + Página Garimpo do Dia (agendado junto)",
+   formato:"Carrossel (fotos do anúncio + texto no Canva)",
+   conteudo:"Comparação entre 2 produtos parecidos",tipo:"Valor",
+   modelo:`[Categoria]: qual vale mais a pena - [Produto A] ou [Produto B]?
 
-// Calendário de recomendações — índice 0 = Domingo, igual ao Date.getDay()
-const ORIENTACOES=[
-  {tema:"Domingo — Bastidores da semana",
-   dica:"Mostre um resumo dos achadinhos da semana ou peça sugestões pros próximos posts. Conteúdo de bastidor humaniza a página e mantém o público por perto.",
-   modelo:"✨ Foi assim nossa semana de achadinhos! Qual desses produtos você quer ver com desconto na próxima semana? Comenta aqui 👇"},
-  {tema:"Segunda — Produção de conteúdo",
-   dica:"Reserve um tempo hoje pra fotografar e gravar os produtos da semana. Ter conteúdo pronto com antecedência melhora a qualidade dos próximos posts.",
-   modelo:"(Dia de produção — sem post público. Use o tempo pra fotografar e gravar os produtos da semana.)"},
-  {tema:"Terça — Comparação de produtos",
-   dica:"Poste comparando dois produtos parecidos (preço, qualidade, uso). Esse formato gera muito comentário e compartilhamento, ótimo pro alcance.",
-   modelo:"🆚 [Produto A] ou [Produto B]? Separei os dois pra te ajudar a escolher! Qual você prefere? Comenta aqui 👇"},
-  {tema:"Quarta — Prova social",
-   dica:"Mostre uma avaliação real, um antes/depois ou reação de quem comprou. Gera confiança e ajuda a converter em vendas.",
-   modelo:"😍 Olha essa avaliação de quem já comprou! Link nos comentários pra garantir o seu 💕"},
-  {tema:"Quinta — Combo de looks",
-   dica:"Monte um combo/kit com produtos que combinam entre si. Aumenta o valor percebido e incentiva a compra de mais de um item.",
-   modelo:"✨ Montei esse combo perfeito pra você: [produto 1] + [produto 2]! Dá uma olhada nos links 👇"},
-  {tema:"Sexta — Promoção do fim de semana",
-   dica:"Destaque um desconto ou oferta por tempo limitado, criando urgência pro fim de semana.",
-   modelo:"🚨 Só até domingo! [Produto] com desconto especial, corre que acaba rápido 🏃‍♀️💨"},
-  {tema:"Sábado — Enquete no Story",
-   dica:"Use um story com enquete ou quiz (\"essa ou essa outra?\"). Aumenta muito o engajamento e ajuda o alcance nos próximos posts.",
-   modelo:"Story: 💭 Qual te agradou mais: A ou B? Vota aí 👆 (enquete)"}
+Testei/pesquisei os dois pra te ajudar a decidir:
+[+] [Produto A]: [ponto forte]
+[-] [Produto A]: [ponto fraco]
+[+] [Produto B]: [ponto forte]
+[-] [Produto B]: [ponto fraco]
+
+Qual você escolheria? Comenta a letra
+A) [Produto A] - R$[preço]
+B) [Produto B] - R$[preço]
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
+
+#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
+
+  {id:"dica_uso",dia:"Terça",hora:"20h",
+   onde:"Grupo Garimpo do Dia (manual)",
+   formato:"Foto + texto",conteudo:"Dica de uso de um produto",tipo:"Valor",
+   semLink:true,
+   modelo:`Vocês sabiam que dá pra usar o [produto] assim?
+
+[Dica 1 rápida]
+[Dica 2 rápida]
+[Dica 3 rápida]
+
+Eu uso o meu quase todo dia pra isso e facilitou muito.
+Alguém aqui já tem um? Conta como usa!
+
+(sem link aqui — post 100% de valor)`},
+
+  {id:"unboxing",dia:"Quarta",hora:"19h",
+   onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
+   formato:"Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",tipo:"Valor",
+   modelo:`Chegou! Vamos testar?
+[1 frase sobre a expectativa antes de abrir]
+
+Legenda curta:
+"Testando o [produto] que todo mundo tá comprando. Vale a pena? Assiste até o final"
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagnicho1] #[hashtagnicho2]`},
+
+  {id:"achadinhos_semana",dia:"Quinta",hora:"21h",
+   onde:"Grupo Garimpo do Dia (manual)",
+   formato:"Carrossel ou foto",conteudo:"“3 achadinhos da semana”",tipo:"Valor",
+   modelo:`3 achadinhos dessa semana por menos de R$[valor]
+
+1. [Produto 1] - o que resolve: [1 frase]
+2. [Produto 2] - o que resolve: [1 frase]
+3. [Produto 3] - o que resolve: [1 frase]
+
+Salva esse post pra não perder!
+Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
+
+#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
+
+  {id:"promocional",dia:"Sexta",hora:"12h · único post da semana",
+   onde:"Instagram + Página Garimpo do Dia (agendado junto)",
+   formato:"Carrossel",conteudo:"Post promocional direto",tipo:"Venda",
+   nota:"Único post promocional da semana — reserve esse tom só pra hoje.",
+   modelo:`Achei isso e precisava compartilhar
+
+[Produto] por R$[preço] (de R$[preço original])
+
+Por que eu recomendo:
+[1-2 frases sobre o motivo real de recomendar]
+
+Corre que costuma esgotar rápido!
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
+
+  {id:"dashein_moda",dia:"Dashein",hora:"1 a 2x por semana · sugestão: sexta à tarde",
+   onde:"Página Dashein + Grupo Achadinhos da Shein",
+   formato:"Carrossel de moda",conteudo:"Look/peça da semana",tipo:"Shein",
+   nota:"Mantenha simples: só carrossel (moda tem muita foto pronta de anúncio), sem vídeo aqui. Publique na Página Dashein e replique manualmente no Grupo Achadinhos da Shein.",
+   modelo:`Look/peça da semana: [nome da peça]
+
+Serve super bem, o tecido é [observação real], e o preço tá em R$[valor].
+Numeração que peguei: [tamanho]
+Recomendo pegar [tamanho normal/menor/maior]
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
+
+  {id:"enquete",dia:"Sábado",hora:"20h",
+   onde:"Grupo Garimpo do Dia (manual)",
+   formato:"Enquete (sem foto/link)",conteudo:"“Qual desses vocês tem em casa?”",tipo:"Engajamento",
+   semLink:true,
+   modelo:`Papo reto: qual desses vocês já tem em casa?
+
+A) [Opção A]
+B) [Opção B]
+
+Comenta a letra! Quero saber o que a maioria usa.
+
+(sem link, sem produto pra vender — só pra gerar conversa)`},
+
+  {id:"hack",dia:"Domingo",hora:"19h",
+   onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
+   formato:"Vídeo (template CapCut)",conteudo:"Dica/hack rápido",tipo:"Valor",
+   modelo:`Ninguém te contou esse truque com [produto/categoria]
+
+[Explicação do hack em 1-2 frases, direto ao ponto]
+
+Salva pra lembrar depois!
+
+#[hashtagnicho1] #[hashtagnicho2]`},
+
+  {id:"tutorial_problema",dia:"Bônus",hora:"quando fizer sentido, no lugar do unboxing",
+   onde:"Instagram + Página Garimpo do Dia / Shopee Video",
+   formato:"Reels / Shopee Video",conteudo:"Tutorial baseado em problema",tipo:"Valor",
+   nota:"O produto entra como ferramenta natural pra resolver o problema, não como o astro do post. Publique também no Shopee Video (mesmo clipe, sem gravar de novo).",
+   modelo:`Como [resolver problema específico] sem [dor comum/gastar muito]
+
+[Passo ou dica 1]
+[Passo ou dica 2]
+[Passo ou dica 3]
+
+O que uso pra isso: [produto], só R$[preço]
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagnicho1] #[hashtagnicho2]`}
 ];
 
-function atualizarRecomendacao(){
-  const valor=document.getElementById("date").value;
-  const d=valor?new Date(valor+"T00:00:00"):new Date();
-  const o=ORIENTACOES[d.getDay()];
-  document.getElementById("recomendacao-tema").textContent=o.tema;
-  document.getElementById("recomendacao-dica").textContent=o.dica;
-  document.getElementById("recomendacao-modelo").value=o.modelo;
-  document.getElementById("recomendacao-modelo-wrap").style.display="none";
+const SLOTS_POR_GRUPO={
+  terca:["comparacao","dica_uso"],
+  quarta:["unboxing"],
+  quinta:["achadinhos_semana"],
+  sexta:["promocional","dashein_moda"],
+  sabado:["enquete"],
+  domingo:["hack"],
+  bonus:["tutorial_problema"]
+};
+
+function segundaFeiraDeHoje(){
+  const d=new Date();
+  const diaSemana=d.getDay(); // 0=domingo
+  const diffParaSegunda=(diaSemana===0)?-6:1-diaSemana;
+  d.setDate(d.getDate()+diffParaSegunda);
+  const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+  return local.toISOString().slice(0,10);
 }
 
-function toggleModelo(){
-  const wrap=document.getElementById("recomendacao-modelo-wrap");
-  wrap.style.display=wrap.style.display==="none"?"block":"none";
-}
-
-async function copiarModelo(){
-  const t=document.getElementById("recomendacao-modelo").value;
-  try{await navigator.clipboard.writeText(t);globalStatus.textContent="Modelo copiado."}
-  catch{alert("Não foi possível copiar.")}
-}
-
-function postTemplate(pagina,i){
-  const key=pagina.id+"-"+i;
+function slotTemplate(slot){
   return `<section class="card">
-    <div class="post-title"><strong>Produto ${i+1}</strong><span class="badge">${defaultTimes[i]}</span></div>
+    <div class="slot-cabecalho">
+      <div><span class="slot-dia-hora">${slot.dia}</span> <span class="slot-hora">${slot.hora}</span></div>
+      <span class="badge">${slot.tipo}</span>
+    </div>
+    <p class="slot-meta"><strong>Onde:</strong> ${slot.onde}</p>
+    <p class="slot-meta"><strong>Formato:</strong> ${slot.formato} — ${slot.conteudo}</p>
+    ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     <div class="foto-linha">
-      <img id="foto-preview-${key}" class="foto-preview" alt="Foto do produto">
+      <img id="foto-preview-${slot.id}" class="foto-preview" alt="Foto do produto">
       <div class="foto-botoes">
-        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${key}').click()">📷 Escolher foto</button>
-        <button type="button" id="foto-remover-${key}" class="danger" style="display:none" onclick="removerFoto('${key}')">✕ Remover foto</button>
+        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${slot.id}').click()">📷 Escolher foto</button>
+        <button type="button" id="foto-remover-${slot.id}" class="danger" style="display:none" onclick="removerFoto('${slot.id}')">✕ Remover foto</button>
       </div>
-      <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
-      <input type="hidden" id="foto-valor-${key}">
+      <input type="file" id="foto-input-${slot.id}" accept="image/*" style="display:none" onchange="onFotoChange('${slot.id}',this)">
+      <input type="hidden" id="foto-valor-${slot.id}">
     </div>
-    <div class="grid"><div class="field"><label>Nome do produto</label><input id="name-${key}" placeholder="Ex.: Jaqueta masculina"></div><div class="field"><label>Horário</label><input id="time-${key}" type="time" value="${defaultTimes[i]}"></div></div>
-    <div class="field"><label>Link de afiliada</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>
-    <div class="field"><label>Legenda</label><textarea id="caption-${key}" placeholder="Escreva a legenda"></textarea></div>
-    <div class="field"><label>Hashtags</label><input id="tags-${key}" placeholder="#shein #achadinhos"></div>
-    <div class="field"><label>Observação do vídeo</label><textarea id="notes-${key}" placeholder="Ex.: vídeo de 15 segundos"></textarea></div>
-    <div class="buttons"><button class="secondary" onclick="copyText('${key}')">Copiar texto</button><button class="success" onclick="markPosted('${key}')">Marcar como postado</button></div>
-    <div id="status-${key}" class="status" data-posted="false">Ainda não postado.</div>
+    <div class="field"><label>Produto(s) — referência interna</label><input id="produto-${slot.id}" placeholder="Ex.: Jaqueta masculina"></div>
+    ${slot.semLink?"":`
+    <div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${slot.id}" type="url" placeholder="Cole o link aqui"></div>
+    <div class="field"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
+    <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
+    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button><button class="success" onclick="marcarPostado('${slot.id}')">Marcar como postado</button></div>
+    <div id="status-${slot.id}" class="status" data-posted="false">Ainda não postado.</div>
   </section>`;
 }
 
-function paginaTemplate(pagina){
-  return `<section class="pagina-bloco">
-    <div class="pagina-cabecalho rede-${pagina.rede.toLowerCase()}">
-      <span class="pagina-rede-icone">${pagina.icone}</span>
-      <div><span class="pagina-rede">${pagina.rede}</span><span class="pagina-nome">${pagina.nome}</span></div>
-    </div>
-    <div class="card banco-links">
-      <label>Banco de links (rascunho)</label>
-      <textarea id="links-${pagina.id}" placeholder="Cole aqui os links dos produtos que você está escolhendo hoje pra essa página"></textarea>
-      <a class="link-rede" href="${pagina.link}" target="_blank" rel="noopener">Abrir ${pagina.rede} →</a>
-    </div>
-    ${[0,1,2].map(i=>postTemplate(pagina,i)).join("")}
+function producaoTemplate(diaId,diaNome){
+  return `<section class="card producao-card">
+    <div class="producao-titulo">🗓️ ${diaNome} à tarde — Sessão de produção</div>
+    ${PASSOS.map((p,i)=>`
+    <label class="passo-linha">
+      <input type="checkbox" id="passo-${diaId}-${i}" onchange="salvarSemana()">
+      <span><strong>${i+1}. ${p.titulo}</strong> <em>(${p.tempo})</em><br>${p.texto}</span>
+    </label>`).join("")}
+    <div class="producao-total">⏱️ Tempo total estimado: ~1h15 a 1h45</div>
   </section>`;
 }
 
-function buildPosts(){document.getElementById("posts").innerHTML=PAGINAS.map(paginaTemplate).join("")}
+function montarTela(){
+  document.getElementById("producao-segunda").innerHTML=producaoTemplate("segunda","Segunda-feira");
+  document.getElementById("producao-quinta").innerHTML=producaoTemplate("quinta","Quinta-feira");
+  document.getElementById("slots-terca").innerHTML=SLOTS_POR_GRUPO.terca.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-quarta").innerHTML=SLOTS_POR_GRUPO.quarta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-quinta").innerHTML=SLOTS_POR_GRUPO.quinta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-sexta").innerHTML=SLOTS_POR_GRUPO.sexta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-sabado").innerHTML=SLOTS_POR_GRUPO.sabado.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-domingo").innerHTML=SLOTS_POR_GRUPO.domingo.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("slots-bonus").innerHTML=SLOTS_POR_GRUPO.bonus.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+}
 
-function storageKey(){return"agenda-achadinhos-"+document.getElementById("date").value}
+function preencherModelosPadrao(){
+  SLOTS.forEach(slot=>{document.getElementById("legenda-"+slot.id).value=slot.modelo});
+}
+
+function storageKey(){return"agenda-achadinhos-semana-"+document.getElementById("date").value}
 
 function comprimirFoto(file,callback){
   const reader=new FileReader();
@@ -305,115 +445,120 @@ function comprimirFoto(file,callback){
   reader.readAsDataURL(file);
 }
 
-function onFotoChange(key,input){
+function onFotoChange(id,input){
   const file=input.files[0];
   if(!file)return;
   comprimirFoto(file,dataUrl=>{
-    document.getElementById("foto-valor-"+key).value=dataUrl;
-    const prev=document.getElementById("foto-preview-"+key);
+    document.getElementById("foto-valor-"+id).value=dataUrl;
+    const prev=document.getElementById("foto-preview-"+id);
     prev.src=dataUrl;prev.style.display="block";
-    document.getElementById("foto-remover-"+key).style.display="block";
+    document.getElementById("foto-remover-"+id).style.display="block";
   });
 }
 
-function removerFoto(key){
-  document.getElementById("foto-valor-"+key).value="";
-  const prev=document.getElementById("foto-preview-"+key);
+function removerFoto(id){
+  document.getElementById("foto-valor-"+id).value="";
+  const prev=document.getElementById("foto-preview-"+id);
   prev.style.display="none";prev.src="";
-  document.getElementById("foto-remover-"+key).style.display="none";
-  document.getElementById("foto-input-"+key).value="";
+  document.getElementById("foto-remover-"+id).style.display="none";
+  document.getElementById("foto-input-"+id).value="";
 }
 
-function collectData(){
-  const paginas={};
-  PAGINAS.forEach(pagina=>{
-    paginas[pagina.id]={
-      links:document.getElementById("links-"+pagina.id).value,
-      posts:[0,1,2].map(i=>{
-        const key=pagina.id+"-"+i;
-        return{
-          name:document.getElementById("name-"+key).value,
-          time:document.getElementById("time-"+key).value,
-          link:document.getElementById("link-"+key).value,
-          caption:document.getElementById("caption-"+key).value,
-          tags:document.getElementById("tags-"+key).value,
-          notes:document.getElementById("notes-"+key).value,
-          foto:document.getElementById("foto-valor-"+key).value||undefined,
-          posted:document.getElementById("status-"+key).dataset.posted==="true"
-        };
-      })
+function coletarDados(){
+  const slots={};
+  SLOTS.forEach(slot=>{
+    slots[slot.id]={
+      produto:document.getElementById("produto-"+slot.id).value,
+      link:slot.semLink?"":document.getElementById("link-"+slot.id).value,
+      palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
+      legenda:document.getElementById("legenda-"+slot.id).value,
+      foto:document.getElementById("foto-valor-"+slot.id).value||undefined,
+      postado:document.getElementById("status-"+slot.id).dataset.posted==="true"
     };
   });
-  return{date:date.value,paginas};
-}
-
-function saveAll(){
-  try{
-    localStorage.setItem(storageKey(),JSON.stringify(collectData()));
-    globalStatus.textContent="Agenda salva neste celular.";
-  }catch(e){
-    alert("⚠️ Memória cheia! Remova fotos de dias antigos (em 'Limpar este dia' ou editando dias anteriores) e tente salvar de novo.");
-  }
-}
-
-function loadDay(){
-  const raw=localStorage.getItem(storageKey());
-  if(!raw){globalStatus.textContent="Nenhuma agenda salva para esta data.";return}
-  const data=JSON.parse(raw);
-  PAGINAS.forEach(pagina=>{
-    const pdata=(data.paginas&&data.paginas[pagina.id])||{};
-    document.getElementById("links-"+pagina.id).value=pdata.links||"";
-    (pdata.posts||[]).forEach((p,i)=>{
-      const key=pagina.id+"-"+i;
-      document.getElementById("name-"+key).value=p.name||"";
-      document.getElementById("time-"+key).value=p.time||defaultTimes[i];
-      document.getElementById("link-"+key).value=p.link||"";
-      document.getElementById("caption-"+key).value=p.caption||"";
-      document.getElementById("tags-"+key).value=p.tags||"";
-      document.getElementById("notes-"+key).value=p.notes||"";
-      if(p.foto){
-        document.getElementById("foto-valor-"+key).value=p.foto;
-        const prev=document.getElementById("foto-preview-"+key);
-        prev.src=p.foto;prev.style.display="block";
-        document.getElementById("foto-remover-"+key).style.display="block";
-      }
-      setPostedStatus(key,!!p.posted);
-    });
+  const producao={};
+  ["segunda","quinta"].forEach(dia=>{
+    producao[dia]=PASSOS.map((_,i)=>document.getElementById("passo-"+dia+"-"+i).checked);
   });
-  globalStatus.textContent="Agenda carregada.";
+  return{data:date.value,slots,producao};
 }
 
-function clearDay(){
-  if(confirm("Apagar a agenda desta data?")){
-    localStorage.removeItem(storageKey());
-    buildPosts();
-    globalStatus.textContent="Agenda apagada.";
+function salvarSemana(){
+  try{
+    localStorage.setItem(storageKey(),JSON.stringify(coletarDados()));
+    globalStatus.textContent="Semana salva neste celular.";
+  }catch(e){
+    alert("⚠️ Memória cheia! Remova fotos de semanas antigas e tente salvar de novo.");
   }
 }
 
-async function copyText(key){
-  const t=[document.getElementById("caption-"+key).value.trim(),document.getElementById("tags-"+key).value.trim(),document.getElementById("link-"+key).value.trim()].filter(Boolean).join("\n\n");
-  if(!t){alert("Preencha a legenda, hashtags ou link.");return}
-  try{await navigator.clipboard.writeText(t);document.getElementById("status-"+key).textContent="Texto copiado. Agora cole na rede social."}
+function carregarSemana(){
+  const raw=localStorage.getItem(storageKey());
+  if(!raw){
+    preencherModelosPadrao();
+    globalStatus.textContent="Nenhuma semana salva pra essa data — modelos padrão carregados.";
+    return;
+  }
+  const dados=JSON.parse(raw);
+  SLOTS.forEach(slot=>{
+    const s=(dados.slots&&dados.slots[slot.id])||{};
+    document.getElementById("produto-"+slot.id).value=s.produto||"";
+    if(!slot.semLink){
+      document.getElementById("link-"+slot.id).value=s.link||"";
+      document.getElementById("palavra-"+slot.id).value=s.palavra||"";
+    }
+    document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
+    if(s.foto){
+      document.getElementById("foto-valor-"+slot.id).value=s.foto;
+      const prev=document.getElementById("foto-preview-"+slot.id);
+      prev.src=s.foto;prev.style.display="block";
+      document.getElementById("foto-remover-"+slot.id).style.display="block";
+    }
+    marcarStatus(slot.id,!!s.postado);
+  });
+  ["segunda","quinta"].forEach(dia=>{
+    const marcados=(dados.producao&&dados.producao[dia])||[];
+    PASSOS.forEach((_,i)=>{document.getElementById("passo-"+dia+"-"+i).checked=!!marcados[i]});
+  });
+  globalStatus.textContent="Semana carregada.";
+}
+
+function novaSemana(){
+  if(confirm("Limpar tudo e recomeçar essa semana do zero (com os modelos padrão)?")){
+    localStorage.removeItem(storageKey());
+    montarTela();
+    preencherModelosPadrao();
+    globalStatus.textContent="Semana nova — modelos padrão carregados.";
+  }
+}
+
+async function copiarLegenda(id){
+  const t=document.getElementById("legenda-"+id).value.trim();
+  if(!t){alert("A legenda está vazia.");return}
+  try{await navigator.clipboard.writeText(t);document.getElementById("status-"+id).textContent="Legenda copiada. Agora cole na rede social."}
   catch{alert("Não foi possível copiar.")}
 }
 
-function setPostedStatus(key,p){
-  const e=document.getElementById("status-"+key);
-  e.dataset.posted=p?"true":"false";
-  e.textContent=p?"Postado ✅":"Ainda não postado.";
+function marcarStatus(id,postado){
+  const e=document.getElementById("status-"+id);
+  e.dataset.posted=postado?"true":"false";
+  e.textContent=postado?"Postado ✅":"Ainda não postado.";
 }
 
-function markPosted(key){
-  const e=document.getElementById("status-"+key);
-  setPostedStatus(key,e.dataset.posted!=="true");
-  saveAll();
+function marcarPostado(id){
+  const e=document.getElementById("status-"+id);
+  marcarStatus(id,e.dataset.posted!=="true");
+  salvarSemana();
 }
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
 if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
-buildPosts();date.value=todayISO();atualizarRecomendacao();loadDay();
+
+montarTela();
+date.value=segundaFeiraDeHoje();
+preencherModelosPadrao();
+carregarSemana();
 </script>
 </body>
 </html>
