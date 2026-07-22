@@ -22,6 +22,9 @@
       --accent-soft:#ffe0ec;
       --ok:#1f9d66;
       --danger:#c62828;
+      --face:#1877f2;
+      --face-soft:#e8f0fe;
+      --insta1:#f58529;--insta2:#dd2a7b;--insta3:#8134af;
     }
     *{box-sizing:border-box}
     body{
@@ -91,14 +94,35 @@
     }
     .success{background:var(--ok);color:#fff}
     .danger{background:#ffe2e2;color:var(--danger)}
-    .socials{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:8px}
-    .socials a:nth-child(1){background:#1f1f1f;color:#fff}
-    .socials a:nth-child(2){background:linear-gradient(135deg,#f58529,#dd2a7b,#8134af);color:#fff}
-    .socials a:nth-child(3){background:#1877f2;color:#fff}
     .status{font-size:13px;color:var(--muted);margin-top:9px}
     #installBox{display:none}
     .tip{font-size:13px;line-height:1.5;color:#555}
-    @media(max-width:620px){.grid,.buttons,.socials{grid-template-columns:1fr}.hero{align-items:flex-start}}
+
+    /* Blocos por página (Facebook/Instagram) */
+    .pagina-bloco{margin-bottom:22px}
+    .pagina-cabecalho{
+      display:flex;align-items:center;gap:10px;
+      padding:10px 14px;border-radius:14px;margin-bottom:10px;color:#fff;font-weight:700;
+    }
+    .pagina-cabecalho.rede-facebook{background:linear-gradient(135deg,var(--face),#3b5bdb)}
+    .pagina-cabecalho.rede-instagram{background:linear-gradient(135deg,var(--insta1),var(--insta2),var(--insta3))}
+    .pagina-rede-icone{font-size:18px}
+    .pagina-nome{font-size:15px}
+    .pagina-rede{font-size:11px;font-weight:700;opacity:.85;text-transform:uppercase;letter-spacing:.5px;display:block}
+    .banco-links label{color:var(--accent-dark)}
+    .banco-links textarea{min-height:64px}
+
+    /* Foto do produto */
+    .foto-linha{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+    .foto-preview{width:56px;height:56px;border-radius:10px;object-fit:cover;border:1px solid var(--line);display:none}
+    .foto-botoes{flex:1;display:flex;flex-direction:column;gap:4px}
+    .foto-botoes button{width:100%}
+    .link-rede{
+      display:inline-block;margin-top:8px;font-size:12px;font-weight:700;
+      color:var(--accent-dark);text-decoration:none;
+    }
+
+    @media(max-width:620px){.grid,.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}}
   </style>
 </head>
 <body>
@@ -107,7 +131,7 @@
     <img src="icon-192.png" alt="Ícone do aplicativo">
     <div>
       <h1>Agenda de Achadinhos</h1>
-      <p>Seus 3 produtos do dia, com legendas, hashtags, links e horários.</p>
+      <p>Seu plano do dia pras suas 4 páginas, com legendas, hashtags, links, fotos e horários.</p>
     </div>
   </section>
 
@@ -118,10 +142,7 @@
   </section>
 
   <section class="card">
-    <div class="grid">
-      <div class="field"><label>Data</label><input id="date" type="date"></div>
-      <div class="field"><label>Nome do perfil</label><input id="profile" placeholder="Achadinhos da SHEIN Brasil"></div>
-    </div>
+    <div class="field"><label>Data</label><input id="date" type="date"></div>
     <div class="buttons">
       <button class="primary" onclick="saveAll()">Salvar agenda</button>
       <button class="secondary" onclick="loadDay()">Carregar agenda</button>
@@ -139,26 +160,182 @@
 </div>
 
 <script>
-const defaultTimes=["11:30","18:30","21:00"];let deferredPrompt=null;
+const defaultTimes=["11:30","18:30","21:00"];
+let deferredPrompt=null;
+
+const PAGINAS=[
+  {id:"face_garimpodia", rede:"Facebook",  nome:"Garimpodia",       icone:"📘", link:"https://www.facebook.com/"},
+  {id:"face_dashein",    rede:"Facebook",  nome:"DaShein",          icone:"📘", link:"https://www.facebook.com/"},
+  {id:"insta_dashein",   rede:"Instagram", nome:"DaShein",          icone:"📸", link:"https://www.instagram.com/"},
+  {id:"insta_garimpo",   rede:"Instagram", nome:"Garimpo Digital",  icone:"📸", link:"https://www.instagram.com/"},
+];
+
 function todayISO(){const d=new Date();const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);return local.toISOString().slice(0,10)}
-function postTemplate(i){return `<section class="card"><div class="post-title"><strong>Produto ${i+1}</strong><span class="badge">${defaultTimes[i]}</span></div>
-<div class="grid"><div class="field"><label>Nome do produto</label><input id="name${i}" placeholder="Ex.: Jaqueta masculina"></div><div class="field"><label>Horário</label><input id="time${i}" type="time" value="${defaultTimes[i]}"></div></div>
-<div class="field"><label>Link de afiliada</label><input id="link${i}" type="url" placeholder="Cole o link aqui"></div>
-<div class="field"><label>Legenda</label><textarea id="caption${i}" placeholder="Escreva a legenda"></textarea></div>
-<div class="field"><label>Hashtags</label><input id="tags${i}" placeholder="#shein #achadinhos"></div>
-<div class="field"><label>Observação do vídeo</label><textarea id="notes${i}" placeholder="Ex.: vídeo de 15 segundos"></textarea></div>
-<div class="buttons"><button class="secondary" onclick="copyText(${i})">Copiar texto</button><button class="success" onclick="markPosted(${i})">Marcar como postado</button></div>
-<div class="socials"><a class="btn secondary" href="https://www.tiktok.com/" target="_blank">TikTok</a><a class="btn secondary" href="https://www.instagram.com/" target="_blank">Instagram</a><a class="btn secondary" href="https://www.facebook.com/" target="_blank">Facebook</a></div>
-<div id="status${i}" class="status" data-posted="false">Ainda não postado.</div></section>`}
-function buildPosts(){document.getElementById("posts").innerHTML=[0,1,2].map(postTemplate).join("")}
+
+function postTemplate(pagina,i){
+  const key=pagina.id+"-"+i;
+  return `<section class="card">
+    <div class="post-title"><strong>Produto ${i+1}</strong><span class="badge">${defaultTimes[i]}</span></div>
+    <div class="foto-linha">
+      <img id="foto-preview-${key}" class="foto-preview" alt="Foto do produto">
+      <div class="foto-botoes">
+        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${key}').click()">📷 Escolher foto</button>
+        <button type="button" id="foto-remover-${key}" class="danger" style="display:none" onclick="removerFoto('${key}')">✕ Remover foto</button>
+      </div>
+      <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
+      <input type="hidden" id="foto-valor-${key}">
+    </div>
+    <div class="grid"><div class="field"><label>Nome do produto</label><input id="name-${key}" placeholder="Ex.: Jaqueta masculina"></div><div class="field"><label>Horário</label><input id="time-${key}" type="time" value="${defaultTimes[i]}"></div></div>
+    <div class="field"><label>Link de afiliada</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>
+    <div class="field"><label>Legenda</label><textarea id="caption-${key}" placeholder="Escreva a legenda"></textarea></div>
+    <div class="field"><label>Hashtags</label><input id="tags-${key}" placeholder="#shein #achadinhos"></div>
+    <div class="field"><label>Observação do vídeo</label><textarea id="notes-${key}" placeholder="Ex.: vídeo de 15 segundos"></textarea></div>
+    <div class="buttons"><button class="secondary" onclick="copyText('${key}')">Copiar texto</button><button class="success" onclick="markPosted('${key}')">Marcar como postado</button></div>
+    <div id="status-${key}" class="status" data-posted="false">Ainda não postado.</div>
+  </section>`;
+}
+
+function paginaTemplate(pagina){
+  return `<section class="pagina-bloco">
+    <div class="pagina-cabecalho rede-${pagina.rede.toLowerCase()}">
+      <span class="pagina-rede-icone">${pagina.icone}</span>
+      <div><span class="pagina-rede">${pagina.rede}</span><span class="pagina-nome">${pagina.nome}</span></div>
+    </div>
+    <div class="card banco-links">
+      <label>Banco de links (rascunho)</label>
+      <textarea id="links-${pagina.id}" placeholder="Cole aqui os links dos produtos que você está escolhendo hoje pra essa página"></textarea>
+      <a class="link-rede" href="${pagina.link}" target="_blank" rel="noopener">Abrir ${pagina.rede} →</a>
+    </div>
+    ${[0,1,2].map(i=>postTemplate(pagina,i)).join("")}
+  </section>`;
+}
+
+function buildPosts(){document.getElementById("posts").innerHTML=PAGINAS.map(paginaTemplate).join("")}
+
 function storageKey(){return"agenda-achadinhos-"+document.getElementById("date").value}
-function collectData(){return{date:date.value,profile:profile.value,posts:[0,1,2].map(i=>({name:document.getElementById("name"+i).value,time:document.getElementById("time"+i).value,link:document.getElementById("link"+i).value,caption:document.getElementById("caption"+i).value,tags:document.getElementById("tags"+i).value,notes:document.getElementById("notes"+i).value,posted:document.getElementById("status"+i).dataset.posted==="true"}))}}
-function saveAll(){localStorage.setItem(storageKey(),JSON.stringify(collectData()));globalStatus.textContent="Agenda salva neste celular."}
-function loadDay(){const raw=localStorage.getItem(storageKey());if(!raw){globalStatus.textContent="Nenhuma agenda salva para esta data.";return}const data=JSON.parse(raw);profile.value=data.profile||"";data.posts.forEach((p,i)=>{document.getElementById("name"+i).value=p.name||"";document.getElementById("time"+i).value=p.time||defaultTimes[i];document.getElementById("link"+i).value=p.link||"";document.getElementById("caption"+i).value=p.caption||"";document.getElementById("tags"+i).value=p.tags||"";document.getElementById("notes"+i).value=p.notes||"";setPostedStatus(i,!!p.posted)});globalStatus.textContent="Agenda carregada."}
-function clearDay(){if(confirm("Apagar a agenda desta data?")){localStorage.removeItem(storageKey());buildPosts();globalStatus.textContent="Agenda apagada."}}
-async function copyText(i){const t=[document.getElementById("caption"+i).value.trim(),document.getElementById("tags"+i).value.trim(),document.getElementById("link"+i).value.trim()].filter(Boolean).join("\n\n");if(!t){alert("Preencha a legenda, hashtags ou link.");return}try{await navigator.clipboard.writeText(t);document.getElementById("status"+i).textContent="Texto copiado. Agora cole na rede social."}catch{alert("Não foi possível copiar.")}}
-function setPostedStatus(i,p){const e=document.getElementById("status"+i);e.dataset.posted=p?"true":"false";e.textContent=p?"Postado ✅":"Ainda não postado."}
-function markPosted(i){const e=document.getElementById("status"+i);setPostedStatus(i,e.dataset.posted!=="true");saveAll()}
+
+function comprimirFoto(file,callback){
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=new Image();
+    img.onload=()=>{
+      const MAX=260;let w=img.width,h=img.height;
+      if(w>MAX||h>MAX){if(w>h){h=Math.round(h*MAX/w);w=MAX}else{w=Math.round(w*MAX/h);h=MAX}}
+      const canvas=document.createElement("canvas");
+      canvas.width=w;canvas.height=h;
+      canvas.getContext("2d").drawImage(img,0,0,w,h);
+      callback(canvas.toDataURL("image/jpeg",0.5));
+    };
+    img.src=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function onFotoChange(key,input){
+  const file=input.files[0];
+  if(!file)return;
+  comprimirFoto(file,dataUrl=>{
+    document.getElementById("foto-valor-"+key).value=dataUrl;
+    const prev=document.getElementById("foto-preview-"+key);
+    prev.src=dataUrl;prev.style.display="block";
+    document.getElementById("foto-remover-"+key).style.display="block";
+  });
+}
+
+function removerFoto(key){
+  document.getElementById("foto-valor-"+key).value="";
+  const prev=document.getElementById("foto-preview-"+key);
+  prev.style.display="none";prev.src="";
+  document.getElementById("foto-remover-"+key).style.display="none";
+  document.getElementById("foto-input-"+key).value="";
+}
+
+function collectData(){
+  const paginas={};
+  PAGINAS.forEach(pagina=>{
+    paginas[pagina.id]={
+      links:document.getElementById("links-"+pagina.id).value,
+      posts:[0,1,2].map(i=>{
+        const key=pagina.id+"-"+i;
+        return{
+          name:document.getElementById("name-"+key).value,
+          time:document.getElementById("time-"+key).value,
+          link:document.getElementById("link-"+key).value,
+          caption:document.getElementById("caption-"+key).value,
+          tags:document.getElementById("tags-"+key).value,
+          notes:document.getElementById("notes-"+key).value,
+          foto:document.getElementById("foto-valor-"+key).value||undefined,
+          posted:document.getElementById("status-"+key).dataset.posted==="true"
+        };
+      })
+    };
+  });
+  return{date:date.value,paginas};
+}
+
+function saveAll(){
+  try{
+    localStorage.setItem(storageKey(),JSON.stringify(collectData()));
+    globalStatus.textContent="Agenda salva neste celular.";
+  }catch(e){
+    alert("⚠️ Memória cheia! Remova fotos de dias antigos (em 'Limpar este dia' ou editando dias anteriores) e tente salvar de novo.");
+  }
+}
+
+function loadDay(){
+  const raw=localStorage.getItem(storageKey());
+  if(!raw){globalStatus.textContent="Nenhuma agenda salva para esta data.";return}
+  const data=JSON.parse(raw);
+  PAGINAS.forEach(pagina=>{
+    const pdata=(data.paginas&&data.paginas[pagina.id])||{};
+    document.getElementById("links-"+pagina.id).value=pdata.links||"";
+    (pdata.posts||[]).forEach((p,i)=>{
+      const key=pagina.id+"-"+i;
+      document.getElementById("name-"+key).value=p.name||"";
+      document.getElementById("time-"+key).value=p.time||defaultTimes[i];
+      document.getElementById("link-"+key).value=p.link||"";
+      document.getElementById("caption-"+key).value=p.caption||"";
+      document.getElementById("tags-"+key).value=p.tags||"";
+      document.getElementById("notes-"+key).value=p.notes||"";
+      if(p.foto){
+        document.getElementById("foto-valor-"+key).value=p.foto;
+        const prev=document.getElementById("foto-preview-"+key);
+        prev.src=p.foto;prev.style.display="block";
+        document.getElementById("foto-remover-"+key).style.display="block";
+      }
+      setPostedStatus(key,!!p.posted);
+    });
+  });
+  globalStatus.textContent="Agenda carregada.";
+}
+
+function clearDay(){
+  if(confirm("Apagar a agenda desta data?")){
+    localStorage.removeItem(storageKey());
+    buildPosts();
+    globalStatus.textContent="Agenda apagada.";
+  }
+}
+
+async function copyText(key){
+  const t=[document.getElementById("caption-"+key).value.trim(),document.getElementById("tags-"+key).value.trim(),document.getElementById("link-"+key).value.trim()].filter(Boolean).join("\n\n");
+  if(!t){alert("Preencha a legenda, hashtags ou link.");return}
+  try{await navigator.clipboard.writeText(t);document.getElementById("status-"+key).textContent="Texto copiado. Agora cole na rede social."}
+  catch{alert("Não foi possível copiar.")}
+}
+
+function setPostedStatus(key,p){
+  const e=document.getElementById("status-"+key);
+  e.dataset.posted=p?"true":"false";
+  e.textContent=p?"Postado ✅":"Ainda não postado.";
+}
+
+function markPosted(key){
+  const e=document.getElementById("status-"+key);
+  setPostedStatus(key,e.dataset.posted!=="true");
+  saveAll();
+}
+
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
 if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
