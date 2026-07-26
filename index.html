@@ -140,6 +140,7 @@
     .item-produto-link{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .item-produto-loja{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 8px;margin-top:3px}
     .item-produto-lixeira{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#ffe2e2;color:var(--danger);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .item-produto-editar{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:var(--accent-soft);color:#7d214f;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
@@ -245,7 +246,8 @@
         </select>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
-      <button class="primary" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
+      <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
+      <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados</div>
@@ -611,6 +613,7 @@ function marcarPostado(id){
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
 const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",magalu:"Magalu",shein:"Shein"};
 let bancoFotoAtual="";
+let bancoEditandoId=null;
 
 function mostrarView(nome){
   document.getElementById("view-semana").style.display=nome==="semana"?"block":"none";
@@ -637,26 +640,62 @@ function salvarBanco(lista){
   catch(e){alert("⚠️ Memória cheia! Remova fotos de produtos antigos do banco e tente de novo.")}
 }
 
-function adicionarProdutoBanco(){
-  const nome=document.getElementById("banco-nome").value.trim();
-  const link=document.getElementById("banco-link").value.trim();
-  const loja=document.getElementById("banco-loja").value;
-  if(!nome){alert("Escreve o nome do produto.");return}
-  const lista=carregarBanco();
-  lista.unshift({id:Date.now(),nome,link,loja,foto:bancoFotoAtual||undefined});
-  salvarBanco(lista);
+function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
   bancoFotoAtual="";
   document.getElementById("banco-foto-preview").style.display="none";
   document.getElementById("banco-foto-placeholder").style.display="flex";
+  bancoEditandoId=null;
+  document.getElementById("banco-btn-salvar").textContent="+ Adicionar ao banco";
+  document.getElementById("banco-btn-cancelar").style.display="none";
+}
+
+function adicionarProdutoBanco(){
+  const nome=document.getElementById("banco-nome").value.trim();
+  const link=document.getElementById("banco-link").value.trim();
+  const loja=document.getElementById("banco-loja").value;
+  if(!nome){alert("Escreve o nome do produto.");return}
+  const lista=carregarBanco();
+  if(bancoEditandoId!==null){
+    const item=lista.find(p=>p.id===bancoEditandoId);
+    if(item){
+      item.nome=nome;item.link=link;item.loja=loja;
+      if(bancoFotoAtual)item.foto=bancoFotoAtual;
+    }
+  }else{
+    lista.unshift({id:Date.now(),nome,link,loja,foto:bancoFotoAtual||undefined});
+  }
+  salvarBanco(lista);
+  limparFormBanco();
   renderizarBanco();
+}
+
+function editarProdutoBanco(id){
+  const item=carregarBanco().find(p=>p.id===id);
+  if(!item)return;
+  bancoEditandoId=id;
+  document.getElementById("banco-nome").value=item.nome||"";
+  document.getElementById("banco-link").value=item.link||"";
+  document.getElementById("banco-loja").value=item.loja||"";
+  bancoFotoAtual=item.foto||"";
+  const prev=document.getElementById("banco-foto-preview");
+  if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
+  else{prev.style.display="none";document.getElementById("banco-foto-placeholder").style.display="flex"}
+  document.getElementById("banco-btn-salvar").textContent="Salvar alterações";
+  document.getElementById("banco-btn-cancelar").style.display="block";
+  document.getElementById("banco-nome").scrollIntoView({behavior:"smooth",block:"center"});
+}
+
+function cancelarEdicaoBanco(){
+  limparFormBanco();
 }
 
 function removerProdutoBanco(id){
   if(!confirm("Remover esse produto do banco?"))return;
   salvarBanco(carregarBanco().filter(p=>p.id!==id));
+  if(bancoEditandoId===id)limparFormBanco();
   renderizarBanco();
 }
 
@@ -677,6 +716,7 @@ function renderizarBanco(){
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
       </div>
+      <button class="item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
       <button class="item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
     </div>
   `).join("");
