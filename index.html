@@ -142,6 +142,7 @@
     .item-produto-lixeira{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#ffe2e2;color:var(--danger);font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .item-produto-editar{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:var(--accent-soft);color:#7d214f;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .item-produto-copiar{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#e0f2ff;color:#1d6fa5;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+    .item-produto-copiar-nome{flex:none;width:38px;height:38px;border-radius:10px;border:none;background:#fff3d6;color:#8a6100;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
@@ -717,11 +718,19 @@ function renderizarBanco(){
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
       </div>
+      <button class="item-produto-copiar-nome" onclick="copiarNomeBanco(${p.id})">📋</button>
       ${p.link?`<button class="item-produto-copiar" onclick="copiarLinkBanco(${p.id})">🔗</button>`:""}
       <button class="item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
       <button class="item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
     </div>
   `).join("");
+}
+
+async function copiarNomeBanco(id){
+  const item=carregarBanco().find(p=>p.id===id);
+  if(!item)return;
+  try{await navigator.clipboard.writeText(item.nome);alert("Nome copiado!")}
+  catch{alert("Não foi possível copiar.")}
 }
 
 async function copiarLinkBanco(id){
