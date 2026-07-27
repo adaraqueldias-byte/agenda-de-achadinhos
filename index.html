@@ -435,6 +435,46 @@ Vota aí 👆 quero saber o que vocês preferem!
 
 (sem link, só pra engajar e conhecer o gosto de quem segue)`},
 
+  {id:"dashein_favoritos",dia:"Dashein — Terça",hora:"21h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Carrossel",conteudo:"3 favoritos da semana",tipo:"Shein",
+   modelo:`3 favoritos dessa semana por menos de R$[valor] 👗
+
+1. [Peça 1] - [1 frase sobre o motivo de gostar]
+2. [Peça 2] - [1 frase sobre o motivo de gostar]
+3. [Peça 3] - [1 frase sobre o motivo de gostar]
+
+Salva esse post pra não perder!
+Comenta [PALAVRA-CHAVE] que eu te mando o link de cada uma no direct
+
+#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
+
+  {id:"dashein_provador",dia:"Dashein — Quinta",hora:"20h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Reels / Vídeo",conteudo:"Provador: como veio x como fica",tipo:"Shein",
+   modelo:`Provador de hoje: [nome da peça] 👗
+
+Assim que chegou → assim que fica no corpo
+[Comentário rápido sobre caimento/qualidade]
+
+Numeração que peguei: [tamanho]
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagmoda1] #[hashtagmoda2]`},
+
+  {id:"dashein_avaliacao",dia:"Dashein — Sábado",hora:"19h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Foto + texto",conteudo:"Avaliação de quem já comprou",tipo:"Shein",
+   modelo:`Olha essa avaliação de quem já comprou [a peça]! 😍
+
+"[trecho da avaliação real]"
+
+Link nos comentários/direct pra garantir o seu 💕
+Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
+
+#[hashtagmoda1] #[hashtagmoda2]`},
+
   {id:"enquete",dia:"Sábado",hora:"20h",
    destinos:TODOS_OS_GRUPOS,
    formato:"Enquete (sem foto/link)",conteudo:"“Qual desses vocês tem em casa?”",tipo:"Engajamento",
@@ -477,11 +517,11 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
 const SLOTS_POR_GRUPO={
   segunda:["dashein_dica"],
-  terca:["comparacao","dica_uso"],
+  terca:["comparacao","dica_uso","dashein_favoritos"],
   quarta:["unboxing","dashein_comparacao"],
-  quinta:["achadinhos_semana"],
+  quinta:["achadinhos_semana","dashein_provador"],
   sexta:["promocional","dashein_moda"],
-  sabado:["enquete"],
+  sabado:["enquete","dashein_avaliacao"],
   domingo:["hack","dashein_enquete"],
   bonus:["tutorial_problema"]
 };
