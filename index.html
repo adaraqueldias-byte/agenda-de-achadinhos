@@ -190,6 +190,8 @@
 
     <div id="producao-segunda"></div>
 
+    <div id="slots-segunda"></div>
+
     <div id="slots-terca"></div>
 
     <div id="slots-quarta"></div>
@@ -375,7 +377,38 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
 #[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
 
-  {id:"dashein_moda",dia:"Dashein",hora:"1 a 2x por semana · sugestão: sexta à tarde",
+  {id:"dashein_dica",dia:"Dashein — Segunda",hora:"19h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Foto + texto",conteudo:"Dica de combinação/styling",tipo:"Shein",
+   modelo:`Como combinar essa peça de mais de um jeito 👇
+
+[Combinação 1: com o quê usar]
+[Combinação 2: com o quê usar]
+[Combinação 3: com o quê usar]
+
+Qual combinação você usaria? Comenta aqui 👇
+
+#[hashtagmoda1] #[hashtagmoda2]`},
+
+  {id:"dashein_comparacao",dia:"Dashein — Quarta",hora:"19h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Carrossel",conteudo:"Comparação entre 2 peças parecidas",tipo:"Shein",
+   modelo:`[Categoria]: essa ou essa? 🤔
+
+[+] [Peça A]: [ponto forte]
+[-] [Peça A]: [ponto fraco]
+[+] [Peça B]: [ponto forte]
+[-] [Peça B]: [ponto fraco]
+
+Comenta a letra que você escolheria!
+A) [Peça A] - R$[preço]
+B) [Peça B] - R$[preço]
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link de cada uma no direct
+
+#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
+
+  {id:"dashein_moda",dia:"Dashein — Sexta",hora:"18h",
    destinos:["insta_dashein","face_dashein"],
    formato:"Carrossel de moda",conteudo:"Look/peça da semana",tipo:"Shein",
    nota:"Mantenha simples: só carrossel (moda tem muita foto pronta de anúncio), sem vídeo aqui. Publique junto no Instagram DaShein e na Página Dashein.",
@@ -388,6 +421,19 @@ Recomendo pegar [tamanho normal/menor/maior]
 Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
 #[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
+
+  {id:"dashein_enquete",dia:"Dashein — Domingo",hora:"19h",
+   destinos:["insta_dashein","face_dashein"],
+   formato:"Enquete no Story (sem foto/link)",conteudo:"Qual look você prefere?",tipo:"Engajamento",
+   semLink:true,
+   modelo:`Enquete no Story: qual desses looks você usaria essa semana?
+
+A) [Look A]
+B) [Look B]
+
+Vota aí 👆 quero saber o que vocês preferem!
+
+(sem link, só pra engajar e conhecer o gosto de quem segue)`},
 
   {id:"enquete",dia:"Sábado",hora:"20h",
    destinos:TODOS_OS_GRUPOS,
@@ -430,12 +476,13 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 ];
 
 const SLOTS_POR_GRUPO={
+  segunda:["dashein_dica"],
   terca:["comparacao","dica_uso"],
-  quarta:["unboxing"],
+  quarta:["unboxing","dashein_comparacao"],
   quinta:["achadinhos_semana"],
   sexta:["promocional","dashein_moda"],
   sabado:["enquete"],
-  domingo:["hack"],
+  domingo:["hack","dashein_enquete"],
   bonus:["tutorial_problema"]
 };
 
@@ -491,6 +538,7 @@ function producaoTemplate(diaId,diaNome){
 function montarTela(){
   document.getElementById("producao-segunda").innerHTML=producaoTemplate("segunda","Segunda-feira");
   document.getElementById("producao-quinta").innerHTML=producaoTemplate("quinta","Quinta-feira");
+  document.getElementById("slots-segunda").innerHTML=SLOTS_POR_GRUPO.segunda.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-terca").innerHTML=SLOTS_POR_GRUPO.terca.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-quarta").innerHTML=SLOTS_POR_GRUPO.quarta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-quinta").innerHTML=SLOTS_POR_GRUPO.quinta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
