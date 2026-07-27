@@ -34,17 +34,17 @@
     .hero{
       background:linear-gradient(135deg,#e83e8c,#8b5cf6);
       color:#fff;
-      border-radius:22px;
-      padding:20px;
+      border-radius:16px;
+      padding:10px 14px;
       margin-bottom:14px;
       display:flex;
       align-items:center;
-      gap:14px;
-      box-shadow:0 10px 24px rgba(232,62,140,.22)
+      gap:10px;
+      box-shadow:0 6px 14px rgba(232,62,140,.18)
     }
-    .hero img{width:64px;height:64px;border-radius:16px}
-    h1{font-size:23px;margin:0 0 4px}
-    .hero p{margin:0;color:#ddd;font-size:14px;line-height:1.4}
+    .hero img{width:34px;height:34px;border-radius:9px}
+    h1{font-size:16px;margin:0}
+    .hero p{margin:0;color:#f3d9e6;font-size:11px;line-height:1.3}
     .card{
       background:rgba(255,255,255,.96);
       border:1px solid var(--line);
@@ -102,6 +102,9 @@
     .slot-hora{font-size:12px;font-weight:600;color:var(--muted)}
     .slot-meta{font-size:13px;color:#5a4550;margin:2px 0}
     .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
+    .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+    .destino-chip{font-size:12px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:4px 10px}
+    .destino-chip strong{font-weight:700}
 
     /* Foto do produto */
     .foto-linha{display:flex;align-items:center;gap:10px;margin:10px 0}
@@ -156,7 +159,7 @@
     <img src="icon-192.png" alt="Ícone do aplicativo">
     <div>
       <h1>Agenda de Achadinhos</h1>
-      <p>Plano semanal fixo — Garimpo do Dia (Instagram + Página + Grupo) e Dashein (Página + Grupo Achadinhos da Shein).</p>
+      <p>Seu plano de postagem da semana</p>
     </div>
   </section>
 
@@ -216,7 +219,7 @@
         <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
         <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
         <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
-        <li>Instagram + Página Garimpo do Dia agendam juntos no Meta Business Suite. Os Grupos (Garimpo do Dia e Achadinhos da Shein) precisam de publicação manual.</li>
+        <li>Instagram e Página agendam juntos no Meta Business Suite. Os 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) precisam de publicação manual.</li>
         <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
       </ul>
     </section>
@@ -275,15 +278,27 @@ const PASSOS=[
   {titulo:"Agendar Instagram + Página Garimpo do Dia",tempo:"10 min",
    texto:"No Meta Business Suite, use Conteúdo/Planejador → Criar publicação → marque Instagram e só a Página Garimpo do Dia (não marque a Dashein) → Agendar. Uma ação publica nos dois."},
   {titulo:"Publicar manualmente nos Grupos",tempo:"5-10 min",
-   texto:"Copie o mesmo conteúdo já pronto e publique direto no Grupo Garimpo do Dia (e no Achadinhos da Shein, quando houver post Shein) no horário da tabela."},
+   texto:"Copie o mesmo conteúdo já pronto e publique direto nos 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) no horário da tabela."},
   {titulo:"Republicar nos outros canais",tempo:"10 min",
    texto:"Suba os mesmos 2 vídeos da semana também no Shopee Video (dentro do próprio app), no TikTok, no vídeo do anúncio do Mercado Livre e no pack de achadinhos do Telegram. Sem gravar de novo."}
 ];
 
-// ===== Slots de conteúdo da semana (do estudo) =====
+// ===== Suas páginas, contas e grupos reais =====
+const CONTAS={
+  face_garimpo:  {rede:"Facebook",  icone:"📘", nome:"Página Garimpo do Dia"},
+  face_dashein:  {rede:"Facebook",  icone:"📘", nome:"Página Dashein"},
+  insta_garimpo: {rede:"Instagram", icone:"📸", nome:"garimpodia"},
+  insta_dashein: {rede:"Instagram", icone:"📸", nome:"DaShein"},
+  grupo_garimpo: {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Garimpo"},
+  grupo_vende:   {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Vende Barato"},
+  grupo_shop:    {rede:"Grupo Facebook", icone:"👥", nome:"Grupo ShopOnline"},
+};
+const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
+
+// ===== Slots de conteúdo da semana (do estudo, adaptado pras suas contas) =====
 const SLOTS=[
   {id:"comparacao",dia:"Terça",hora:"18h",
-   onde:"Instagram + Página Garimpo do Dia (agendado junto)",
+   destinos:["insta_garimpo","face_garimpo"],
    formato:"Carrossel (fotos do anúncio + texto no Canva)",
    conteudo:"Comparação entre 2 produtos parecidos",
    modelo:`[Categoria]: qual vale mais a pena - [Produto A] ou [Produto B]?
@@ -303,7 +318,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
 #[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
 
   {id:"dica_uso",dia:"Terça",hora:"20h",
-   onde:"Grupo Garimpo do Dia (manual)",
+   destinos:TODOS_OS_GRUPOS,
    formato:"Foto + texto",conteudo:"Dica de uso de um produto",
    semLink:true,
    modelo:`Vocês sabiam que dá pra usar o [produto] assim?
@@ -318,8 +333,8 @@ Alguém aqui já tem um? Conta como usa!
 (sem link aqui — post 100% de valor)`},
 
   {id:"unboxing",dia:"Quarta",hora:"15h",
-   onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
-   formato:"Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",
+   destinos:["insta_garimpo","face_garimpo"],
+   formato:"Reels / Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",
    modelo:`Chegou! Vamos testar?
 [1 frase sobre a expectativa antes de abrir]
 
@@ -331,7 +346,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 #[hashtagnicho1] #[hashtagnicho2]`},
 
   {id:"achadinhos_semana",dia:"Quinta",hora:"21h",
-   onde:"Grupo Garimpo do Dia (manual)",
+   destinos:TODOS_OS_GRUPOS,
    formato:"Carrossel ou foto",conteudo:"“3 achadinhos da semana”",
    modelo:`3 achadinhos dessa semana por menos de R$[valor]
 
@@ -345,7 +360,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
 #[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
 
   {id:"promocional",dia:"Sexta",hora:"12h · único post da semana",
-   onde:"Instagram + Página Garimpo do Dia (agendado junto)",
+   destinos:["insta_garimpo","face_garimpo"],
    formato:"Carrossel",conteudo:"Post promocional direto",tipo:"Venda",
    nota:"Único post promocional da semana — reserve esse tom só pra hoje.",
    modelo:`Achei isso e precisava compartilhar
@@ -361,9 +376,9 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 #[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
 
   {id:"dashein_moda",dia:"Dashein",hora:"1 a 2x por semana · sugestão: sexta à tarde",
-   onde:"Página Dashein + Grupo Achadinhos da Shein",
+   destinos:["insta_dashein","face_dashein"],
    formato:"Carrossel de moda",conteudo:"Look/peça da semana",tipo:"Shein",
-   nota:"Mantenha simples: só carrossel (moda tem muita foto pronta de anúncio), sem vídeo aqui. Publique na Página Dashein e replique manualmente no Grupo Achadinhos da Shein.",
+   nota:"Mantenha simples: só carrossel (moda tem muita foto pronta de anúncio), sem vídeo aqui. Publique junto no Instagram DaShein e na Página Dashein.",
    modelo:`Look/peça da semana: [nome da peça]
 
 Serve super bem, o tecido é [observação real], e o preço tá em R$[valor].
@@ -375,7 +390,7 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 #[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
 
   {id:"enquete",dia:"Sábado",hora:"20h",
-   onde:"Grupo Garimpo do Dia (manual)",
+   destinos:TODOS_OS_GRUPOS,
    formato:"Enquete (sem foto/link)",conteudo:"“Qual desses vocês tem em casa?”",tipo:"Engajamento",
    semLink:true,
    modelo:`Papo reto: qual desses vocês já tem em casa?
@@ -388,8 +403,8 @@ Comenta a letra! Quero saber o que a maioria usa.
 (sem link, sem produto pra vender — só pra gerar conversa)`},
 
   {id:"hack",dia:"Domingo",hora:"18h",
-   onde:"Instagram Reels + Página Garimpo do Dia (agendado junto)",
-   formato:"Vídeo (template CapCut)",conteudo:"Dica/hack rápido",
+   destinos:["insta_garimpo","face_garimpo"],
+   formato:"Reels / Vídeo (template CapCut)",conteudo:"Dica/hack rápido",
    modelo:`Ninguém te contou esse truque com [produto/categoria]
 
 [Explicação do hack em 1-2 frases, direto ao ponto]
@@ -399,7 +414,7 @@ Salva pra lembrar depois!
 #[hashtagnicho1] #[hashtagnicho2]`},
 
   {id:"tutorial_problema",dia:"Bônus",hora:"quando fizer sentido, no lugar do unboxing",
-   onde:"Instagram + Página Garimpo do Dia / Shopee Video",
+   destinos:["insta_garimpo","face_garimpo"],
    formato:"Reels / Shopee Video",conteudo:"Tutorial baseado em problema",
    nota:"O produto entra como ferramenta natural pra resolver o problema, não como o astro do post. Publique também no Shopee Video (mesmo clipe, sem gravar de novo).",
    modelo:`Como [resolver problema específico] sem [dor comum/gastar muito]
@@ -439,7 +454,7 @@ function slotTemplate(slot){
       <div><span class="slot-dia-hora">${slot.dia}</span> <span class="slot-hora">${slot.hora}</span></div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
-    <p class="slot-meta"><strong>Onde:</strong> ${slot.onde}</p>
+    <div class="slot-destinos">${slot.destinos.map(id=>{const c=CONTAS[id];return `<span class="destino-chip">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span>`}).join("")}</div>
     <p class="slot-meta"><strong>Formato:</strong> ${slot.formato} — ${slot.conteudo}</p>
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     <div class="foto-linha">
