@@ -142,6 +142,8 @@
     .item-produto-nome:hover{color:var(--accent-dark)}
     .item-produto-link{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .item-produto-loja{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 8px;margin-top:3px}
+    .item-produto-comissao{display:inline-block;font-size:10px;font-weight:700;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
+    .item-produto-comissao.baixa{background:#fee2e2;color:#991b1b}
     .item-produto-acoes{flex:none;display:grid;grid-template-columns:repeat(2,32px);grid-auto-rows:32px;gap:5px}
     .item-produto-icone{width:32px;height:32px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
     .item-produto-lixeira{background:#ffe2e2;color:var(--danger)}
@@ -255,6 +257,7 @@
         </select>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
+      <div class="field"><label>Comissão (%) — confira no painel de afiliados</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
@@ -752,6 +755,7 @@ function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
+  document.getElementById("banco-comissao").value="";
   bancoFotoAtual="";
   document.getElementById("banco-foto-preview").style.display="none";
   document.getElementById("banco-foto-placeholder").style.display="flex";
@@ -764,16 +768,18 @@ function adicionarProdutoBanco(){
   const nome=document.getElementById("banco-nome").value.trim();
   const link=document.getElementById("banco-link").value.trim();
   const loja=document.getElementById("banco-loja").value;
+  const comissaoValor=document.getElementById("banco-comissao").value;
+  const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   if(!nome){alert("Escreve o nome do produto.");return}
   const lista=carregarBanco();
   if(bancoEditandoId!==null){
     const item=lista.find(p=>p.id===bancoEditandoId);
     if(item){
-      item.nome=nome;item.link=link;item.loja=loja;
+      item.nome=nome;item.link=link;item.loja=loja;item.comissao=comissao;
       if(bancoFotoAtual)item.foto=bancoFotoAtual;
     }
   }else{
-    lista.unshift({id:Date.now(),nome,link,loja,foto:bancoFotoAtual||undefined});
+    lista.unshift({id:Date.now(),nome,link,loja,comissao,foto:bancoFotoAtual||undefined});
   }
   salvarBanco(lista);
   limparFormBanco();
@@ -787,6 +793,7 @@ function editarProdutoBanco(id){
   document.getElementById("banco-nome").value=item.nome||"";
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
+  document.getElementById("banco-comissao").value=item.comissao??"";
   bancoFotoAtual=item.foto||"";
   const prev=document.getElementById("banco-foto-preview");
   if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
@@ -822,6 +829,7 @@ function renderizarBanco(){
       <div class="item-produto-info">
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
+        ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
       </div>
       <div class="item-produto-acoes">
