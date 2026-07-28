@@ -103,6 +103,13 @@
     .slot-hora{font-size:12px;font-weight:600;color:var(--muted)}
     .slot-meta{font-size:13px;color:#5a4550;margin:2px 0}
     .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
+    .story-contador{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
+    .story-contador:first-child{border-top:none}
+    .story-contador-nome{font-size:13px;font-weight:700;color:var(--text)}
+    .story-contador-controles{display:flex;align-items:center;gap:8px}
+    .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
+    .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
+    .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:8px;width:26px;height:26px;font-size:13px;cursor:pointer;color:var(--muted)}
     .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
     .destino-chip{font-size:12px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:4px 10px}
     .destino-chip strong{font-weight:700}
@@ -211,9 +218,9 @@
 
     <section class="card">
       <div class="slot-dia-hora">📱 Todos os dias <span class="slot-hora">de manhã, 5 min</span></div>
-      <p class="slot-meta"><strong>Onde:</strong> Stories (Instagram + Página)</p>
       <p class="slot-meta"><strong>Conteúdo:</strong> Foto/repost rápido — Bastidor ou enquete</p>
       <p class="slot-nota">💡 Poste Story todos os dias, sem limite de quantidade — quanto mais story, melhor pro alcance. Esse calendário é a base mínima da semana, não um teto: poste mais sempre que quiser.</p>
+      <div id="contadores-story"></div>
     </section>
 
     <div id="slots-bonus"></div>
@@ -594,6 +601,32 @@ function montarTela(){
   document.getElementById("slots-sabado").innerHTML=SLOTS_POR_GRUPO.sabado.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-domingo").innerHTML=SLOTS_POR_GRUPO.domingo.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-bonus").innerHTML=SLOTS_POR_GRUPO.bonus.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  document.getElementById("contadores-story").innerHTML=CONTAS_STORY.map(storyContadorTemplate).join("");
+}
+
+const CONTAS_STORY=["insta_garimpo","face_garimpo","insta_dashein","face_dashein"];
+
+function storyContadorTemplate(id){
+  const c=CONTAS[id];
+  return `<div class="story-contador">
+    <span class="story-contador-nome">${c.icone} ${c.nome}</span>
+    <div class="story-contador-controles">
+      <button type="button" class="story-btn-zerar" onclick="zerarStory('${id}')">↺</button>
+      <span class="story-contador-numero" id="story-numero-${id}">0</span>
+      <button type="button" class="story-btn-mais" onclick="incrementarStory('${id}')">+1 Story</button>
+    </div>
+  </div>`;
+}
+
+function incrementarStory(id){
+  const el=document.getElementById("story-numero-"+id);
+  el.textContent=parseInt(el.textContent)+1;
+  salvarSemana();
+}
+
+function zerarStory(id){
+  document.getElementById("story-numero-"+id).textContent="0";
+  salvarSemana();
 }
 
 function preencherModelosPadrao(){
@@ -654,7 +687,9 @@ function coletarDados(){
   ["segunda","quinta"].forEach(dia=>{
     producao[dia]=PASSOS.map((_,i)=>document.getElementById("passo-"+dia+"-"+i).checked);
   });
-  return{data:date.value,slots,producao};
+  const stories={};
+  CONTAS_STORY.forEach(id=>{stories[id]=parseInt(document.getElementById("story-numero-"+id).textContent)||0});
+  return{data:date.value,slots,producao,stories};
 }
 
 function salvarSemana(){
@@ -693,6 +728,9 @@ function carregarSemana(){
   ["segunda","quinta"].forEach(dia=>{
     const marcados=(dados.producao&&dados.producao[dia])||[];
     PASSOS.forEach((_,i)=>{document.getElementById("passo-"+dia+"-"+i).checked=!!marcados[i]});
+  });
+  CONTAS_STORY.forEach(id=>{
+    document.getElementById("story-numero-"+id).textContent=(dados.stories&&dados.stories[id])||0;
   });
   globalStatus.textContent="Semana carregada.";
 }
