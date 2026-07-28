@@ -105,7 +105,10 @@
     .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
     .story-contador{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
     .story-contador:first-child{border-top:none}
-    .story-contador-nome{font-size:13px;font-weight:700;color:var(--text)}
+    .story-contador-nome{font-size:13px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:6px}
+    .icone-rede{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:6px;font-size:11px;font-weight:800;flex:none;line-height:1}
+    .icone-facebook{background:#1877f2;color:#fff;font-family:Georgia,serif;font-style:italic}
+    .icone-instagram{background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);font-size:12px}
     .story-contador-controles{display:flex;align-items:center;gap:8px}
     .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
     .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
@@ -602,10 +605,16 @@ function montarTela(){
 
 const CONTAS_STORY=["insta_garimpo","face_garimpo","insta_dashein","face_dashein"];
 
+function iconeRedeHTML(rede){
+  if(rede==="Facebook")return `<span class="icone-rede icone-facebook">f</span>`;
+  if(rede==="Instagram")return `<span class="icone-rede icone-instagram">📷</span>`;
+  return "";
+}
+
 function storyContadorTemplate(id){
   const c=CONTAS[id];
   return `<div class="story-contador">
-    <span class="story-contador-nome">${c.icone} ${c.nome}</span>
+    <span class="story-contador-nome">${iconeRedeHTML(c.rede)} <strong>${c.rede}</strong> · ${c.nome}</span>
     <div class="story-contador-controles">
       <button type="button" class="story-btn-zerar" onclick="zerarStory('${id}')">↺</button>
       <span class="story-contador-numero" id="story-numero-${id}">0</span>
