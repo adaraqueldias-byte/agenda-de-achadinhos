@@ -188,14 +188,10 @@
     <section class="card">
       <div class="field">
         <label class="semana-titulo">Semana que começa em (segunda-feira)</label>
-        <input id="date" type="date">
+        <input id="date" type="date" onchange="carregarSemana()">
       </div>
-      <div class="buttons">
-        <button class="primary" onclick="salvarSemana()">Salvar semana</button>
-        <button class="secondary" onclick="carregarSemana()">Carregar semana</button>
-      </div>
-      <button class="danger" style="width:100%;margin-top:8px" onclick="novaSemana()">Nova semana (limpar)</button>
-      <div id="globalStatus" class="status"></div>
+      <button class="danger" style="width:100%" onclick="novaSemana()">Nova semana (limpar)</button>
+      <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
     </section>
 
     <div id="producao-segunda"></div>
@@ -629,10 +625,6 @@ function zerarStory(id){
   salvarSemana();
 }
 
-function preencherModelosPadrao(){
-  SLOTS.forEach(slot=>{document.getElementById("legenda-"+slot.id).value=slot.modelo});
-}
-
 function storageKey(){return"agenda-achadinhos-semana-"+document.getElementById("date").value}
 
 function comprimirFoto(file,callback){
@@ -660,15 +652,21 @@ function onFotoChange(id,input){
     const prev=document.getElementById("foto-preview-"+id);
     prev.src=dataUrl;prev.style.display="block";
     document.getElementById("foto-remover-"+id).style.display="block";
+    salvarSemana();
   });
 }
 
-function removerFoto(id){
+function removerFotoSilencioso(id){
   document.getElementById("foto-valor-"+id).value="";
   const prev=document.getElementById("foto-preview-"+id);
   prev.style.display="none";prev.src="";
   document.getElementById("foto-remover-"+id).style.display="none";
   document.getElementById("foto-input-"+id).value="";
+}
+
+function removerFoto(id){
+  removerFotoSilencioso(id);
+  salvarSemana();
 }
 
 function coletarDados(){
@@ -703,12 +701,7 @@ function salvarSemana(){
 
 function carregarSemana(){
   const raw=localStorage.getItem(storageKey());
-  if(!raw){
-    preencherModelosPadrao();
-    globalStatus.textContent="Nenhuma semana salva pra essa data — modelos padrão carregados.";
-    return;
-  }
-  const dados=JSON.parse(raw);
+  const dados=raw?JSON.parse(raw):{};
   SLOTS.forEach(slot=>{
     const s=(dados.slots&&dados.slots[slot.id])||{};
     document.getElementById("produto-"+slot.id).value=s.produto||"";
@@ -722,6 +715,8 @@ function carregarSemana(){
       const prev=document.getElementById("foto-preview-"+slot.id);
       prev.src=s.foto;prev.style.display="block";
       document.getElementById("foto-remover-"+slot.id).style.display="block";
+    }else{
+      removerFotoSilencioso(slot.id);
     }
     marcarStatus(slot.id,!!s.postado);
   });
@@ -732,15 +727,14 @@ function carregarSemana(){
   CONTAS_STORY.forEach(id=>{
     document.getElementById("story-numero-"+id).textContent=(dados.stories&&dados.stories[id])||0;
   });
-  globalStatus.textContent="Semana carregada.";
+  globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
 }
 
 function novaSemana(){
   if(confirm("Limpar tudo e recomeçar essa semana do zero (com os modelos padrão)?")){
     localStorage.removeItem(storageKey());
     montarTela();
-    preencherModelosPadrao();
-    globalStatus.textContent="Semana nova — modelos padrão carregados.";
+    carregarSemana();
   }
 }
 
@@ -908,9 +902,18 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
 if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
 
+// Salva sozinho enquanto a pessoa digita nos campos da semana (produto, link, palavra-chave, legenda)
+let autoSalvarTimeout=null;
+document.getElementById("view-semana").addEventListener("input",e=>{
+  const id=e.target.id||"";
+  if(/^(produto|link|palavra|legenda)-/.test(id)){
+    clearTimeout(autoSalvarTimeout);
+    autoSalvarTimeout=setTimeout(salvarSemana,500);
+  }
+});
+
 montarTela();
 date.value=segundaFeiraDeHoje();
-preencherModelosPadrao();
 carregarSemana();
 </script>
 </body>
