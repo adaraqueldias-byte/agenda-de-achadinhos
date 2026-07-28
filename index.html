@@ -266,7 +266,7 @@
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
 
-    <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados</div>
+    <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div id="lista-banco"></div>
   </div>
 </div>
@@ -827,6 +827,7 @@ function escaparBanco(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<'
 function renderizarBanco(){
   const lista=carregarBanco();
   const cont=document.getElementById("lista-banco");
+  document.getElementById("banco-contador").textContent="("+lista.length+")";
   if(lista.length===0){
     cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
     return;
