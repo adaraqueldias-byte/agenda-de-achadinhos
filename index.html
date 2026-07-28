@@ -70,6 +70,7 @@
     textarea{min-height:88px;resize:vertical}
     .legenda-textarea{min-height:150px;font-size:14px;line-height:1.5}
     .field{margin-bottom:11px}
+    .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .badge{
       background:linear-gradient(135deg,#ffe0ec,#ede4ff);
       color:#8d2858;
@@ -257,7 +258,10 @@
         </select>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
-      <div class="field"><label>Comissão (%) — confira no painel de afiliados</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
+      <div class="grid">
+        <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
+        <div class="field"><label>Valor da comissão (R$)</label><input id="banco-valor-comissao" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
+      </div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
@@ -756,6 +760,7 @@ function limparFormBanco(){
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
   document.getElementById("banco-comissao").value="";
+  document.getElementById("banco-valor-comissao").value="";
   bancoFotoAtual="";
   document.getElementById("banco-foto-preview").style.display="none";
   document.getElementById("banco-foto-placeholder").style.display="flex";
@@ -770,16 +775,18 @@ function adicionarProdutoBanco(){
   const loja=document.getElementById("banco-loja").value;
   const comissaoValor=document.getElementById("banco-comissao").value;
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
+  const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
+  const valorComissao=valorComissaoTexto===""?undefined:parseFloat(valorComissaoTexto);
   if(!nome){alert("Escreve o nome do produto.");return}
   const lista=carregarBanco();
   if(bancoEditandoId!==null){
     const item=lista.find(p=>p.id===bancoEditandoId);
     if(item){
-      item.nome=nome;item.link=link;item.loja=loja;item.comissao=comissao;
+      item.nome=nome;item.link=link;item.loja=loja;item.comissao=comissao;item.valorComissao=valorComissao;
       if(bancoFotoAtual)item.foto=bancoFotoAtual;
     }
   }else{
-    lista.unshift({id:Date.now(),nome,link,loja,comissao,foto:bancoFotoAtual||undefined});
+    lista.unshift({id:Date.now(),nome,link,loja,comissao,valorComissao,foto:bancoFotoAtual||undefined});
   }
   salvarBanco(lista);
   limparFormBanco();
@@ -794,6 +801,7 @@ function editarProdutoBanco(id){
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
   document.getElementById("banco-comissao").value=item.comissao??"";
+  document.getElementById("banco-valor-comissao").value=item.valorComissao??"";
   bancoFotoAtual=item.foto||"";
   const prev=document.getElementById("banco-foto-preview");
   if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
@@ -830,6 +838,7 @@ function renderizarBanco(){
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
+        ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">R$ ${p.valorComissao.toFixed(2)}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
       </div>
       <div class="item-produto-acoes">
