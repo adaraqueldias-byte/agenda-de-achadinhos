@@ -560,7 +560,7 @@ function segundaFeiraDeHoje(){
 
 function itemProdutoSlotTemplate(slot,i,total){
   const key=total>1?`${slot.id}-${i}`:slot.id;
-  const rotulo=total>1?`Produto ${String.fromCharCode(65+i)}`:"Produto(s)";
+  const rotulo=total>1?`Produto ${String.fromCharCode(65+i)}`:"Produto";
   return `<div class="${total>1?'item-slot-produto':''}">
     ${total>1?`<div class="item-slot-titulo">${rotulo}</div>`:""}
     <div class="foto-linha">
@@ -572,7 +572,11 @@ function itemProdutoSlotTemplate(slot,i,total){
       <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
       <input type="hidden" id="foto-valor-${key}">
     </div>
-    <div class="field"><label>${rotulo} — referência interna</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
+    <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
+    <div class="grid">
+      <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
+      <div class="field"><label>Valor comissão (R$)</label><input id="valor-comissao-${key}" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
+    </div>
     ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
   </div>`;
 }
@@ -706,10 +710,14 @@ function coletarDados(){
     const itens=[];
     for(let i=0;i<total;i++){
       const key=chaveItemSlot(slot,i);
+      const comissaoTexto=document.getElementById("comissao-"+key).value;
+      const valorComissaoTexto=document.getElementById("valor-comissao-"+key).value;
       itens.push({
         produto:document.getElementById("produto-"+key).value,
         link:slot.semLink?"":document.getElementById("link-"+key).value,
-        foto:document.getElementById("foto-valor-"+key).value||undefined
+        foto:document.getElementById("foto-valor-"+key).value||undefined,
+        comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto),
+        valorComissao:valorComissaoTexto===""?undefined:parseFloat(valorComissaoTexto)
       });
     }
     slots[slot.id]={
@@ -749,6 +757,8 @@ function carregarSemana(){
       const key=chaveItemSlot(slot,i);
       const it=itensSalvos[i]||{};
       document.getElementById("produto-"+key).value=it.produto||"";
+      document.getElementById("comissao-"+key).value=it.comissao??"";
+      document.getElementById("valor-comissao-"+key).value=it.valorComissao??"";
       if(!slot.semLink){
         document.getElementById("link-"+key).value=it.link||"";
       }
@@ -963,7 +973,7 @@ if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker
 let autoSalvarTimeout=null;
 document.getElementById("view-semana").addEventListener("input",e=>{
   const id=e.target.id||"";
-  if(/^(produto|link|palavra|legenda)-/.test(id)){
+  if(/^(produto|link|palavra|legenda|comissao|valor-comissao)-/.test(id)){
     clearTimeout(autoSalvarTimeout);
     autoSalvarTimeout=setTimeout(salvarSemana,500);
   }
