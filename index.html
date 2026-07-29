@@ -130,9 +130,12 @@
     .foto-botoes{flex:1;display:flex;flex-direction:column;gap:4px}
     .foto-botoes button{width:100%}
 
+    /* Quadros que abrem/fecham (acordeão) */
+    .acordeon-titulo{font-size:16px;font-weight:800;width:100%;background:none;border:none;padding:0;margin:0;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px}
+
     /* Sessão de produção */
     .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7;padding:12px 15px}
-    .producao-titulo{font-size:16px;font-weight:800;color:#5b21a6;width:100%;background:none;border:none;padding:0;margin:0;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .producao-titulo{color:#5b21a6}
     .producao-corpo{margin-top:4px}
     .passo-linha{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
     .passo-linha:first-of-type{border-top:none}
@@ -142,9 +145,14 @@
     .passo-checks input{width:auto;margin:0}
     .producao-total{font-size:12px;color:#5b21a6;font-weight:700;margin-top:8px}
 
+    /* Dias da semana (acordeão) */
+    .dia-titulo{color:var(--accent-dark)}
+    .dia-card>div{margin-top:6px}
+
     /* Lembretes finais */
     .lembretes-card{background:linear-gradient(135deg,#fff8e1,#fffdf5);border:1px solid #f0d98a}
-    .lembretes-card ul{margin:0;padding-left:18px;font-size:13px;line-height:1.6;color:#5c3d00}
+    .lembretes-titulo{color:#8a6100}
+    .lembretes-card ul{margin:8px 0 0;padding-left:18px;font-size:13px;line-height:1.6;color:#5c3d00}
 
     .semana-titulo{font-size:12px;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;font-weight:700}
 
@@ -222,31 +230,84 @@
 
     <div id="producao-segunda"></div>
 
-    <div id="slots-segunda"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-segunda')">
+        <span>Segunda-feira</span>
+        <span id="dia-segunda-seta">▸</span>
+      </button>
+      <div id="dia-segunda-corpo" style="display:none"><div id="slots-segunda"></div></div>
+    </section>
 
-    <div id="slots-terca"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-terca')">
+        <span>Terça-feira</span>
+        <span id="dia-terca-seta">▸</span>
+      </button>
+      <div id="dia-terca-corpo" style="display:none"><div id="slots-terca"></div></div>
+    </section>
 
-    <div id="slots-quarta"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-quarta')">
+        <span>Quarta-feira</span>
+        <span id="dia-quarta-seta">▸</span>
+      </button>
+      <div id="dia-quarta-corpo" style="display:none"><div id="slots-quarta"></div></div>
+    </section>
 
-    <div id="slots-quinta"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-quinta')">
+        <span>Quinta-feira</span>
+        <span id="dia-quinta-seta">▸</span>
+      </button>
+      <div id="dia-quinta-corpo" style="display:none"><div id="slots-quinta"></div></div>
+    </section>
 
-    <div id="slots-sexta"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-sexta')">
+        <span>Sexta-feira</span>
+        <span id="dia-sexta-seta">▸</span>
+      </button>
+      <div id="dia-sexta-corpo" style="display:none"><div id="slots-sexta"></div></div>
+    </section>
 
-    <div id="slots-sabado"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-sabado')">
+        <span>Sábado</span>
+        <span id="dia-sabado-seta">▸</span>
+      </button>
+      <div id="dia-sabado-corpo" style="display:none"><div id="slots-sabado"></div></div>
+    </section>
 
-    <div id="slots-domingo"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-domingo')">
+        <span>Domingo</span>
+        <span id="dia-domingo-seta">▸</span>
+      </button>
+      <div id="dia-domingo-corpo" style="display:none"><div id="slots-domingo"></div></div>
+    </section>
 
-    <div id="slots-bonus"></div>
+    <section class="card dia-card">
+      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-bonus')">
+        <span>Bônus</span>
+        <span id="dia-bonus-seta">▸</span>
+      </button>
+      <div id="dia-bonus-corpo" style="display:none"><div id="slots-bonus"></div></div>
+    </section>
 
     <section class="card lembretes-card">
-      <strong>Lembretes rápidos</strong>
-      <ul>
-        <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
-        <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
-        <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
-        <li>Instagram e Página agendam juntos no Meta Business Suite. Os 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) precisam de publicação manual.</li>
-        <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
-      </ul>
+      <button type="button" class="acordeon-titulo lembretes-titulo" onclick="toggleSecao('lembretes')">
+        <span>💡 Lembretes rápidos</span>
+        <span id="lembretes-seta">▸</span>
+      </button>
+      <div id="lembretes-corpo" style="display:none">
+        <ul>
+          <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
+          <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
+          <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
+          <li>Instagram e Página agendam juntos no Meta Business Suite. Os 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) precisam de publicação manual.</li>
+          <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
+        </ul>
+      </div>
     </section>
 
     <section class="card">
@@ -703,7 +764,7 @@ function slotTemplate(slot){
 
 function producaoTemplate(){
   return `<section class="card producao-card">
-    <button type="button" class="producao-titulo" onclick="toggleProducao()">
+    <button type="button" class="acordeon-titulo producao-titulo" onclick="toggleSecao('producao')">
       <span>🗓️ Segunda e Quinta à tarde — Sessão de produção</span>
       <span id="producao-seta">▸</span>
     </button>
@@ -721,12 +782,12 @@ function producaoTemplate(){
   </section>`;
 }
 
-function toggleProducao(){
-  const corpo=document.getElementById("producao-corpo");
-  const seta=document.getElementById("producao-seta");
+function toggleSecao(id){
+  const corpo=document.getElementById(id+"-corpo");
+  const seta=document.getElementById(id+"-seta");
   const aberto=corpo.style.display!=="none";
   corpo.style.display=aberto?"none":"block";
-  seta.textContent=aberto?"▸":"▾";
+  if(seta)seta.textContent=aberto?"▸":"▾";
 }
 
 function montarTela(){
