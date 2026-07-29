@@ -613,7 +613,7 @@ function itemDisplayHTML(key){
       ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
       ${comissaoTexto?`<span class="item-produto-comissao ${parseFloat(comissaoTexto)<10?"baixa":""}">${comissaoTexto}% comissão</span>`:""}
       <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
-      <button class="item-produto-publicado${postado?" sim":""}" onclick="togglePostadoItemSlot('${key}')">${postado?"✅ Postado":"☐ Marcar como postado"}</button>
+      <button class="item-produto-publicado${postado?" sim":""}" onclick="togglePostadoItemSlot('${key}')">${postado?"✅ Publicado":"☐ Marcar como publicado"}</button>
     </div>
     <div class="item-produto-acoes">
       <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
