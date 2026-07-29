@@ -196,14 +196,13 @@
   </section>
 
   <div class="abas">
-    <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">📅 Semana</div>
+    <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">🗓️ Semana</div>
     <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
   </div>
 
   <div id="view-semana">
     <section class="card">
       <div class="field">
-        <label class="semana-titulo">Semana que começa em (segunda-feira)</label>
         <input id="date" type="date" onchange="carregarSemana()">
       </div>
       <button class="danger" style="width:100%" onclick="novaSemana()">Nova semana (limpar)</button>
