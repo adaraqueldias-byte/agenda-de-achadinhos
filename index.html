@@ -121,6 +121,9 @@
     .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
     .destino-chip{font-size:12px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:4px 10px}
     .destino-chip strong{font-weight:700}
+    .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
+    .modo-btn{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
+    .modo-btn.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:transparent}
 
     /* Foto do produto */
     .foto-linha{display:flex;align-items:center;gap:10px;margin:10px 0}
@@ -588,14 +591,27 @@ Comenta a letra! Quero saber o que a maioria usa.
 
   {id:"hack",dia:"Domingo",hora:"18h",
    destinos:["insta_garimpo","face_garimpo"],
-   formato:"Reels / Vídeo (template CapCut)",conteudo:"Dica/hack rápido",
-   modelo:`Ninguém te contou esse truque com [produto/categoria]
+   itens:3,
+   alterna:{
+     hack:{label:"🎯 Hack",formato:"Reels / Vídeo (template CapCut)",conteudo:"Dica/hack rápido",usaItens:false,
+       modelo:`Ninguém te contou esse truque com [produto/categoria]
 
 [Explicação do hack em 1-2 frases, direto ao ponto]
 
 Salva pra lembrar depois!
 
 #[hashtagnicho1] #[hashtagnicho2]`},
+     ranking:{label:"🏆 Ranking Top 3",formato:"Carrossel ou Reels",conteudo:"Ranking / Top 3 da semana",usaItens:true,
+       modelo:`Top 3 achadinhos da semana 🏆
+
+1. [Produto 1] - por quê: [1 frase]
+2. [Produto 2] - por quê: [1 frase]
+3. [Produto 3] - por quê: [1 frase]
+
+Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
+
+#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`}
+   }},
 
   {id:"tutorial_problema",dia:"Bônus",hora:"quando fizer sentido, no lugar do unboxing",
    destinos:["insta_garimpo","face_garimpo"],
@@ -745,21 +761,47 @@ async function copiarLinkItemSlot(key){
 function slotTemplate(slot){
   const total=slot.itens||1;
   const itensHtml=Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
+  const temAlterna=!!slot.alterna;
+  const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
+  const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
   return `<section class="card">
     <div class="slot-cabecalho">
       <div><span class="slot-dia-hora">${slot.dia}</span> <span class="slot-hora">${slot.hora}</span></div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
     <div class="slot-destinos">${slot.destinos.map(id=>{const c=CONTAS[id];return `<span class="destino-chip">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span>`}).join("")}</div>
-    <p class="slot-meta"><strong>Formato:</strong> ${slot.formato} — ${slot.conteudo}</p>
+    ${temAlterna?`
+    <div class="slot-modo-toggle">
+      ${Object.keys(slot.alterna).map(modo=>`<button type="button" class="modo-btn${modo===modoPadrao?" ativo":""}" id="modo-${slot.id}-${modo}" onclick="escolherModoSlot('${slot.id}','${modo}')">${slot.alterna[modo].label}</button>`).join("")}
+    </div>
+    <input type="hidden" id="modo-${slot.id}" value="${modoPadrao}">`:""}
+    <p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     <input type="hidden" id="postado-${slot.id}" value="false">
-    ${itensHtml}
+    ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
     ${slot.semLink?"":`<div class="field"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
   </section>`;
+}
+
+function aplicarModoVisual(slotId,modo){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const cfg=slot.alterna[modo];
+  Object.keys(slot.alterna).forEach(m=>{
+    document.getElementById(`modo-${slotId}-${m}`).classList.toggle("ativo",m===modo);
+  });
+  document.getElementById("formato-"+slotId).innerHTML=`<strong>Formato:</strong> ${cfg.formato} — ${cfg.conteudo}`;
+  const itensContainer=document.getElementById("itens-"+slotId);
+  if(itensContainer)itensContainer.style.display=cfg.usaItens?"block":"none";
+}
+
+function escolherModoSlot(slotId,modo){
+  document.getElementById("modo-"+slotId).value=modo;
+  aplicarModoVisual(slotId,modo);
+  document.getElementById("legenda-"+slotId).value=SLOTS.find(s=>s.id===slotId).alterna[modo].modelo;
+  salvarSemana();
 }
 
 function producaoTemplate(){
@@ -902,7 +944,8 @@ function coletarDados(){
       itens,
       palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
-      postado:document.getElementById("postado-"+slot.id).value==="true"
+      postado:document.getElementById("postado-"+slot.id).value==="true",
+      modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined
     };
   });
   const producao={};
@@ -959,7 +1002,14 @@ function carregarSemana(){
     if(!slot.semLink){
       document.getElementById("palavra-"+slot.id).value=s.palavra||"";
     }
-    document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
+    if(slot.alterna){
+      const modoSalvo=(s.modo&&slot.alterna[s.modo])?s.modo:Object.keys(slot.alterna)[0];
+      document.getElementById("modo-"+slot.id).value=modoSalvo;
+      aplicarModoVisual(slot.id,modoSalvo);
+      document.getElementById("legenda-"+slot.id).value=s.legenda||slot.alterna[modoSalvo].modelo;
+    }else{
+      document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
+    }
   });
   ["segunda","quinta"].forEach(dia=>{
     const marcados=(dados.producao&&dados.producao[dia])||[];
