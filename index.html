@@ -583,18 +583,37 @@ function itemProdutoSlotTemplate(slot,i,total){
   </div>`;
 }
 
+function slotIdFromKey(key){return key.replace(/-\d+$/,"")}
+
+function slotEstaPostado(slotId){
+  const el=document.getElementById("postado-"+slotId);
+  return el?el.value==="true":false;
+}
+
+function togglePostadoItemSlot(key){
+  const slotId=slotIdFromKey(key);
+  const input=document.getElementById("postado-"+slotId);
+  input.value=input.value==="true"?"false":"true";
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const total=slot.itens||1;
+  for(let i=0;i<total;i++){atualizarDisplayItemSlot(chaveItemSlot(slot,i))}
+  salvarSemana();
+}
+
 function itemDisplayHTML(key){
   const nome=document.getElementById("produto-"+key).value;
   const linkEl=document.getElementById("link-"+key);
   const link=linkEl?linkEl.value:"";
   const foto=document.getElementById("foto-valor-"+key).value;
   const comissaoTexto=document.getElementById("comissao-"+key).value;
+  const postado=slotEstaPostado(slotIdFromKey(key));
   return `
     ${foto?`<img class="item-produto-foto" src="${foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
     <div class="item-produto-info">
       ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
       ${comissaoTexto?`<span class="item-produto-comissao ${parseFloat(comissaoTexto)<10?"baixa":""}">${comissaoTexto}% comissão</span>`:""}
       <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
+      <button class="item-produto-publicado${postado?" sim":""}" onclick="togglePostadoItemSlot('${key}')">${postado?"✅ Postado":"☐ Marcar como postado"}</button>
     </div>
     <div class="item-produto-acoes">
       <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
@@ -606,7 +625,9 @@ function itemDisplayHTML(key){
 }
 
 function atualizarDisplayItemSlot(key){
-  document.getElementById("item-display-"+key).innerHTML=itemDisplayHTML(key);
+  const el=document.getElementById("item-display-"+key);
+  el.innerHTML=itemDisplayHTML(key);
+  el.classList.toggle("publicado",slotEstaPostado(slotIdFromKey(key)));
 }
 
 function mostrarItemEdicao(key){
@@ -658,11 +679,12 @@ function slotTemplate(slot){
     <div class="slot-destinos">${slot.destinos.map(id=>{const c=CONTAS[id];return `<span class="destino-chip">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span>`}).join("")}</div>
     <p class="slot-meta"><strong>Formato:</strong> ${slot.formato} — ${slot.conteudo}</p>
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
+    <input type="hidden" id="postado-${slot.id}" value="false">
     ${itensHtml}
     ${slot.semLink?"":`<div class="field"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
-    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button><button class="success" onclick="marcarPostado('${slot.id}')">Marcar como postado</button></div>
-    <div id="status-${slot.id}" class="status" data-posted="false">Ainda não postado.</div>
+    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
+    <div id="status-${slot.id}" class="status"></div>
   </section>`;
 }
 
@@ -790,7 +812,7 @@ function coletarDados(){
       itens,
       palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
-      postado:document.getElementById("status-"+slot.id).dataset.posted==="true"
+      postado:document.getElementById("postado-"+slot.id).value==="true"
     };
   });
   const producao={};
@@ -817,6 +839,7 @@ function carregarSemana(){
   SLOTS.forEach(slot=>{
     const s=(dados.slots&&dados.slots[slot.id])||{};
     const total=slot.itens||1;
+    document.getElementById("postado-"+slot.id).value=s.postado?"true":"false";
     // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
     const itensSalvos=s.itens||(s.produto!==undefined?[{produto:s.produto,link:s.link,foto:s.foto}]:[]);
     for(let i=0;i<total;i++){
@@ -847,7 +870,6 @@ function carregarSemana(){
       document.getElementById("palavra-"+slot.id).value=s.palavra||"";
     }
     document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
-    marcarStatus(slot.id,!!s.postado);
   });
   ["segunda","quinta"].forEach(dia=>{
     const marcados=(dados.producao&&dados.producao[dia])||[];
@@ -872,18 +894,6 @@ async function copiarLegenda(id){
   if(!t){alert("A legenda está vazia.");return}
   try{await navigator.clipboard.writeText(t);document.getElementById("status-"+id).textContent="Legenda copiada. Agora cole na rede social."}
   catch{alert("Não foi possível copiar.")}
-}
-
-function marcarStatus(id,postado){
-  const e=document.getElementById("status-"+id);
-  e.dataset.posted=postado?"true":"false";
-  e.textContent=postado?"Postado ✅":"Ainda não postado.";
-}
-
-function marcarPostado(id){
-  const e=document.getElementById("status-"+id);
-  marcarStatus(id,e.dataset.posted!=="true");
-  salvarSemana();
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
