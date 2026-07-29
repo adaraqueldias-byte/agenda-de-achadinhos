@@ -563,19 +563,87 @@ function itemProdutoSlotTemplate(slot,i,total){
   const rotulo=total>1?`Produto ${String.fromCharCode(65+i)}`:"Produto";
   return `<div class="${total>1?'item-slot-produto':''}">
     ${total>1?`<div class="item-slot-titulo">${rotulo}</div>`:""}
-    <div class="foto-linha">
-      <img id="foto-preview-${key}" class="foto-preview" alt="Foto do produto">
-      <div class="foto-botoes">
-        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${key}').click()">📷 Escolher foto</button>
-        <button type="button" id="foto-remover-${key}" class="danger" style="display:none" onclick="removerFoto('${key}')">✕ Remover foto</button>
+    <div id="item-display-${key}" class="item-produto" style="display:none"></div>
+    <div id="item-edit-${key}">
+      <div class="foto-linha">
+        <img id="foto-preview-${key}" class="foto-preview" alt="Foto do produto">
+        <div class="foto-botoes">
+          <button type="button" class="secondary" onclick="document.getElementById('foto-input-${key}').click()">📷 Escolher foto</button>
+          <button type="button" id="foto-remover-${key}" class="danger" style="display:none" onclick="removerFoto('${key}')">✕ Remover foto</button>
+        </div>
+        <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
+        <input type="hidden" id="foto-valor-${key}">
       </div>
-      <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
-      <input type="hidden" id="foto-valor-${key}">
+      <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
+      <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
+      ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
+      <button type="button" class="success" style="width:100%;margin-top:4px" onclick="salvarItemSlot('${key}')">✓ Salvar produto</button>
     </div>
-    <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
-    <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
-    ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
   </div>`;
+}
+
+function itemDisplayHTML(key){
+  const nome=document.getElementById("produto-"+key).value;
+  const linkEl=document.getElementById("link-"+key);
+  const link=linkEl?linkEl.value:"";
+  const foto=document.getElementById("foto-valor-"+key).value;
+  const comissaoTexto=document.getElementById("comissao-"+key).value;
+  return `
+    ${foto?`<img class="item-produto-foto" src="${foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
+    <div class="item-produto-info">
+      ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
+      ${comissaoTexto?`<span class="item-produto-comissao ${parseFloat(comissaoTexto)<10?"baixa":""}">${comissaoTexto}% comissão</span>`:""}
+      <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
+    </div>
+    <div class="item-produto-acoes">
+      <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
+      ${link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkItemSlot('${key}')">🔗</button>`:"<span></span>"}
+      <button class="item-produto-icone item-produto-editar" onclick="mostrarItemEdicao('${key}')">✏️</button>
+      <button class="item-produto-icone item-produto-lixeira" onclick="limparItemSlot('${key}')">🗑️</button>
+    </div>
+  `;
+}
+
+function atualizarDisplayItemSlot(key){
+  document.getElementById("item-display-"+key).innerHTML=itemDisplayHTML(key);
+}
+
+function mostrarItemEdicao(key){
+  document.getElementById("item-display-"+key).style.display="none";
+  document.getElementById("item-edit-"+key).style.display="block";
+}
+
+function salvarItemSlot(key){
+  atualizarDisplayItemSlot(key);
+  document.getElementById("item-edit-"+key).style.display="none";
+  document.getElementById("item-display-"+key).style.display="flex";
+  salvarSemana();
+}
+
+function limparItemSlot(key){
+  if(!confirm("Limpar esse produto?"))return;
+  document.getElementById("produto-"+key).value="";
+  const linkEl=document.getElementById("link-"+key);
+  if(linkEl)linkEl.value="";
+  document.getElementById("comissao-"+key).value="";
+  removerFotoSilencioso(key);
+  mostrarItemEdicao(key);
+  salvarSemana();
+}
+
+async function copiarNomeItemSlot(key){
+  const nome=document.getElementById("produto-"+key).value;
+  if(!nome){alert("Sem nome pra copiar.");return}
+  try{await navigator.clipboard.writeText(nome);alert("Nome copiado!")}
+  catch{alert("Não foi possível copiar.")}
+}
+
+async function copiarLinkItemSlot(key){
+  const linkEl=document.getElementById("link-"+key);
+  const link=linkEl?linkEl.value:"";
+  if(!link){alert("Sem link pra copiar.");return}
+  try{await navigator.clipboard.writeText(link);alert("Link copiado!")}
+  catch{alert("Não foi possível copiar.")}
 }
 
 function slotTemplate(slot){
@@ -763,6 +831,13 @@ function carregarSemana(){
         document.getElementById("foto-remover-"+key).style.display="block";
       }else{
         removerFotoSilencioso(key);
+      }
+      atualizarDisplayItemSlot(key);
+      if(it.produto){
+        document.getElementById("item-edit-"+key).style.display="none";
+        document.getElementById("item-display-"+key).style.display="flex";
+      }else{
+        mostrarItemEdicao(key);
       }
     }
     if(!slot.semLink){
