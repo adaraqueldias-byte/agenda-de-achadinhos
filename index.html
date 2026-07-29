@@ -128,9 +128,12 @@
     /* Sessão de produção */
     .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7}
     .producao-titulo{font-size:16px;font-weight:800;color:#5b21a6;margin-bottom:4px}
-    .passo-linha{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
+    .passo-linha{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
     .passo-linha:first-of-type{border-top:none}
-    .passo-linha input{width:auto;margin-top:3px}
+    .passo-texto{flex:1;min-width:180px}
+    .passo-checks{display:flex;gap:12px;flex:none}
+    .passo-checks label{display:flex;align-items:center;gap:4px;font-weight:700;white-space:nowrap;color:#5b21a6}
+    .passo-checks input{width:auto;margin:0}
     .producao-total{font-size:12px;color:#5b21a6;font-weight:700;margin-top:8px}
 
     /* Lembretes finais */
@@ -216,8 +219,6 @@
     <div id="slots-terca"></div>
 
     <div id="slots-quarta"></div>
-
-    <div id="producao-quinta"></div>
 
     <div id="slots-quinta"></div>
 
@@ -665,21 +666,23 @@ function slotTemplate(slot){
   </section>`;
 }
 
-function producaoTemplate(diaId,diaNome){
+function producaoTemplate(){
   return `<section class="card producao-card">
-    <div class="producao-titulo">🗓️ ${diaNome} à tarde — Sessão de produção</div>
+    <div class="producao-titulo">🗓️ Segunda e Quinta à tarde — Sessão de produção</div>
     ${PASSOS.map((p,i)=>`
-    <label class="passo-linha">
-      <input type="checkbox" id="passo-${diaId}-${i}" onchange="salvarSemana()">
-      <span><strong>${i+1}. ${p.titulo}</strong> <em>(${p.tempo})</em><br>${p.texto}</span>
-    </label>`).join("")}
-    <div class="producao-total">⏱️ Tempo total estimado: ~1h15 a 1h45</div>
+    <div class="passo-linha">
+      <div class="passo-texto"><strong>${i+1}. ${p.titulo}</strong> <em>(${p.tempo})</em><br>${p.texto}</div>
+      <div class="passo-checks">
+        <label><input type="checkbox" id="passo-segunda-${i}" onchange="salvarSemana()"> Segunda</label>
+        <label><input type="checkbox" id="passo-quinta-${i}" onchange="salvarSemana()"> Quinta</label>
+      </div>
+    </div>`).join("")}
+    <div class="producao-total">⏱️ Tempo total estimado: ~1h15 a 1h45 em cada dia</div>
   </section>`;
 }
 
 function montarTela(){
-  document.getElementById("producao-segunda").innerHTML=producaoTemplate("segunda","Segunda-feira");
-  document.getElementById("producao-quinta").innerHTML=producaoTemplate("quinta","Quinta-feira");
+  document.getElementById("producao-segunda").innerHTML=producaoTemplate();
   document.getElementById("slots-segunda").innerHTML=SLOTS_POR_GRUPO.segunda.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-terca").innerHTML=SLOTS_POR_GRUPO.terca.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-quarta").innerHTML=SLOTS_POR_GRUPO.quarta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
