@@ -177,10 +177,9 @@
     .item-produto-copiar-nome{background:#fff3d6;color:#8a6100}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
-    .banco-contador-lojas{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;justify-content:center;font-size:12px}
+    .banco-contador-lojas{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:13px}
     .banco-contador-lojas span{color:var(--muted);font-weight:600}
     .banco-contador-lojas strong{color:var(--accent-dark);font-weight:800}
-    .banco-meta{cursor:pointer;text-decoration:underline dotted}
 
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
   </style>
@@ -277,7 +276,8 @@
           <option value="">Selecione a loja</option>
           <option value="shopee">Shopee</option>
           <option value="mercadolivre">Mercado Livre</option>
-          <option value="amazon">Amazon</option>
+          <option value="amazon_br">Amazon 🇧🇷</option>
+          <option value="amazon_eua">Amazon 🇺🇸</option>
           <option value="magalu">Magalu</option>
           <option value="shein">Shein</option>
         </select>
@@ -918,34 +918,23 @@ async function copiarLegenda(id){
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
-const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",magalu:"Magalu",shein:"Shein"};
+const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",amazon_br:"Amazon 🇧🇷",amazon_eua:"Amazon 🇺🇸",magalu:"Magalu",shein:"Shein"};
 let bancoFotoAtual="";
 let bancoEditandoId=null;
 
-function editarMetaBanco(){
-  const atual=localStorage.getItem("agenda-achadinhos-banco-meta")||"3";
-  const novo=prompt("Meta de produtos por dia:",atual);
-  if(novo===null)return;
-  const n=parseInt(novo);
-  if(isNaN(n)||n<0){alert("Digite um número válido.");return}
-  localStorage.setItem("agenda-achadinhos-banco-meta",n);
-  atualizarContadorLojasBanco();
-}
-
 function atualizarContadorLojasBanco(){
   const lista=carregarBanco();
-  const contagem={shopee:0,mercadolivre:0,amazon:0,magalu:0,shein:0};
+  const contagem={shopee:0,mercadolivre:0,amazon_br:0,amazon_eua:0,magalu:0,shein:0};
   lista.forEach(p=>{
     if(contagem[p.loja]!==undefined)contagem[p.loja]++;
   });
-  const meta=localStorage.getItem("agenda-achadinhos-banco-meta")||"3";
   document.getElementById("banco-contador-lojas").innerHTML=`
     <span>Shopee <strong>${contagem.shopee}</strong></span>
     <span>Mercado Livre <strong>${contagem.mercadolivre}</strong></span>
-    <span>Amazon <strong>${contagem.amazon}</strong></span>
+    <span>Amazon 🇧🇷 <strong>${contagem.amazon_br}</strong></span>
+    <span>Amazon 🇺🇸 <strong>${contagem.amazon_eua}</strong></span>
     <span>Magalu <strong>${contagem.magalu}</strong></span>
     <span>Shein <strong>${contagem.shein}</strong></span>
-    <span class="banco-meta" onclick="editarMetaBanco()">meta <strong>${meta}</strong></span>
   `;
 }
 
