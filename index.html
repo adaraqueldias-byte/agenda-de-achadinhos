@@ -573,10 +573,7 @@ function itemProdutoSlotTemplate(slot,i,total){
       <input type="hidden" id="foto-valor-${key}">
     </div>
     <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
-    <div class="grid">
-      <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
-      <div class="field"><label>Valor comissão (R$)</label><input id="valor-comissao-${key}" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
-    </div>
+    <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
     ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
   </div>`;
 }
@@ -711,13 +708,11 @@ function coletarDados(){
     for(let i=0;i<total;i++){
       const key=chaveItemSlot(slot,i);
       const comissaoTexto=document.getElementById("comissao-"+key).value;
-      const valorComissaoTexto=document.getElementById("valor-comissao-"+key).value;
       itens.push({
         produto:document.getElementById("produto-"+key).value,
         link:slot.semLink?"":document.getElementById("link-"+key).value,
         foto:document.getElementById("foto-valor-"+key).value||undefined,
-        comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto),
-        valorComissao:valorComissaoTexto===""?undefined:parseFloat(valorComissaoTexto)
+        comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto)
       });
     }
     slots[slot.id]={
@@ -758,7 +753,6 @@ function carregarSemana(){
       const it=itensSalvos[i]||{};
       document.getElementById("produto-"+key).value=it.produto||"";
       document.getElementById("comissao-"+key).value=it.comissao??"";
-      document.getElementById("valor-comissao-"+key).value=it.valorComissao??"";
       if(!slot.semLink){
         document.getElementById("link-"+key).value=it.link||"";
       }
@@ -973,7 +967,7 @@ if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker
 let autoSalvarTimeout=null;
 document.getElementById("view-semana").addEventListener("input",e=>{
   const id=e.target.id||"";
-  if(/^(produto|link|palavra|legenda|comissao|valor-comissao)-/.test(id)){
+  if(/^(produto|link|palavra|legenda|comissao)-/.test(id)){
     clearTimeout(autoSalvarTimeout);
     autoSalvarTimeout=setTimeout(salvarSemana,500);
   }
