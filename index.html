@@ -176,6 +176,18 @@
     .item-produto-copiar-nome{background:#fff3d6;color:#8a6100}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
+    .banco-dia-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .banco-dia-seta{width:36px;height:36px;border-radius:50%;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:18px;font-weight:800;cursor:pointer;flex:none}
+    .banco-dia-info{flex:1;text-align:center}
+    .banco-dia-nome{font-size:17px;font-weight:800;color:var(--text)}
+    .banco-dia-data{font-size:12px;color:var(--muted);margin-top:1px}
+    .banco-dia-hoje{margin-top:6px;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:999px;padding:3px 12px;font-size:11px;font-weight:800;cursor:pointer}
+    .banco-dia-hoje.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff}
+    .banco-contador-lojas{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;justify-content:center;margin-top:12px;padding-top:12px;border-top:1px solid var(--line);font-size:12px}
+    .banco-contador-lojas span{color:var(--muted);font-weight:600}
+    .banco-contador-lojas strong{color:var(--accent-dark);font-weight:800}
+    .banco-meta{cursor:pointer;text-decoration:underline dotted}
+
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
   </style>
 </head>
@@ -252,6 +264,19 @@
   </div>
 
   <div id="view-banco" style="display:none">
+    <section class="card">
+      <div class="banco-dia-nav">
+        <button type="button" class="banco-dia-seta" onclick="mudarDiaBanco(-1)">‹</button>
+        <div class="banco-dia-info">
+          <div class="banco-dia-nome" id="banco-dia-nome"></div>
+          <div class="banco-dia-data" id="banco-dia-data"></div>
+          <button type="button" class="banco-dia-hoje" id="banco-dia-hoje" onclick="irParaHojeBanco()">HOJE</button>
+        </div>
+        <button type="button" class="banco-dia-seta" onclick="mudarDiaBanco(1)">›</button>
+      </div>
+      <div class="banco-contador-lojas" id="banco-contador-lojas"></div>
+    </section>
+
     <section class="card">
       <div class="foto-linha">
         <img id="banco-foto-preview" class="foto-preview" alt="">
@@ -907,13 +932,74 @@ async function copiarLegenda(id){
 const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",magalu:"Magalu",shein:"Shein"};
 let bancoFotoAtual="";
 let bancoEditandoId=null;
+let bancoDiaAtual=new Date();
+bancoDiaAtual.setHours(0,0,0,0);
+
+const DIAS_SEMANA_BANCO=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+const MESES_BANCO=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+function mudarDiaBanco(delta){
+  bancoDiaAtual.setDate(bancoDiaAtual.getDate()+delta);
+  atualizarNavDiaBanco();
+  atualizarContadorLojasBanco();
+}
+
+function irParaHojeBanco(){
+  bancoDiaAtual=new Date();
+  bancoDiaAtual.setHours(0,0,0,0);
+  atualizarNavDiaBanco();
+  atualizarContadorLojasBanco();
+}
+
+function ehHojeBanco(){
+  const hoje=new Date();hoje.setHours(0,0,0,0);
+  return bancoDiaAtual.getTime()===hoje.getTime();
+}
+
+function atualizarNavDiaBanco(){
+  document.getElementById("banco-dia-nome").textContent=DIAS_SEMANA_BANCO[bancoDiaAtual.getDay()];
+  document.getElementById("banco-dia-data").textContent=`${bancoDiaAtual.getDate()} de ${MESES_BANCO[bancoDiaAtual.getMonth()]} de ${bancoDiaAtual.getFullYear()}`;
+  document.getElementById("banco-dia-hoje").classList.toggle("ativo",ehHojeBanco());
+}
+
+function editarMetaBanco(){
+  const atual=localStorage.getItem("agenda-achadinhos-banco-meta")||"3";
+  const novo=prompt("Meta de produtos por dia:",atual);
+  if(novo===null)return;
+  const n=parseInt(novo);
+  if(isNaN(n)||n<0){alert("Digite um número válido.");return}
+  localStorage.setItem("agenda-achadinhos-banco-meta",n);
+  atualizarContadorLojasBanco();
+}
+
+function atualizarContadorLojasBanco(){
+  const lista=carregarBanco();
+  const inicioDia=bancoDiaAtual.getTime();
+  const fimDia=inicioDia+24*60*60*1000-1;
+  const contagem={shopee:0,mercadolivre:0,amazon:0,magalu:0,shein:0};
+  lista.forEach(p=>{
+    if(p.id>=inicioDia&&p.id<=fimDia&&contagem[p.loja]!==undefined)contagem[p.loja]++;
+  });
+  const meta=localStorage.getItem("agenda-achadinhos-banco-meta")||"3";
+  document.getElementById("banco-contador-lojas").innerHTML=`
+    <span>Shopee <strong>${contagem.shopee}</strong></span>
+    <span>Mercado Livre <strong>${contagem.mercadolivre}</strong></span>
+    <span>Amazon <strong>${contagem.amazon}</strong></span>
+    <span>Magalu <strong>${contagem.magalu}</strong></span>
+    <span>Shein <strong>${contagem.shein}</strong></span>
+    <span class="banco-meta" onclick="editarMetaBanco()">meta <strong>${meta}</strong></span>
+  `;
+}
 
 function mostrarView(nome){
   document.getElementById("view-semana").style.display=nome==="semana"?"block":"none";
   document.getElementById("view-banco").style.display=nome==="banco"?"block":"none";
   document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
   document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
-  if(nome==="banco")renderizarBanco();
+  if(nome==="banco"){
+    atualizarNavDiaBanco();
+    renderizarBanco();
+  }
 }
 
 function onFotoBanco(input){
@@ -1015,6 +1101,7 @@ function renderizarBanco(){
   const lista=carregarBanco();
   const cont=document.getElementById("lista-banco");
   document.getElementById("banco-contador").textContent="("+lista.length+")";
+  atualizarContadorLojasBanco();
   if(lista.length===0){
     cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
     return;
