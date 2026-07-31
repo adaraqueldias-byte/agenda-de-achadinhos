@@ -164,6 +164,9 @@
     .aba{flex:1;background:#fff;border:1px solid var(--line);border-radius:14px;padding:12px;font-size:14px;font-weight:700;color:var(--muted);cursor:pointer;text-align:center}
     .aba.ativa{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:transparent}
 
+    .backup-linha{display:flex;justify-content:center;gap:18px;margin:-4px 0 14px}
+    .backup-link{background:none;border:none;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer;padding:4px;text-decoration:underline dotted}
+
     /* Banco de produtos */
     select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;background:#fffafb;font-family:inherit;color:var(--text)}
     select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
@@ -214,6 +217,12 @@
   <div class="abas">
     <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">Semana</div>
     <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
+  </div>
+
+  <div class="backup-linha">
+    <button type="button" class="backup-link" onclick="exportarBackup()">💾 Fazer backup</button>
+    <button type="button" class="backup-link" onclick="document.getElementById('backup-input').click()">📂 Restaurar backup</button>
+    <input type="file" id="backup-input" accept="application/json" style="display:none" onchange="importarBackupArquivo(this)">
   </div>
 
   <div id="view-semana">
@@ -362,6 +371,56 @@
 
 <script>
 let deferredPrompt=null;
+
+// ===== Backup (exportar/restaurar todos os dados salvos neste celular) =====
+function exportarBackup(){
+  const dados={};
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(key&&key.startsWith("agenda-achadinhos-")){
+      dados[key]=localStorage.getItem(key);
+    }
+  }
+  const blob=new Blob([JSON.stringify(dados)],{type:"application/json"});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement("a");
+  const agora=new Date();
+  const dataArquivo=`${agora.getFullYear()}-${String(agora.getMonth()+1).padStart(2,"0")}-${String(agora.getDate()).padStart(2,"0")}`;
+  a.href=url;
+  a.download=`backup-agenda-achadinhos-${dataArquivo}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  alert("Backup gerado! Salve esse arquivo no Google Drive, no WhatsApp (pra você mesma) ou onde preferir, pra poder restaurar depois se precisar.");
+}
+
+function importarBackupArquivo(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    let dados;
+    try{
+      dados=JSON.parse(e.target.result);
+    }catch(err){
+      alert("Esse arquivo não parece ser um backup válido.");
+      input.value="";
+      return;
+    }
+    const chaves=Object.keys(dados).filter(k=>k.startsWith("agenda-achadinhos-"));
+    if(chaves.length===0){
+      alert("Esse arquivo não tem nenhum dado do Agenda de Achadinhos.");
+      input.value="";
+      return;
+    }
+    if(!confirm(`Restaurar esse backup vai substituir os dados atuais (Banco de Produtos e semanas salvas) pelos do arquivo. Continuar?`))return;
+    chaves.forEach(key=>localStorage.setItem(key,dados[key]));
+    alert("Backup restaurado! O app vai recarregar agora.");
+    location.reload();
+  };
+  reader.readAsText(file);
+}
 
 // ===== Roteiro fixo de produção (Segunda e Quinta à tarde) =====
 const PASSOS=[
