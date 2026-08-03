@@ -171,9 +171,12 @@
     select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;background:#fffafb;font-family:inherit;color:var(--text)}
     select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
     .item-produto{display:flex;align-items:center;gap:12px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px;box-shadow:0 4px 10px rgba(139,92,246,.06)}
+    .item-produto.agendado{border-color:#93c5fd;background:#eff6ff}
     .item-produto.publicado{border-color:var(--ok);background:#f0fdf4}
     .item-produto-publicado{display:block;margin-top:5px;font-size:11px;font-weight:700;border:none;background:none;color:var(--muted);padding:0;cursor:pointer;text-align:left}
     .item-produto-publicado.sim{color:var(--ok)}
+    .item-produto-agendado{display:block;margin-top:5px;font-size:11px;font-weight:700;border:none;background:none;color:var(--muted);padding:0;cursor:pointer;text-align:left}
+    .item-produto-agendado.sim{color:#2563eb}
     .item-produto-foto{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none;background:var(--accent-soft)}
     .item-produto-foto.vazio{display:flex;align-items:center;justify-content:center;font-size:20px}
     .item-produto-info{flex:1;min-width:0}
@@ -739,9 +742,24 @@ function slotEstaPostado(slotId){
   return el?el.value==="true":false;
 }
 
+function slotEstaAgendado(slotId){
+  const el=document.getElementById("agendado-"+slotId);
+  return el?el.value==="true":false;
+}
+
 function togglePostadoItemSlot(key){
   const slotId=slotIdFromKey(key);
   const input=document.getElementById("postado-"+slotId);
+  input.value=input.value==="true"?"false":"true";
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const total=slot.itens||1;
+  for(let i=0;i<total;i++){atualizarDisplayItemSlot(chaveItemSlot(slot,i))}
+  salvarSemana();
+}
+
+function toggleAgendadoItemSlot(key){
+  const slotId=slotIdFromKey(key);
+  const input=document.getElementById("agendado-"+slotId);
   input.value=input.value==="true"?"false":"true";
   const slot=SLOTS.find(s=>s.id===slotId);
   const total=slot.itens||1;
@@ -756,12 +774,14 @@ function itemDisplayHTML(key){
   const foto=document.getElementById("foto-valor-"+key).value;
   const comissaoTexto=document.getElementById("comissao-"+key).value;
   const postado=slotEstaPostado(slotIdFromKey(key));
+  const agendado=slotEstaAgendado(slotIdFromKey(key));
   return `
     ${foto?`<img class="item-produto-foto" src="${foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
     <div class="item-produto-info">
       ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
       ${comissaoTexto?`<span class="item-produto-comissao ${parseFloat(comissaoTexto)<10?"baixa":""}">${comissaoTexto}% comissão</span>`:""}
       <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
+      <button class="item-produto-agendado${agendado?" sim":""}" onclick="toggleAgendadoItemSlot('${key}')">${agendado?"🕐 Agendado":"🕐 Marcar como agendado"}</button>
       <button class="item-produto-publicado${postado?" sim":""}" onclick="togglePostadoItemSlot('${key}')">${postado?"✅ Publicado":"☐ Marcar como publicado"}</button>
     </div>
     <div class="item-produto-acoes">
@@ -776,7 +796,10 @@ function itemDisplayHTML(key){
 function atualizarDisplayItemSlot(key){
   const el=document.getElementById("item-display-"+key);
   el.innerHTML=itemDisplayHTML(key);
-  el.classList.toggle("publicado",slotEstaPostado(slotIdFromKey(key)));
+  const slotId=slotIdFromKey(key);
+  const postado=slotEstaPostado(slotId);
+  el.classList.toggle("publicado",postado);
+  el.classList.toggle("agendado",!postado&&slotEstaAgendado(slotId));
 }
 
 function mostrarItemEdicao(key){
@@ -837,6 +860,7 @@ function slotTemplate(slot){
     <p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     <input type="hidden" id="postado-${slot.id}" value="false">
+    <input type="hidden" id="agendado-${slot.id}" value="false">
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
     ${slot.semLink?"":`<div class="field"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
@@ -1004,6 +1028,7 @@ function coletarDados(){
       palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
       postado:document.getElementById("postado-"+slot.id).value==="true",
+      agendado:document.getElementById("agendado-"+slot.id).value==="true",
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined
     };
   });
@@ -1032,6 +1057,7 @@ function carregarSemana(){
     const s=(dados.slots&&dados.slots[slot.id])||{};
     const total=slot.itens||1;
     document.getElementById("postado-"+slot.id).value=s.postado?"true":"false";
+    document.getElementById("agendado-"+slot.id).value=s.agendado?"true":"false";
     // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
     const itensSalvos=s.itens||(s.produto!==undefined?[{produto:s.produto,link:s.link,foto:s.foto}]:[]);
     for(let i=0;i<total;i++){
