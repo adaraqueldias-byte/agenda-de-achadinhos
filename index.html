@@ -124,6 +124,7 @@
     .destino-chip-agendado{background:#dbeafe;color:#1e40af;border-color:#60a5fa}
     .destino-chip-publicado{background:#dcfce7;color:#166534;border-color:#4ade80}
     .destino-status-icone{font-size:17px;line-height:1}
+    .destino-horario{font-size:11px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 7px}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
     .modo-btn{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
     .modo-btn.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:transparent}
@@ -814,7 +815,7 @@ function slotTemplate(slot){
       <div><span class="slot-dia-hora">${slot.dia}</span></div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
-    <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span> ${c.icone} <strong>${c.rede}:</strong> ${c.nome}</button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada">`}).join("")}</div>
+    <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span> ${c.icone} <strong>${c.rede}:</strong> ${c.nome} <span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
     ${temAlterna?`
     <div class="slot-modo-toggle">
       ${Object.keys(slot.alterna).map(modo=>`<button type="button" class="modo-btn${modo===modoPadrao?" ativo":""}" id="modo-${slot.id}-${modo}" onclick="escolherModoSlot('${slot.id}','${modo}')">${slot.alterna[modo].label}</button>`).join("")}
@@ -853,7 +854,12 @@ const PROXIMO_STATUS_DESTINO={nada:"agendado",agendado:"publicado",publicado:"na
 
 function atualizarChipDestino(slotId,destId){
   const status=document.getElementById(`status-destino-${slotId}-${destId}`).value||"nada";
+  const horario=document.getElementById(`horario-destino-${slotId}-${destId}`).value||"";
   document.getElementById(`status-icone-${slotId}-${destId}`).textContent=ICONES_STATUS_DESTINO[status];
+  const horarioEl=document.getElementById(`status-horario-${slotId}-${destId}`);
+  const mostrarHorario=status!=="nada"&&horario;
+  horarioEl.textContent=mostrarHorario?horario:"";
+  horarioEl.style.display=mostrarHorario?"inline":"none";
   const chip=document.getElementById(`chip-${slotId}-${destId}`);
   chip.classList.remove("destino-chip-agendado","destino-chip-publicado");
   if(status!=="nada")chip.classList.add(`destino-chip-${status}`);
@@ -861,7 +867,17 @@ function atualizarChipDestino(slotId,destId){
 
 function ciclarStatusDestino(slotId,destId){
   const input=document.getElementById(`status-destino-${slotId}-${destId}`);
-  input.value=PROXIMO_STATUS_DESTINO[input.value||"nada"];
+  const horarioInput=document.getElementById(`horario-destino-${slotId}-${destId}`);
+  const novoStatus=PROXIMO_STATUS_DESTINO[input.value||"nada"];
+  if(novoStatus==="agendado"){
+    const horario=prompt("Que horário foi agendado esse post?",horarioInput.value||"");
+    if(horario===null)return;
+    horarioInput.value=horario.trim();
+  }
+  if(novoStatus==="nada"){
+    horarioInput.value="";
+  }
+  input.value=novoStatus;
   atualizarChipDestino(slotId,destId);
   salvarSemana();
 }
@@ -1003,15 +1019,19 @@ function coletarDados(){
       });
     }
     const destinosStatus={};
+    const destinosHorario={};
     slot.destinos.forEach(destId=>{
       const el=document.getElementById(`status-destino-${slot.id}-${destId}`);
       destinosStatus[destId]=el?el.value:"nada";
+      const elH=document.getElementById(`horario-destino-${slot.id}-${destId}`);
+      destinosHorario[destId]=elH?elH.value:"";
     });
     slots[slot.id]={
       itens,
       palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
       destinosStatus,
+      destinosHorario,
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined
     };
   });
@@ -1041,7 +1061,9 @@ function carregarSemana(){
     const total=slot.itens||1;
     slot.destinos.forEach(destId=>{
       const status=(s.destinosStatus&&s.destinosStatus[destId])||"nada";
+      const horario=(s.destinosHorario&&s.destinosHorario[destId])||"";
       document.getElementById(`status-destino-${slot.id}-${destId}`).value=status;
+      document.getElementById(`horario-destino-${slot.id}-${destId}`).value=horario;
       atualizarChipDestino(slot.id,destId);
     });
     // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
