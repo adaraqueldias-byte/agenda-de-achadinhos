@@ -119,12 +119,13 @@
     .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
     .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:8px;width:26px;height:26px;font-size:13px;cursor:pointer;color:var(--muted)}
     .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
-    .destino-chip{font-size:13px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:5px 12px 5px 8px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+    .destino-chip{font-size:13px;background:var(--accent-soft);color:#7d214f;border-radius:16px;padding:6px 12px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:4px 6px;text-align:left}
     .destino-chip strong{font-weight:700}
+    .destino-chip-texto{flex:1 1 auto;min-width:0}
     .destino-chip-agendado{background:#dbeafe;color:#1e40af;border-color:#60a5fa}
     .destino-chip-publicado{background:#dcfce7;color:#166534;border-color:#4ade80}
-    .destino-status-icone{font-size:17px;line-height:1}
-    .destino-horario{font-size:11px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 7px}
+    .destino-status-icone{font-size:17px;line-height:1;flex:none}
+    .destino-horario{font-size:11px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 7px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
     .modo-btn{flex:1;background:#fff;border:1px solid var(--line);border-radius:12px;padding:8px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer}
     .modo-btn.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff;border-color:transparent}
@@ -815,7 +816,7 @@ function slotTemplate(slot){
       <div><span class="slot-dia-hora">${slot.dia}</span></div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
-    <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span> ${c.icone} <strong>${c.rede}:</strong> ${c.nome} <span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
+    <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
     ${temAlterna?`
     <div class="slot-modo-toggle">
       ${Object.keys(slot.alterna).map(modo=>`<button type="button" class="modo-btn${modo===modoPadrao?" ativo":""}" id="modo-${slot.id}-${modo}" onclick="escolherModoSlot('${slot.id}','${modo}')">${slot.alterna[modo].label}</button>`).join("")}
