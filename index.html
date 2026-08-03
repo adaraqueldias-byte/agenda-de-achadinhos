@@ -811,7 +811,7 @@ function slotTemplate(slot){
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
   return `<section class="card">
     <div class="slot-cabecalho">
-      <div><span class="slot-dia-hora">${slot.dia}</span> <span class="slot-hora">${slot.hora}</span></div>
+      <div><span class="slot-dia-hora">${slot.dia}</span></div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
     <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span> ${c.icone} <strong>${c.rede}:</strong> ${c.nome}</button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada">`}).join("")}</div>
