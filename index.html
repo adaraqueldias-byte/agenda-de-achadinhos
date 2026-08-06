@@ -488,7 +488,6 @@ Comenta QUERO que eu te mando o link no direct.
       id:`gd_pagina_${grupoKey}`,dia,horaPadrao:"11:30",
       destinos:["face_garimpo"],
       formatoDefault:"Foto",conteudo:"Produto/oferta do dia",
-      instaMagicPadrao:false,
       ctaSugerido:"Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.",
       modelo:`[Nome do produto] — [1 frase sobre a oferta/benefício]
 
@@ -501,7 +500,6 @@ Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver dispon
       id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
       destinos:["grupo_garimpo"],
       formatoDefault:"Foto",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
-      instaMagicPadrao:false,
       ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.",
       modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
 
@@ -514,7 +512,6 @@ Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.`
       destinos:[grupoAltId],
       formatoDefault:"Foto",
       conteudo:diaA?"Alternando grupos — hoje é a vez do Grupo ShopOnline":"Alternando grupos — hoje é a vez do Grupo Vende Barato",
-      instaMagicPadrao:false,
       nota:"Esse horário alterna de grupo a cada dia (ShopOnline / Vende Barato) pra não publicar nos dois no mesmo dia.",
       ctaSugerido:diaA?"Você teria esse produto em casa? Comenta QUERO que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.",
       modelo:diaA?
@@ -528,12 +525,11 @@ Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.`
     });
 
     const canalNoiteId=diaA?"insta_garimpo":"face_garimpo";
-    slots.push({
+    const slotNoite={
       id:`gd_noite_${grupoKey}`,dia,horaPadrao:"20:00",
       destinos:[canalNoiteId],
       formatoDefault:"Reels",
       conteudo:"Postagem principal da noite — o produto com maior potencial de engajamento/venda do dia",
-      instaMagicPadrao:diaA,
       nota:"Esse horário alterna entre Instagram e Facebook Página a cada dia.",
       ctaSugerido:diaA?"Quer o link? Comenta QUERO que eu te mando no direct.":"Gostou? Confira o link e aproveite enquanto estiver disponível.",
       modelo:diaA?
@@ -546,7 +542,9 @@ Quer o link? Comenta QUERO que eu te mando no direct.
 `[Nome do produto] — [1 frase: por que é o destaque do dia]
 
 Gostou? Confira o link e aproveite enquanto estiver disponível.`
-    });
+    };
+    if(diaA)slotNoite.instaMagicPadrao=true; // só o Instagram usa InstaMagic — nos dias de Facebook essa opção nem aparece
+    slots.push(slotNoite);
   });
   return slots;
 }
@@ -815,7 +813,7 @@ function slotTemplate(slot){
     ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
     ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
-    ${slot.semLink?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
+    ${slot.semLink?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave${temInstaMagic?" (InstaMagic)":""}</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
