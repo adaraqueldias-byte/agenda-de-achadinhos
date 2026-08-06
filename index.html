@@ -106,6 +106,10 @@
     .slot-hora{font-size:12px;font-weight:600;color:var(--muted)}
     .slot-meta{font-size:13px;color:#5a4550;margin:2px 0}
     .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
+    .slot-hora-editavel{width:66px;display:inline-block;border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:12px;font-weight:700;color:var(--accent-dark);margin-left:6px;background:#fff}
+    .cta-sugerido{font-size:12px;color:#7d214f;background:var(--accent-soft);border-radius:10px;padding:6px 10px;margin:6px 0}
+    .instamagic-check{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);margin:10px 0 4px}
+    .instamagic-check input{width:auto}
     .story-contador{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
     .story-contador:first-child{border-top:none}
     .story-contador-nome{font-size:13px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:2px}
@@ -305,14 +309,6 @@
       <div id="dia-domingo-corpo" style="display:none"><div id="slots-domingo"></div></div>
     </section>
 
-    <section class="card dia-card">
-      <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-bonus')">
-        <span>Bônus</span>
-        <span id="dia-bonus-seta">▸</span>
-      </button>
-      <div id="dia-bonus-corpo" style="display:none"><div id="slots-bonus"></div></div>
-    </section>
-
     <section class="card lembretes-card">
       <button type="button" class="acordeon-titulo lembretes-titulo" onclick="toggleSecao('lembretes')">
         <span>💡 Lembretes rápidos</span>
@@ -323,9 +319,11 @@
           <li>Critério de produto: comissão acima de 10%, nota 4,5+, ticket médio entre R$50 e R$300.</li>
           <li>O link do afiliado nunca vai na legenda nem em comentário público — a pessoa comenta a palavra-chave configurada no InstaMagic e recebe o link automaticamente no direct.</li>
           <li>Troque as hashtags de nicho pelas 3 a 5 específicas do seu segmento (nada genérico tipo #promoção).</li>
-          <li>Instagram e Página agendam juntos no Meta Business Suite. Os 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) precisam de publicação manual.</li>
+          <li>Cada horário do Garimpo do Dia agenda num canal por vez (Instagram, Página ou um grupo) — programe cada um separadamente no Meta Business Suite/app do grupo, no horário marcado em cada post (você pode editar o horário tocando nele).</li>
           <li>Depois que cada post programado for ao ar, reserve 10 a 15 minutos pra responder comentários — isso empurra mais alcance do que a legenda em si.</li>
-          <li>💡 Melhores horários pra programar (estimativa geral, não é dado da sua conta): <strong>Instagram</strong> 11h-13h ou 19h-21h · <strong>Facebook Página</strong> 13h-15h ou 19h-21h · <strong>Grupos do Facebook</strong> 20h-22h.</li>
+          <li>💡 Melhores horários (estimativa geral, não é dado da sua conta): <strong>Instagram</strong> 11h-13h ou 19h-21h · <strong>Facebook Página</strong> 13h-15h ou 19h-21h · <strong>Grupos do Facebook</strong> 20h-22h.</li>
+          <li>Reaproveitando o mesmo produto em mais de um canal: não copie a publicação igual. Troque a legenda, varie o CTA, mude a chamada inicial e, quando possível, alterne foto/carrossel/vídeo.</li>
+          <li>Status de cada rede no chip: ⚪ pendente · 🕐 agendado (com horário) · ✅ postado. Toque no chip pra avançar o status.</li>
         </ul>
       </div>
     </section>
@@ -440,10 +438,10 @@ const PASSOS=[
    texto:"Grave os 2 vídeos da semana em sequência, sem se preocupar com corte. Prefira gravar pensando no problema que o produto resolve, em vez de só mostrar o produto."},
   {titulo:"Editar os vídeos com template do CapCut",tempo:"15-20 min",
    texto:"Encaixe os clipes no template pronto (corte, música e transição já vêm prontos) — isso substitui edição do zero."},
-  {titulo:"Agendar Instagram + Página Garimpo do Dia",tempo:"10 min",
-   texto:"No Meta Business Suite, use Conteúdo/Planejador → Criar publicação → marque Instagram e só a Página Garimpo do Dia (não marque a Dashein) → Agendar. Uma ação publica nos dois."},
+  {titulo:"Agendar os posts do Garimpo do Dia",tempo:"15 min",
+   texto:"No Meta Business Suite, agende separadamente o Instagram (09:00), a Página (11:30) e o post da noite (20:00, alterna Instagram/Página) — cada um com sua legenda própria, não repita a mesma publicação nos dois canais."},
   {titulo:"Publicar manualmente nos Grupos",tempo:"5-10 min",
-   texto:"Copie o mesmo conteúdo já pronto e publique direto nos 3 grupos (Grupo Garimpo, Grupo Vende Barato e Grupo ShopOnline) no horário da tabela."},
+   texto:"Publique direto no Grupo Garimpo (14:00) e no grupo que alterna nesse dia — ShopOnline ou Vende Barato (17:30) — vendo no app qual dos dois é a vez de hoje."},
   {titulo:"Republicar nos outros canais",tempo:"10 min",
    texto:"Suba os mesmos 2 vídeos da semana também no Shopee Video (dentro do próprio app), no TikTok, no vídeo do anúncio do Mercado Livre e no pack de achadinhos do Telegram. Sem gravar de novo."}
 ];
@@ -461,87 +459,101 @@ const CONTAS={
 };
 const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
+// ===== Cronograma fixo do Garimpo do Dia: 5 horários por dia, todo dia =====
+const DIAS_GD=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
+const GRUPOS_GD=["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
+
+function criarSlotsGarimpoDoDia(){
+  const slots=[];
+  GRUPOS_GD.forEach((grupoKey,i)=>{
+    const dia=DIAS_GD[i];
+    const diaA=i%2===0; // Segunda, Quarta, Sexta, Domingo = dia A
+
+    slots.push({
+      id:`gd_manha_${grupoKey}`,dia,horaPadrao:"09:00",
+      destinos:["insta_garimpo"],
+      formatoDefault:"Carrossel",conteudo:"Dica, produto útil, comparação ou carrossel",
+      instaMagicPadrao:true,
+      ctaSugerido:"Comenta QUERO que eu te mando o link no direct.",
+      modelo:`[Nome do produto] — [1 frase sobre o que ele resolve ou por que vale a pena]
+
+[Detalhe extra: comparação, dica de uso ou por que esse achado é bom]
+
+Comenta QUERO que eu te mando o link no direct.
+
+#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`
+    });
+
+    slots.push({
+      id:`gd_pagina_${grupoKey}`,dia,horaPadrao:"11:30",
+      destinos:["face_garimpo"],
+      formatoDefault:"Foto",conteudo:"Produto/oferta do dia",
+      instaMagicPadrao:false,
+      ctaSugerido:"Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.",
+      modelo:`[Nome do produto] — [1 frase sobre a oferta/benefício]
+
+Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.
+
+#[hashtagnicho1] #[hashtagnicho2]`
+    });
+
+    slots.push({
+      id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
+      destinos:["grupo_garimpo"],
+      formatoDefault:"Foto",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
+      instaMagicPadrao:false,
+      ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.",
+      modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
+
+Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.`
+    });
+
+    const grupoAltId=diaA?"grupo_shop":"grupo_vende";
+    slots.push({
+      id:`gd_grupo_alt_${grupoKey}`,dia,horaPadrao:"17:30",
+      destinos:[grupoAltId],
+      formatoDefault:"Foto",
+      conteudo:diaA?"Alternando grupos — hoje é a vez do Grupo ShopOnline":"Alternando grupos — hoje é a vez do Grupo Vende Barato",
+      instaMagicPadrao:false,
+      nota:"Esse horário alterna de grupo a cada dia (ShopOnline / Vende Barato) pra não publicar nos dois no mesmo dia.",
+      ctaSugerido:diaA?"Você teria esse produto em casa? Comenta QUERO que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.",
+      modelo:diaA?
+`[Nome do produto] — [1 frase sobre o produto]
+
+Você teria esse produto em casa? Comenta QUERO que eu te passo o link.`
+      :
+`[Nome do produto] — [1 frase sobre o preço/oferta]
+
+Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.`
+    });
+
+    const canalNoiteId=diaA?"insta_garimpo":"face_garimpo";
+    slots.push({
+      id:`gd_noite_${grupoKey}`,dia,horaPadrao:"20:00",
+      destinos:[canalNoiteId],
+      formatoDefault:"Reels",
+      conteudo:"Postagem principal da noite — o produto com maior potencial de engajamento/venda do dia",
+      instaMagicPadrao:diaA,
+      nota:"Esse horário alterna entre Instagram e Facebook Página a cada dia.",
+      ctaSugerido:diaA?"Quer o link? Comenta QUERO que eu te mando no direct.":"Gostou? Confira o link e aproveite enquanto estiver disponível.",
+      modelo:diaA?
+`[Nome do produto] — [1 frase: por que é o destaque do dia]
+
+Quer o link? Comenta QUERO que eu te mando no direct.
+
+#[hashtagnicho1] #[hashtagnicho2]`
+      :
+`[Nome do produto] — [1 frase: por que é o destaque do dia]
+
+Gostou? Confira o link e aproveite enquanto estiver disponível.`
+    });
+  });
+  return slots;
+}
+
 // ===== Slots de conteúdo da semana (do estudo, adaptado pras suas contas) =====
 const SLOTS=[
-  {id:"comparacao",dia:"Terça",hora:"18h",
-   destinos:["insta_garimpo","face_garimpo"],
-   itens:2,
-   formato:"Carrossel (fotos do anúncio + texto no Canva)",
-   conteudo:"Comparação entre 2 produtos parecidos",
-   modelo:`[Categoria]: qual vale mais a pena - [Produto A] ou [Produto B]?
-
-Testei/pesquisei os dois pra te ajudar a decidir:
-[+] [Produto A]: [ponto forte]
-[-] [Produto A]: [ponto fraco]
-[+] [Produto B]: [ponto forte]
-[-] [Produto B]: [ponto fraco]
-
-Qual você escolheria? Comenta a letra
-A) [Produto A] - R$[preço]
-B) [Produto B] - R$[preço]
-
-Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
-
-#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
-
-  {id:"dica_uso",dia:"Terça",hora:"20h",
-   destinos:TODOS_OS_GRUPOS,
-   formato:"Foto + texto",conteudo:"Dica de uso de um produto",
-   semLink:true,
-   modelo:`Vocês sabiam que dá pra usar o [produto] assim?
-
-[Dica 1 rápida]
-[Dica 2 rápida]
-[Dica 3 rápida]
-
-Eu uso o meu quase todo dia pra isso e facilitou muito.
-Alguém aqui já tem um? Conta como usa!
-
-(sem link aqui — post 100% de valor)`},
-
-  {id:"unboxing",dia:"Quarta",hora:"15h",
-   destinos:["insta_garimpo","face_garimpo"],
-   formato:"Reels / Vídeo (template CapCut)",conteudo:"Demonstração/unboxing de 1 produto",
-   modelo:`Chegou! Vamos testar?
-[1 frase sobre a expectativa antes de abrir]
-
-Legenda curta:
-"Testando o [produto] que todo mundo tá comprando. Vale a pena? Assiste até o final"
-
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagnicho1] #[hashtagnicho2]`},
-
-  {id:"achadinhos_semana",dia:"Quinta",hora:"21h",
-   destinos:TODOS_OS_GRUPOS,
-   itens:3,
-   formato:"Carrossel ou foto",conteudo:"“3 achadinhos da semana”",
-   modelo:`3 achadinhos dessa semana por menos de R$[valor]
-
-1. [Produto 1] - o que resolve: [1 frase]
-2. [Produto 2] - o que resolve: [1 frase]
-3. [Produto 3] - o que resolve: [1 frase]
-
-Salva esse post pra não perder!
-Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
-
-#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
-
-  {id:"promocional",dia:"Sexta",hora:"12h · único post da semana",
-   destinos:["insta_garimpo","face_garimpo"],
-   formato:"Carrossel",conteudo:"Post promocional direto",tipo:"Venda",
-   nota:"Único post promocional da semana — reserve esse tom só pra hoje.",
-   modelo:`Achei isso e precisava compartilhar
-
-[Produto] por R$[preço] (de R$[preço original])
-
-Por que eu recomendo:
-[1-2 frases sobre o motivo real de recomendar]
-
-Corre que costuma esgotar rápido!
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`},
+  ...criarSlotsGarimpoDoDia(),
 
   {id:"dashein_dica",dia:"Dashein — Segunda",hora:"19h",
    destinos:["insta_dashein","face_dashein","grupo_shein"],
@@ -643,68 +655,16 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
 #[hashtagmoda1] #[hashtagmoda2]`},
 
-  {id:"enquete",dia:"Sábado",hora:"20h",
-   destinos:TODOS_OS_GRUPOS,
-   formato:"Enquete (sem foto/link)",conteudo:"“Qual desses vocês tem em casa?”",tipo:"Engajamento",
-   semLink:true,
-   modelo:`Papo reto: qual desses vocês já tem em casa?
-
-A) [Opção A]
-B) [Opção B]
-
-Comenta a letra! Quero saber o que a maioria usa.
-
-(sem link, sem produto pra vender — só pra gerar conversa)`},
-
-  {id:"hack",dia:"Domingo",hora:"18h",
-   destinos:["insta_garimpo","face_garimpo"],
-   itens:3,
-   alterna:{
-     hack:{label:"🎯 Hack",formato:"Reels / Vídeo (template CapCut)",conteudo:"Dica/hack rápido",usaItens:false,
-       modelo:`Ninguém te contou esse truque com [produto/categoria]
-
-[Explicação do hack em 1-2 frases, direto ao ponto]
-
-Salva pra lembrar depois!
-
-#[hashtagnicho1] #[hashtagnicho2]`},
-     ranking:{label:"🏆 Ranking Top 3",formato:"Carrossel ou Reels",conteudo:"Ranking / Top 3 da semana",usaItens:true,
-       modelo:`Top 3 achadinhos da semana 🏆
-
-1. [Produto 1] - por quê: [1 frase]
-2. [Produto 2] - por quê: [1 frase]
-3. [Produto 3] - por quê: [1 frase]
-
-Comenta [PALAVRA-CHAVE] que eu te mando o link de cada um no direct
-
-#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`}
-   }},
-
-  {id:"tutorial_problema",dia:"Bônus",hora:"quando fizer sentido, no lugar do unboxing",
-   destinos:["insta_garimpo","face_garimpo"],
-   formato:"Reels / Shopee Video",conteudo:"Tutorial baseado em problema",
-   nota:"O produto entra como ferramenta natural pra resolver o problema, não como o astro do post. Publique também no Shopee Video (mesmo clipe, sem gravar de novo).",
-   modelo:`Como [resolver problema específico] sem [dor comum/gastar muito]
-
-[Passo ou dica 1]
-[Passo ou dica 2]
-[Passo ou dica 3]
-
-O que uso pra isso: [produto], só R$[preço]
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagnicho1] #[hashtagnicho2]`}
 ];
 
 const SLOTS_POR_GRUPO={
-  segunda:["dashein_dica"],
-  terca:["comparacao","dica_uso","dashein_favoritos"],
-  quarta:["unboxing","dashein_comparacao"],
-  quinta:["achadinhos_semana","dashein_provador"],
-  sexta:["promocional","dashein_moda"],
-  sabado:["enquete","dashein_avaliacao"],
-  domingo:["hack","dashein_enquete"],
-  bonus:["tutorial_problema"]
+  segunda:["gd_manha_segunda","gd_pagina_segunda","gd_grupo_segunda","gd_grupo_alt_segunda","gd_noite_segunda","dashein_dica"],
+  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","dashein_favoritos"],
+  quarta:["gd_manha_quarta","gd_pagina_quarta","gd_grupo_quarta","gd_grupo_alt_quarta","gd_noite_quarta","dashein_comparacao"],
+  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","dashein_provador"],
+  sexta:["gd_manha_sexta","gd_pagina_sexta","gd_grupo_sexta","gd_grupo_alt_sexta","gd_noite_sexta","dashein_moda"],
+  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","dashein_avaliacao"],
+  domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","dashein_enquete"]
 };
 
 function segundaFeiraDeHoje(){
@@ -818,15 +778,23 @@ async function copiarLinkItemSlot(key){
   catch{alert("Não foi possível copiar.")}
 }
 
+const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
+
 function slotTemplate(slot){
   const total=slot.itens||1;
   const itensHtml=Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
+  const temHorario=slot.horaPadrao!==undefined;
+  const temInstaMagic=slot.instaMagicPadrao!==undefined;
+  const temFormatoSelect=slot.formatoDefault!==undefined;
   return `<section class="card">
     <div class="slot-cabecalho">
-      <div><span class="slot-dia-hora">${slot.dia}</span></div>
+      <div>
+        <span class="slot-dia-hora">${slot.dia}</span>
+        ${temHorario?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:""}
+      </div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
     <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
@@ -835,14 +803,30 @@ function slotTemplate(slot){
       ${Object.keys(slot.alterna).map(modo=>`<button type="button" class="modo-btn${modo===modoPadrao?" ativo":""}" id="modo-${slot.id}-${modo}" onclick="escolherModoSlot('${slot.id}','${modo}')">${slot.alterna[modo].label}</button>`).join("")}
     </div>
     <input type="hidden" id="modo-${slot.id}" value="${modoPadrao}">`:""}
-    <p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>
+    ${temFormatoSelect?`
+    <div class="field"><label>Formato</label>
+      <select id="formato-select-${slot.id}" onchange="salvarSemana()">
+        ${FORMATOS_OPCOES.map(op=>`<option value="${op}"${op===slot.formatoDefault?" selected":""}>${op}</option>`).join("")}
+      </select>
+    </div>
+    <p class="slot-meta">${slot.conteudo}</p>`:`
+    <p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>`}
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
+    ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
-    ${slot.semLink?"":`<div class="field"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
+    ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
+    ${slot.semLink?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave (InstaMagic)</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
   </section>`;
+}
+
+function togglePalavraChave(slotId){
+  const checked=document.getElementById("instamagic-"+slotId).checked;
+  const container=document.getElementById("palavra-container-"+slotId);
+  if(container)container.style.display=checked?"block":"none";
+  salvarSemana();
 }
 
 function aplicarModoVisual(slotId,modo){
@@ -933,7 +917,6 @@ function montarTela(){
   document.getElementById("slots-sexta").innerHTML=SLOTS_POR_GRUPO.sexta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-sabado").innerHTML=SLOTS_POR_GRUPO.sabado.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("slots-domingo").innerHTML=SLOTS_POR_GRUPO.domingo.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-bonus").innerHTML=SLOTS_POR_GRUPO.bonus.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
   document.getElementById("contadores-story").innerHTML=CONTAS_STORY.map(storyContadorTemplate).join("");
 }
 
@@ -1046,7 +1029,10 @@ function coletarDados(){
       legenda:document.getElementById("legenda-"+slot.id).value,
       destinosStatus,
       destinosHorario,
-      modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined
+      modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined,
+      horarioSlot:slot.horaPadrao!==undefined?document.getElementById("horario-slot-"+slot.id).value:undefined,
+      instamagic:slot.instaMagicPadrao!==undefined?document.getElementById("instamagic-"+slot.id).checked:undefined,
+      formatoSelecionado:slot.formatoDefault!==undefined?document.getElementById("formato-select-"+slot.id).value:undefined
     };
   });
   const producao={};
@@ -1116,6 +1102,18 @@ function carregarSemana(){
       document.getElementById("legenda-"+slot.id).value=s.legenda||slot.alterna[modoSalvo].modelo;
     }else{
       document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
+    }
+    if(slot.horaPadrao!==undefined){
+      document.getElementById("horario-slot-"+slot.id).value=s.horarioSlot||slot.horaPadrao;
+    }
+    if(slot.instaMagicPadrao!==undefined){
+      const checado=s.instamagic!==undefined?s.instamagic:slot.instaMagicPadrao;
+      document.getElementById("instamagic-"+slot.id).checked=checado;
+      const container=document.getElementById("palavra-container-"+slot.id);
+      if(container)container.style.display=checado?"block":"none";
+    }
+    if(slot.formatoDefault!==undefined){
+      document.getElementById("formato-select-"+slot.id).value=s.formatoSelecionado||slot.formatoDefault;
     }
   });
   ["segunda","quinta"].forEach(dia=>{
