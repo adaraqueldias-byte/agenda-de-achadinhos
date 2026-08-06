@@ -117,8 +117,9 @@
     .story-contador-controles{display:flex;align-items:center;gap:8px}
     .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
     .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
-    .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:8px;width:26px;height:26px;font-size:13px;cursor:pointer;color:var(--muted)}
+    .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:7px;width:22px;height:22px;padding:0;font-size:11px;cursor:pointer;color:var(--muted)}
     .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+    .date-dia-semana{font-size:13px;font-weight:700;color:var(--accent-dark);margin-top:6px}
     .destino-chip{font-size:11.5px;background:var(--accent-soft);color:#7d214f;border-radius:14px;padding:5px 9px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 5px;text-align:left}
     .destino-chip strong{font-weight:700}
     .destino-chip-texto{flex:1 1 auto;min-width:0}
@@ -233,7 +234,8 @@
   <div id="view-semana">
     <section class="card">
       <div class="field">
-        <input id="date" type="date" autocomplete="off" onchange="carregarSemana()">
+        <input id="date" type="date" autocomplete="off" onchange="carregarSemana();atualizarDiaSemanaTexto()">
+        <div id="date-dia-semana" class="date-dia-semana"></div>
       </div>
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
     </section>
@@ -712,6 +714,17 @@ function segundaFeiraDeHoje(){
   d.setDate(d.getDate()+diffParaSegunda);
   const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
   return local.toISOString().slice(0,10);
+}
+
+const DIAS_SEMANA_EXTENSO=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+
+function atualizarDiaSemanaTexto(){
+  const valor=document.getElementById("date").value;
+  const el=document.getElementById("date-dia-semana");
+  if(!valor){el.textContent="";return}
+  const [ano,mes,dia]=valor.split("-").map(Number);
+  const d=new Date(ano,mes-1,dia);
+  el.textContent=DIAS_SEMANA_EXTENSO[d.getDay()];
 }
 
 function itemProdutoSlotTemplate(slot,i,total){
@@ -1306,6 +1319,7 @@ document.getElementById("view-semana").addEventListener("input",e=>{
 
 montarTela();
 date.value=segundaFeiraDeHoje();
+atualizarDiaSemanaTexto();
 carregarSemana();
 </script>
 </body>
