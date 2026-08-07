@@ -835,7 +835,7 @@ function slotTemplate(slot){
     ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
     ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
-    ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave${temInstaMagic?" (InstaMagic)":""}</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
+    ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
@@ -1236,7 +1236,7 @@ function carregarSemana(){
       });
     }
     if(!slot.semLink&&slotTemInstagram(slot)){
-      document.getElementById("palavra-"+slot.id).value=s.palavra||"";
+      document.getElementById("palavra-"+slot.id).value=s.palavra??"QUERO";
     }
     if(slot.alterna){
       const modoSalvo=(s.modo&&slot.alterna[s.modo])?s.modo:Object.keys(slot.alterna)[0];
