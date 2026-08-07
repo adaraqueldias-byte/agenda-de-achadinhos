@@ -122,7 +122,9 @@
     .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
     .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
     .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:7px;width:22px;height:22px;padding:0;font-size:11px;cursor:pointer;color:var(--muted)}
-    .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+    .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+    .slot-destinos-linha{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+    .slot-toggle-seta{flex:none;width:32px;height:32px;border-radius:10px;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:800;cursor:pointer}
     .date-dia-semana{font-size:13px;font-weight:700;color:var(--accent-dark);margin-top:6px}
     .destino-chip{font-size:11.5px;background:var(--accent-soft);color:#7d214f;border-radius:14px;padding:5px 9px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 5px;text-align:left}
     .destino-chip strong{font-weight:700}
@@ -795,7 +797,11 @@ function slotTemplate(slot){
       </div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
-    <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
+    <div class="slot-destinos-linha">
+      <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
+      <button type="button" class="slot-toggle-seta" id="slot-seta-${slot.id}" onclick="toggleSlotCorpo('${slot.id}')">▸</button>
+    </div>
+    <div id="slot-corpo-${slot.id}" style="display:none">
     ${temAlterna?`
     <div class="slot-modo-toggle">
       ${Object.keys(slot.alterna).map(modo=>`<button type="button" class="modo-btn${modo===modoPadrao?" ativo":""}" id="modo-${slot.id}-${modo}" onclick="escolherModoSlot('${slot.id}','${modo}')">${slot.alterna[modo].label}</button>`).join("")}
@@ -817,7 +823,16 @@ function slotTemplate(slot){
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
+    </div>
   </section>`;
+}
+
+function toggleSlotCorpo(slotId){
+  const corpo=document.getElementById("slot-corpo-"+slotId);
+  const seta=document.getElementById("slot-seta-"+slotId);
+  const aberto=corpo.style.display!=="none";
+  corpo.style.display=aberto?"none":"block";
+  seta.textContent=aberto?"▸":"▾";
 }
 
 function togglePalavraChave(slotId){
