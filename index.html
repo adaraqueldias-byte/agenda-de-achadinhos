@@ -141,6 +141,10 @@
     .foto-linha{display:flex;align-items:center;gap:10px;margin:10px 0}
     .item-slot-produto{background:#fdf5fa;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
     .item-slot-titulo{font-size:12px;font-weight:800;color:var(--accent-dark);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px}
+    .produto-vitrine{background:#fdf5fa;border:1px solid var(--line);border-radius:14px;padding:10px;margin-bottom:10px}
+    .checklist-postagem{background:#fff8fb;border:1px solid var(--line);border-radius:14px;padding:10px;margin:10px 0}
+    .checklist-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--text);padding:5px 0}
+    .checklist-item input{width:auto;margin-top:2px}
     .foto-preview{width:56px;height:56px;border-radius:10px;object-fit:cover;border:1px solid var(--line);display:none}
     .foto-botoes{flex:1;display:flex;flex-direction:column;gap:4px}
     .foto-botoes button{width:100%}
@@ -629,19 +633,28 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link de cada uma no direct
 
 #[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
 
-  {id:"dashein_provador",dia:"Dashein — Quinta",hora:"20h",
+  {id:"dashein_vitrine",dia:"Dashein — Quinta",horaPadrao:"19:30",
    destinos:["insta_dashein","face_dashein","grupo_shein"],
-   formato:"Reels / Vídeo",conteudo:"Provador: como veio x como fica",tipo:"Shein",
-   modelo:`Provador de hoje: [nome da peça] 👗
+   formato:"Reels / Vídeo — sequência de produtos",conteudo:"Vitrine SHEIN — Escolhas da Semana: 3 a 5 produtos em sequência",tipo:"Shein",
+   nota:"Use pequenos trechos dos vídeos dos produtos da SHEIN e monte uma sequência rápida (3-5s cada produto, total de 15-25s). Numere cada produto no vídeo pra facilitar o pedido do link nos comentários.",
+   ctaSugerido:"QUERO + número do produto",
+   vitrine:{min:3,max:5},
+   checklist:[
+     "Escolhi de 3 a 5 produtos",
+     "Baixei/separei os vídeos dos produtos",
+     "Montei o Reels",
+     "Coloquei os números dos produtos no vídeo",
+     "Cadastrei os links no aplicativo",
+     "Preparei a capa",
+     "Legenda pronta"
+   ],
+   modelo:`Olha essa seleção que encontrei na SHEIN 😍
 
-Assim que chegou → assim que fica no corpo
-[Comentário rápido sobre caimento/qualidade]
+Qual você escolheria: 1, 2, 3, 4 ou 5?
 
-Numeração que peguei: [tamanho]
+Comenta QUERO + o número que eu te mando o link no direct.
 
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagmoda1] #[hashtagmoda2]`},
+#Shein #ModaFeminina #Looks #AchadinhosShein #DaShein`},
 
   {id:"dashein_avaliacao",dia:"Dashein — Sábado",hora:"19h",
    destinos:["insta_dashein","face_dashein","grupo_shein"],
@@ -661,7 +674,7 @@ const SLOTS_POR_GRUPO={
   segunda:["gd_manha_segunda","gd_pagina_segunda","gd_grupo_segunda","gd_grupo_alt_segunda","gd_noite_segunda","dashein_dica"],
   terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","dashein_favoritos"],
   quarta:["gd_manha_quarta","gd_pagina_quarta","gd_grupo_quarta","gd_grupo_alt_quarta","gd_noite_quarta","dashein_comparacao"],
-  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","dashein_provador"],
+  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","dashein_vitrine"],
   sexta:["gd_manha_sexta","gd_pagina_sexta","gd_grupo_sexta","gd_grupo_alt_sexta","gd_noite_sexta","dashein_moda"],
   sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","dashein_avaliacao"],
   domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","dashein_enquete"]
@@ -782,7 +795,7 @@ const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
 
 function slotTemplate(slot){
   const total=slot.itens||1;
-  const itensHtml=Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
+  const itensHtml=slot.vitrine?vitrineTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
@@ -823,8 +836,64 @@ function slotTemplate(slot){
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
+    ${slot.checklist?`
+    <div class="checklist-postagem">
+      <div class="item-slot-titulo">Checklist da postagem</div>
+      ${slot.checklist.map((item,i)=>`<label class="checklist-item"><input type="checkbox" id="checklist-${slot.id}-${i}" onchange="salvarSemana()"> ${item}</label>`).join("")}
+    </div>`:""}
     </div>
   </section>`;
+}
+
+function vitrineTemplate(slot){
+  const min=slot.vitrine.min,max=slot.vitrine.max;
+  const produtosHtml=Array.from({length:max},(_,idx)=>{
+    const n=idx+1;
+    return `<div class="produto-vitrine" id="produto-vitrine-${slot.id}-${n}" style="display:${n<=min?"block":"none"}">
+      <div class="item-slot-titulo">Produto ${n}</div>
+      <div class="field"><label>Nome do produto</label><input id="vitrine-nome-${slot.id}-${n}" placeholder="Ex.: Vestido midi"></div>
+      <div class="field"><label>Comissão (%)</label><input id="vitrine-comissao-${slot.id}-${n}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 15"></div>
+      <div class="field"><label>Link de afiliado — controle interno, nunca entra na legenda</label><input id="vitrine-link-${slot.id}-${n}" type="url" placeholder="Cole o link aqui"></div>
+      <button type="button" class="secondary" onclick="copiarLinkVitrine('${slot.id}',${n})">📋 Copiar link</button>
+    </div>`;
+  }).join("");
+  return `
+    <input type="hidden" id="vitrine-count-${slot.id}" value="${min}">
+    <div class="foto-linha">
+      <img id="foto-preview-${slot.id}" class="foto-preview" alt="Capa do Reels">
+      <div class="foto-botoes">
+        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${slot.id}').click()">📷 Escolher capa do Reels</button>
+        <button type="button" id="foto-remover-${slot.id}" class="danger" style="display:none" onclick="removerFoto('${slot.id}')">✕ Remover foto</button>
+      </div>
+      <input type="file" id="foto-input-${slot.id}" accept="image/*" style="display:none" onchange="onFotoChange('${slot.id}',this)">
+      <input type="hidden" id="foto-valor-${slot.id}">
+    </div>
+    <div class="item-slot-titulo">Produtos do vídeo</div>
+    ${produtosHtml}
+    <button type="button" class="secondary" id="vitrine-add-${slot.id}" style="width:100%;margin:6px 0" onclick="adicionarProdutoVitrine('${slot.id}')">+ Adicionar produto</button>
+    <button type="button" class="success" style="width:100%" onclick="salvarSemana()">✓ Salvar produtos</button>
+  `;
+}
+
+function adicionarProdutoVitrine(slotId){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const contInput=document.getElementById("vitrine-count-"+slotId);
+  let count=parseInt(contInput.value)||slot.vitrine.min;
+  if(count>=slot.vitrine.max)return;
+  count++;
+  contInput.value=count;
+  document.getElementById(`produto-vitrine-${slotId}-${count}`).style.display="block";
+  if(count>=slot.vitrine.max){
+    document.getElementById("vitrine-add-"+slotId).style.display="none";
+  }
+  salvarSemana();
+}
+
+async function copiarLinkVitrine(slotId,n){
+  const link=document.getElementById(`vitrine-link-${slotId}-${n}`).value;
+  if(!link){alert("Sem link pra copiar.");return}
+  try{await navigator.clipboard.writeText(link);alert("Link copiado!")}
+  catch{alert("Não foi possível copiar.")}
 }
 
 function toggleSlotCorpo(slotId){
@@ -1018,15 +1087,38 @@ function coletarDados(){
   SLOTS.forEach(slot=>{
     const total=slot.itens||1;
     const itens=[];
-    for(let i=0;i<total;i++){
-      const key=chaveItemSlot(slot,i);
-      const comissaoTexto=document.getElementById("comissao-"+key).value;
-      itens.push({
-        produto:document.getElementById("produto-"+key).value,
-        link:slot.semLink?"":document.getElementById("link-"+key).value,
-        foto:document.getElementById("foto-valor-"+key).value||undefined,
-        comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto)
-      });
+    if(!slot.vitrine){
+      for(let i=0;i<total;i++){
+        const key=chaveItemSlot(slot,i);
+        const comissaoTexto=document.getElementById("comissao-"+key).value;
+        itens.push({
+          produto:document.getElementById("produto-"+key).value,
+          link:slot.semLink?"":document.getElementById("link-"+key).value,
+          foto:document.getElementById("foto-valor-"+key).value||undefined,
+          comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto)
+        });
+      }
+    }
+    let vitrine;
+    if(slot.vitrine){
+      const produtos=[];
+      for(let n=1;n<=slot.vitrine.max;n++){
+        const comissaoTexto=document.getElementById(`vitrine-comissao-${slot.id}-${n}`).value;
+        produtos.push({
+          nome:document.getElementById(`vitrine-nome-${slot.id}-${n}`).value,
+          comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto),
+          link:document.getElementById(`vitrine-link-${slot.id}-${n}`).value
+        });
+      }
+      vitrine={
+        count:parseInt(document.getElementById("vitrine-count-"+slot.id).value)||slot.vitrine.min,
+        produtos,
+        capaFoto:document.getElementById("foto-valor-"+slot.id).value||undefined
+      };
+    }
+    let checklist;
+    if(slot.checklist){
+      checklist=slot.checklist.map((_,i)=>document.getElementById(`checklist-${slot.id}-${i}`).checked);
     }
     const destinosStatus={};
     const destinosHorario={};
@@ -1038,6 +1130,8 @@ function coletarDados(){
     });
     slots[slot.id]={
       itens,
+      vitrine,
+      checklist,
       palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
       destinosStatus,
@@ -1079,31 +1173,59 @@ function carregarSemana(){
       document.getElementById(`horario-destino-${slot.id}-${destId}`).value=horario;
       atualizarChipDestino(slot.id,destId);
     });
-    // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
-    const itensSalvos=s.itens||(s.produto!==undefined?[{produto:s.produto,link:s.link,foto:s.foto}]:[]);
-    for(let i=0;i<total;i++){
-      const key=chaveItemSlot(slot,i);
-      const it=itensSalvos[i]||{};
-      document.getElementById("produto-"+key).value=it.produto||"";
-      document.getElementById("comissao-"+key).value=it.comissao??"";
-      if(!slot.semLink){
-        document.getElementById("link-"+key).value=it.link||"";
+    if(!slot.vitrine){
+      // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
+      const itensSalvos=s.itens||(s.produto!==undefined?[{produto:s.produto,link:s.link,foto:s.foto}]:[]);
+      for(let i=0;i<total;i++){
+        const key=chaveItemSlot(slot,i);
+        const it=itensSalvos[i]||{};
+        document.getElementById("produto-"+key).value=it.produto||"";
+        document.getElementById("comissao-"+key).value=it.comissao??"";
+        if(!slot.semLink){
+          document.getElementById("link-"+key).value=it.link||"";
+        }
+        if(it.foto){
+          document.getElementById("foto-valor-"+key).value=it.foto;
+          const prev=document.getElementById("foto-preview-"+key);
+          prev.src=it.foto;prev.style.display="block";
+          document.getElementById("foto-remover-"+key).style.display="block";
+        }else{
+          removerFotoSilencioso(key);
+        }
+        atualizarDisplayItemSlot(key);
+        if(it.produto){
+          document.getElementById("item-edit-"+key).style.display="none";
+          document.getElementById("item-display-"+key).style.display="flex";
+        }else{
+          mostrarItemEdicao(key);
+        }
       }
-      if(it.foto){
-        document.getElementById("foto-valor-"+key).value=it.foto;
-        const prev=document.getElementById("foto-preview-"+key);
-        prev.src=it.foto;prev.style.display="block";
-        document.getElementById("foto-remover-"+key).style.display="block";
+    }
+    if(slot.vitrine){
+      const vd=s.vitrine||{};
+      const count=vd.count||slot.vitrine.min;
+      document.getElementById("vitrine-count-"+slot.id).value=count;
+      for(let n=1;n<=slot.vitrine.max;n++){
+        const p=(vd.produtos&&vd.produtos[n-1])||{};
+        document.getElementById(`vitrine-nome-${slot.id}-${n}`).value=p.nome||"";
+        document.getElementById(`vitrine-comissao-${slot.id}-${n}`).value=p.comissao??"";
+        document.getElementById(`vitrine-link-${slot.id}-${n}`).value=p.link||"";
+        document.getElementById(`produto-vitrine-${slot.id}-${n}`).style.display=n<=count?"block":"none";
+      }
+      document.getElementById("vitrine-add-"+slot.id).style.display=count>=slot.vitrine.max?"none":"block";
+      if(vd.capaFoto){
+        document.getElementById("foto-valor-"+slot.id).value=vd.capaFoto;
+        const prev=document.getElementById("foto-preview-"+slot.id);
+        prev.src=vd.capaFoto;prev.style.display="block";
+        document.getElementById("foto-remover-"+slot.id).style.display="block";
       }else{
-        removerFotoSilencioso(key);
+        removerFotoSilencioso(slot.id);
       }
-      atualizarDisplayItemSlot(key);
-      if(it.produto){
-        document.getElementById("item-edit-"+key).style.display="none";
-        document.getElementById("item-display-"+key).style.display="flex";
-      }else{
-        mostrarItemEdicao(key);
-      }
+    }
+    if(slot.checklist){
+      slot.checklist.forEach((_,i)=>{
+        document.getElementById(`checklist-${slot.id}-${i}`).checked=!!(s.checklist&&s.checklist[i]);
+      });
     }
     if(!slot.semLink){
       document.getElementById("palavra-"+slot.id).value=s.palavra||"";
@@ -1322,7 +1444,7 @@ if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker
 let autoSalvarTimeout=null;
 document.getElementById("view-semana").addEventListener("input",e=>{
   const id=e.target.id||"";
-  if(/^(produto|link|palavra|legenda|comissao)-/.test(id)){
+  if(/^(produto|link|palavra|legenda|comissao|vitrine)-/.test(id)){
     clearTimeout(autoSalvarTimeout);
     autoSalvarTimeout=setTimeout(salvarSemana,500);
   }
