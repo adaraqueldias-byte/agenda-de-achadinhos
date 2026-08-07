@@ -837,7 +837,7 @@ function slotTemplate(slot){
     ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
     ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
-    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
+    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button><button class="secondary" onclick="restaurarLegendaPadrao('${slot.id}')">↺ Restaurar padrão</button></div>
     <div id="status-${slot.id}" class="status"></div>
     ${slot.checklist?`
     <div class="checklist-postagem">
@@ -1274,6 +1274,14 @@ async function copiarLegenda(id){
   if(!t){alert("A legenda está vazia.");return}
   try{await navigator.clipboard.writeText(t);document.getElementById("status-"+id).textContent="Legenda copiada. Agora cole na rede social."}
   catch{alert("Não foi possível copiar.")}
+}
+
+function restaurarLegendaPadrao(slotId){
+  if(!confirm("Isso vai substituir a legenda atual pelo modelo padrão mais recente. Continuar?"))return;
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const modelo=slot.alterna?slot.alterna[document.getElementById("modo-"+slotId).value].modelo:slot.modelo;
+  document.getElementById("legenda-"+slotId).value=modelo;
+  salvarSemana();
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
