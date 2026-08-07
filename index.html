@@ -465,6 +465,8 @@ const CONTAS={
 };
 const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
+function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId].rede==="Instagram")}
+
 // ===== Cronograma fixo do Garimpo do Dia: 5 horários por dia, todo dia =====
 const DIAS_GD=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
 const GRUPOS_GD=["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
@@ -506,10 +508,10 @@ Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver dispon
       id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
       destinos:["grupo_garimpo"],
       formatoDefault:"Foto",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
-      ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.",
+      ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.",
       modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
 
-Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.`
+Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.`
     });
 
     const grupoAltId=diaA?"grupo_shop":"grupo_vende";
@@ -519,15 +521,15 @@ Quem estava procurando algo assim? 👀 Comenta QUERO que eu te passo o link.`
       formatoDefault:"Foto",
       conteudo:diaA?"Alternando grupos — hoje é a vez do Grupo ShopOnline":"Alternando grupos — hoje é a vez do Grupo Vende Barato",
       nota:"Esse horário alterna de grupo a cada dia (ShopOnline / Vende Barato) pra não publicar nos dois no mesmo dia.",
-      ctaSugerido:diaA?"Você teria esse produto em casa? Comenta QUERO que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.",
+      ctaSugerido:diaA?"Você teria esse produto em casa? Comenta aqui que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.",
       modelo:diaA?
 `[Nome do produto] — [1 frase sobre o produto]
 
-Você teria esse produto em casa? Comenta QUERO que eu te passo o link.`
+Você teria esse produto em casa? Comenta aqui que eu te passo o link.`
       :
 `[Nome do produto] — [1 frase sobre o preço/oferta]
 
-Olha o preço que encontrei 👀 Quem quiser o link, comenta QUERO.`
+Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.`
     });
 
     const canalNoiteId=diaA?"insta_garimpo":"face_garimpo";
@@ -802,6 +804,7 @@ function slotTemplate(slot){
   const temHorario=slot.horaPadrao!==undefined;
   const temInstaMagic=slot.instaMagicPadrao!==undefined;
   const temFormatoSelect=slot.formatoDefault!==undefined;
+  const temInstagram=slotTemInstagram(slot);
   return `<section class="card">
     <div class="slot-cabecalho">
       <div>
@@ -832,7 +835,7 @@ function slotTemplate(slot){
     ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
     ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
-    ${slot.semLink?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave${temInstaMagic?" (InstaMagic)":""}</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
+    ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave${temInstaMagic?" (InstaMagic)":""}</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
     <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
@@ -1137,7 +1140,7 @@ function coletarDados(){
       itens,
       vitrine,
       checklist,
-      palavra:slot.semLink?"":document.getElementById("palavra-"+slot.id).value,
+      palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id).value,
       legenda:document.getElementById("legenda-"+slot.id).value,
       destinosStatus,
       destinosHorario,
@@ -1232,7 +1235,7 @@ function carregarSemana(){
         document.getElementById(`checklist-${slot.id}-${i}`).checked=!!(s.checklist&&s.checklist[i]);
       });
     }
-    if(!slot.semLink){
+    if(!slot.semLink&&slotTemInstagram(slot)){
       document.getElementById("palavra-"+slot.id).value=s.palavra||"";
     }
     if(slot.alterna){
