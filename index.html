@@ -838,8 +838,13 @@ function slotTemplate(slot){
     <div id="status-${slot.id}" class="status"></div>
     ${slot.checklist?`
     <div class="checklist-postagem">
-      <div class="item-slot-titulo">Checklist da postagem</div>
-      ${slot.checklist.map((item,i)=>`<label class="checklist-item"><input type="checkbox" id="checklist-${slot.id}-${i}" onchange="salvarSemana()"> ${item}</label>`).join("")}
+      <button type="button" class="acordeon-titulo item-slot-titulo" onclick="toggleSecao('checklist-${slot.id}')">
+        <span>Checklist da postagem</span>
+        <span id="checklist-${slot.id}-seta">▸</span>
+      </button>
+      <div id="checklist-${slot.id}-corpo" style="display:none">
+        ${slot.checklist.map((item,i)=>`<label class="checklist-item"><input type="checkbox" id="checklist-${slot.id}-${i}" onchange="salvarSemana()"> ${item}</label>`).join("")}
+      </div>
     </div>`:""}
     </div>
   </section>`;
