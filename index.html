@@ -128,7 +128,8 @@
     .semana-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
     .semana-seta{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:20px;font-weight:800;cursor:pointer}
     .semana-nav-info{flex:1;text-align:center}
-    .semana-nav-titulo{font-size:16px;font-weight:800;color:var(--text)}
+    .semana-nav-titulo{font-size:18px;font-weight:800;color:var(--text)}
+    .dia-nav-data{font-size:13px;color:var(--muted);margin-top:1px}
     .semana-hoje{margin-top:6px;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;cursor:pointer}
     .semana-hoje.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff}
     .destino-chip{font-size:11.5px;background:var(--accent-soft);color:#7d214f;border-radius:14px;padding:5px 9px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 5px;text-align:left}
@@ -249,12 +250,13 @@
   <div id="view-semana">
     <section class="card">
       <div class="semana-nav">
-        <button type="button" class="semana-seta" onclick="mudarSemana(-1)">‹</button>
+        <button type="button" class="semana-seta" onclick="mudarDia(-1)">‹</button>
         <div class="semana-nav-info">
-          <div class="semana-nav-titulo">Semana de <span id="semana-intervalo-texto"></span></div>
-          <button type="button" class="semana-hoje" id="semana-hoje-btn" onclick="irParaSemanaAtual()">HOJE</button>
+          <div class="semana-nav-titulo" id="dia-nav-nome"></div>
+          <div class="dia-nav-data" id="dia-nav-data"></div>
+          <button type="button" class="semana-hoje" id="semana-hoje-btn" onclick="irParaHojeDia()">HOJE</button>
         </div>
-        <button type="button" class="semana-seta" onclick="mudarSemana(1)">›</button>
+        <button type="button" class="semana-seta" onclick="mudarDia(1)">›</button>
       </div>
       <input type="hidden" id="date" value="">
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
@@ -701,35 +703,70 @@ function segundaFeiraDeHoje(){
   return local.toISOString().slice(0,10);
 }
 
-function formatarIntervaloSemana(valor){
-  const [ano,mes,dia]=valor.split("-").map(Number);
-  const seg=new Date(ano,mes-1,dia);
-  const dom=new Date(seg);dom.setDate(seg.getDate()+6);
-  const fmt=d=>`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
-  return `${fmt(seg)} a ${fmt(dom)}`;
-}
+const DIAS_SEMANA_NOME=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+const CHAVE_DIA_POR_INDICE=["domingo","segunda","terca","quarta","quinta","sexta","sabado"];
+const MESES_NOME=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+let diaAtualISO="";
 
-function atualizarSemanaNav(){
-  const valor=document.getElementById("date").value;
-  document.getElementById("semana-intervalo-texto").textContent=formatarIntervaloSemana(valor);
-  document.getElementById("semana-hoje-btn").classList.toggle("ativo",valor===segundaFeiraDeHoje());
+function isoParaData(iso){
+  const [ano,mes,dia]=iso.split("-").map(Number);
+  return new Date(ano,mes-1,dia);
 }
-
-function mudarSemana(deltaSemanas){
-  const dateEl=document.getElementById("date");
-  const [ano,mes,dia]=dateEl.value.split("-").map(Number);
-  const d=new Date(ano,mes-1,dia);
-  d.setDate(d.getDate()+deltaSemanas*7);
+function dataParaIso(d){
   const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
-  dateEl.value=local.toISOString().slice(0,10);
-  atualizarSemanaNav();
-  carregarSemana();
+  return local.toISOString().slice(0,10);
+}
+function segundaDaData(d){
+  const diaSemana=d.getDay();
+  const diff=(diaSemana===0)?-6:1-diaSemana;
+  const seg=new Date(d);
+  seg.setDate(d.getDate()+diff);
+  return seg;
 }
 
-function irParaSemanaAtual(){
-  document.getElementById("date").value=segundaFeiraDeHoje();
-  atualizarSemanaNav();
-  carregarSemana();
+function atualizarNavDia(){
+  const d=isoParaData(diaAtualISO);
+  document.getElementById("dia-nav-nome").textContent=DIAS_SEMANA_NOME[d.getDay()];
+  document.getElementById("dia-nav-data").textContent=`${d.getDate()} de ${MESES_NOME[d.getMonth()]} de ${d.getFullYear()}`;
+  document.getElementById("semana-hoje-btn").classList.toggle("ativo",diaAtualISO===dataParaIso(new Date()));
+}
+
+function abrirApenasDia(chaveDia){
+  const dias=["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
+  dias.forEach(k=>{
+    const corpo=document.getElementById("dia-"+k+"-corpo");
+    const seta=document.getElementById("dia-"+k+"-seta");
+    if(!corpo)return;
+    const abrir=k===chaveDia;
+    corpo.style.display=abrir?"block":"none";
+    if(seta)seta.textContent=abrir?"▾":"▸";
+  });
+  const corpoAtual=document.getElementById("dia-"+chaveDia+"-corpo");
+  if(corpoAtual)corpoAtual.closest("section").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function aplicarDiaAtual(){
+  const d=isoParaData(diaAtualISO);
+  const novaSegunda=dataParaIso(segundaDaData(d));
+  const dateEl=document.getElementById("date");
+  if(dateEl.value!==novaSegunda){
+    dateEl.value=novaSegunda;
+    carregarSemana();
+  }
+  atualizarNavDia();
+  abrirApenasDia(CHAVE_DIA_POR_INDICE[d.getDay()]);
+}
+
+function mudarDia(delta){
+  const d=isoParaData(diaAtualISO);
+  d.setDate(d.getDate()+delta);
+  diaAtualISO=dataParaIso(d);
+  aplicarDiaAtual();
+}
+
+function irParaHojeDia(){
+  diaAtualISO=dataParaIso(new Date());
+  aplicarDiaAtual();
 }
 
 function itemProdutoSlotTemplate(slot,i,total){
@@ -1489,9 +1526,11 @@ document.getElementById("view-semana").addEventListener("input",e=>{
 });
 
 montarTela();
+diaAtualISO=dataParaIso(new Date());
 date.value=segundaFeiraDeHoje();
-atualizarSemanaNav();
+atualizarNavDia();
 carregarSemana();
+abrirApenasDia(CHAVE_DIA_POR_INDICE[new Date().getDay()]);
 </script>
 </body>
 </html>
