@@ -157,6 +157,9 @@
 
     /* Quadros que abrem/fecham (acordeão) */
     .acordeon-titulo{font-size:16px;font-weight:800;width:100%;background:none;border:none;padding:0;margin:0;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px}
+    .extra-wrapper{background:#fff;border:1px dashed var(--line);border-radius:16px;padding:12px 15px;margin-bottom:10px}
+    .extra-titulo{color:var(--muted);font-size:14px}
+    .extra-wrapper .card{margin:10px 0 0;box-shadow:none}
 
     /* Sessão de produção */
     .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7;padding:12px 15px}
@@ -572,6 +575,7 @@ Gostou? Confira o link e aproveite enquanto estiver disponível.`
       formatoDefault:"Foto",
       conteudo:"Postagem extra do dia — produto avulso, fora dos 5 horários fixos",
       tipo:"Extra",
+      oculto:true,
       instaMagicPadrao:true,
       nota:"Espaço livre pra controlar uma postagem extra que você fizer nesse dia. Preencha o horário que quiser e marque só o(s) canal(is) que usar.",
       modelo:`[Nome do produto] — [1 frase sobre o produto]
@@ -887,7 +891,7 @@ function slotTemplate(slot){
   const temInstaMagic=slot.instaMagicPadrao!==undefined;
   const temFormatoSelect=slot.formatoDefault!==undefined;
   const temInstagram=slotTemInstagram(slot);
-  return `<section class="card">
+  const cardHtml=`<section class="card">
     <div class="slot-cabecalho">
       <div>
         <span class="slot-dia-hora">${slot.dia}</span>
@@ -933,6 +937,16 @@ function slotTemplate(slot){
     </div>`:""}
     </div>
   </section>`;
+  if(slot.oculto){
+    return `<div class="extra-wrapper">
+      <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
+        <span>➕ Postagem extra</span>
+        <span id="extra-${slot.id}-seta">▸</span>
+      </button>
+      <div id="extra-${slot.id}-corpo" style="display:none">${cardHtml}</div>
+    </div>`;
+  }
+  return cardHtml;
 }
 
 function vitrineTemplate(slot){
