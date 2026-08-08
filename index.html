@@ -125,7 +125,12 @@
     .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;flex:1}
     .slot-destinos-linha{display:flex;align-items:center;gap:8px;margin-bottom:6px}
     .slot-toggle-seta{flex:none;width:32px;height:32px;border-radius:10px;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:800;cursor:pointer}
-    .date-dia-semana{font-size:13px;font-weight:700;color:var(--accent-dark);margin-top:6px}
+    .semana-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
+    .semana-seta{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:20px;font-weight:800;cursor:pointer}
+    .semana-nav-info{flex:1;text-align:center}
+    .semana-nav-titulo{font-size:16px;font-weight:800;color:var(--text)}
+    .semana-hoje{margin-top:6px;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;cursor:pointer}
+    .semana-hoje.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff}
     .destino-chip{font-size:11.5px;background:var(--accent-soft);color:#7d214f;border-radius:14px;padding:5px 9px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 5px;text-align:left}
     .destino-chip strong{font-weight:700}
     .destino-chip-texto{flex:1 1 auto;min-width:0}
@@ -243,10 +248,15 @@
 
   <div id="view-semana">
     <section class="card">
-      <div class="field">
-        <input id="date" type="date" autocomplete="off" onchange="carregarSemana();atualizarDiaSemanaTexto()">
-        <div id="date-dia-semana" class="date-dia-semana"></div>
+      <div class="semana-nav">
+        <button type="button" class="semana-seta" onclick="mudarSemana(-1)">‹</button>
+        <div class="semana-nav-info">
+          <div class="semana-nav-titulo">Semana de <span id="semana-intervalo-texto"></span></div>
+          <button type="button" class="semana-hoje" id="semana-hoje-btn" onclick="irParaSemanaAtual()">HOJE</button>
+        </div>
+        <button type="button" class="semana-seta" onclick="mudarSemana(1)">›</button>
       </div>
+      <input type="hidden" id="date" value="">
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
     </section>
 
@@ -691,15 +701,35 @@ function segundaFeiraDeHoje(){
   return local.toISOString().slice(0,10);
 }
 
-const DIAS_SEMANA_EXTENSO=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
-
-function atualizarDiaSemanaTexto(){
-  const valor=document.getElementById("date").value;
-  const el=document.getElementById("date-dia-semana");
-  if(!valor){el.textContent="";return}
+function formatarIntervaloSemana(valor){
   const [ano,mes,dia]=valor.split("-").map(Number);
+  const seg=new Date(ano,mes-1,dia);
+  const dom=new Date(seg);dom.setDate(seg.getDate()+6);
+  const fmt=d=>`${String(d.getDate()).padStart(2,"0")}/${String(d.getMonth()+1).padStart(2,"0")}`;
+  return `${fmt(seg)} a ${fmt(dom)}`;
+}
+
+function atualizarSemanaNav(){
+  const valor=document.getElementById("date").value;
+  document.getElementById("semana-intervalo-texto").textContent=formatarIntervaloSemana(valor);
+  document.getElementById("semana-hoje-btn").classList.toggle("ativo",valor===segundaFeiraDeHoje());
+}
+
+function mudarSemana(deltaSemanas){
+  const dateEl=document.getElementById("date");
+  const [ano,mes,dia]=dateEl.value.split("-").map(Number);
   const d=new Date(ano,mes-1,dia);
-  el.textContent=DIAS_SEMANA_EXTENSO[d.getDay()];
+  d.setDate(d.getDate()+deltaSemanas*7);
+  const local=new Date(d.getTime()-d.getTimezoneOffset()*60000);
+  dateEl.value=local.toISOString().slice(0,10);
+  atualizarSemanaNav();
+  carregarSemana();
+}
+
+function irParaSemanaAtual(){
+  document.getElementById("date").value=segundaFeiraDeHoje();
+  atualizarSemanaNav();
+  carregarSemana();
 }
 
 function itemProdutoSlotTemplate(slot,i,total){
@@ -837,7 +867,7 @@ function slotTemplate(slot){
     ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
     ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
     <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
-    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button><button class="secondary" onclick="restaurarLegendaPadrao('${slot.id}')">↺ Restaurar padrão</button></div>
+    <div class="buttons"><button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button></div>
     <div id="status-${slot.id}" class="status"></div>
     ${slot.checklist?`
     <div class="checklist-postagem">
@@ -1276,14 +1306,6 @@ async function copiarLegenda(id){
   catch{alert("Não foi possível copiar.")}
 }
 
-function restaurarLegendaPadrao(slotId){
-  if(!confirm("Isso vai substituir a legenda atual pelo modelo padrão mais recente. Continuar?"))return;
-  const slot=SLOTS.find(s=>s.id===slotId);
-  const modelo=slot.alterna?slot.alterna[document.getElementById("modo-"+slotId).value].modelo:slot.modelo;
-  document.getElementById("legenda-"+slotId).value=modelo;
-  salvarSemana();
-}
-
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
 const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",amazon_br:"Amazon 🇧🇷",amazon_eua:"Amazon 🇺🇸",magalu:"Magalu",shein:"Shein"};
 let bancoFotoAtual="";
@@ -1468,7 +1490,7 @@ document.getElementById("view-semana").addEventListener("input",e=>{
 
 montarTela();
 date.value=segundaFeiraDeHoje();
-atualizarDiaSemanaTexto();
+atualizarSemanaNav();
 carregarSemana();
 </script>
 </body>
