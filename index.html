@@ -496,6 +496,7 @@ function criarSlotsGarimpoDoDia(){
       id:`gd_manha_${grupoKey}`,dia,horaPadrao:"09:00",
       destinos:["insta_garimpo"],
       formatoDefault:"Carrossel",conteudo:"Dica, produto útil, comparação ou carrossel",
+      itensVariavel:{min:1,max:5},
       instaMagicPadrao:true,
       ctaSugerido:"Comenta QUERO que eu te mando o link no direct.",
       modelo:`[Nome do produto] — [1 frase sobre o que ele resolve ou por que vale a pena]
@@ -790,7 +791,7 @@ function irParaHojeDia(){
 
 function itemProdutoSlotTemplate(slot,i,total){
   const key=total>1?`${slot.id}-${i}`:slot.id;
-  const rotulo=total>1?`Produto ${String.fromCharCode(65+i)}`:"Produto";
+  const rotulo=total>1?`Produto ${i+1}`:"Produto";
   return `<div class="${total>1?'item-slot-produto':''}">
     ${total>1?`<div class="item-slot-titulo">${rotulo}</div>`:""}
     <div id="item-display-${key}" class="item-produto" style="display:none"></div>
@@ -882,8 +883,8 @@ async function copiarLinkItemSlot(key){
 const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
 
 function slotTemplate(slot){
-  const total=slot.itens||1;
-  const itensHtml=slot.vitrine?vitrineTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
+  const total=totalItensSlot(slot);
+  const itensHtml=slot.vitrine?vitrineTemplate(slot):slot.itensVariavel?itensVariavelTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
@@ -947,6 +948,32 @@ function slotTemplate(slot){
     </div>`;
   }
   return cardHtml;
+}
+
+function itensVariavelTemplate(slot){
+  const min=slot.itensVariavel.min,max=slot.itensVariavel.max;
+  const itensHtml=Array.from({length:max},(_,idx)=>{
+    return `<div id="item-variavel-${slot.id}-${idx}" style="display:${idx<min?"block":"none"}">${itemProdutoSlotTemplate(slot,idx,max)}</div>`;
+  }).join("");
+  return `
+    <input type="hidden" id="item-variavel-count-${slot.id}" value="${min}">
+    ${itensHtml}
+    <button type="button" class="secondary" id="item-variavel-add-${slot.id}" style="width:100%;margin:6px 0" onclick="adicionarItemVariavel('${slot.id}')">+ Adicionar produto</button>
+  `;
+}
+
+function adicionarItemVariavel(slotId){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const contInput=document.getElementById("item-variavel-count-"+slotId);
+  let count=parseInt(contInput.value)||slot.itensVariavel.min;
+  if(count>=slot.itensVariavel.max)return;
+  document.getElementById(`item-variavel-${slotId}-${count}`).style.display="block";
+  count++;
+  contInput.value=count;
+  if(count>=slot.itensVariavel.max){
+    document.getElementById("item-variavel-add-"+slotId).style.display="none";
+  }
+  salvarSemana();
 }
 
 function vitrineTemplate(slot){
@@ -1184,12 +1211,13 @@ function removerFoto(id){
   salvarSemana();
 }
 
-function chaveItemSlot(slot,i){return (slot.itens||1)>1?`${slot.id}-${i}`:slot.id}
+function totalItensSlot(slot){return slot.itensVariavel?slot.itensVariavel.max:(slot.itens||1)}
+function chaveItemSlot(slot,i){return totalItensSlot(slot)>1?`${slot.id}-${i}`:slot.id}
 
 function coletarDados(){
   const slots={};
   SLOTS.forEach(slot=>{
-    const total=slot.itens||1;
+    const total=totalItensSlot(slot);
     const itens=[];
     if(!slot.vitrine){
       for(let i=0;i<total;i++){
@@ -1203,6 +1231,7 @@ function coletarDados(){
         });
       }
     }
+    const itensVariavelCount=slot.itensVariavel?(parseInt(document.getElementById("item-variavel-count-"+slot.id).value)||slot.itensVariavel.min):undefined;
     let vitrine;
     if(slot.vitrine){
       const produtos=[];
@@ -1234,6 +1263,7 @@ function coletarDados(){
     });
     slots[slot.id]={
       itens,
+      itensVariavelCount,
       vitrine,
       checklist,
       palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id).value,
@@ -1269,7 +1299,7 @@ function carregarSemana(){
   const dados=raw?JSON.parse(raw):{};
   SLOTS.forEach(slot=>{
     const s=(dados.slots&&dados.slots[slot.id])||{};
-    const total=slot.itens||1;
+    const total=totalItensSlot(slot);
     slot.destinos.forEach(destId=>{
       const status=(s.destinosStatus&&s.destinosStatus[destId])||"nada";
       const horario=(s.destinosHorario&&s.destinosHorario[destId])||"";
@@ -1303,6 +1333,15 @@ function carregarSemana(){
         }else{
           mostrarItemEdicao(key);
         }
+      }
+      if(slot.itensVariavel){
+        const count=s.itensVariavelCount||slot.itensVariavel.min;
+        document.getElementById("item-variavel-count-"+slot.id).value=count;
+        for(let idx=0;idx<slot.itensVariavel.max;idx++){
+          const temDados=itensSalvos[idx]&&itensSalvos[idx].produto;
+          document.getElementById(`item-variavel-${slot.id}-${idx}`).style.display=(idx<count||temDados)?"block":"none";
+        }
+        document.getElementById("item-variavel-add-"+slot.id).style.display=count>=slot.itensVariavel.max?"none":"block";
       }
     }
     if(slot.vitrine){
