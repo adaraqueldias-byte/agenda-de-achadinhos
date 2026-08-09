@@ -512,6 +512,7 @@ Comenta QUERO que eu te mando o link no direct.
       id:`gd_pagina_${grupoKey}`,dia,horaPadrao:"11:30",
       destinos:["face_garimpo"],
       formatoDefault:"Foto",conteudo:"Produto/oferta do dia",
+      itensVariavel:{min:1,max:5},
       ctaSugerido:"Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.",
       modelo:`[Nome do produto] — [1 frase sobre a oferta/benefício]
 
@@ -524,6 +525,7 @@ Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver dispon
       id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
       destinos:["grupo_garimpo"],
       formatoDefault:"Foto",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
+      itensVariavel:{min:1,max:5},
       ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.",
       modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
 
@@ -535,6 +537,7 @@ Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.`
       id:`gd_grupo_alt_${grupoKey}`,dia,horaPadrao:"17:30",
       destinos:[grupoAltId],
       formatoDefault:"Foto",
+      itensVariavel:{min:1,max:5},
       conteudo:diaA?"Alternando grupos — hoje é a vez do Grupo ShopOnline":"Alternando grupos — hoje é a vez do Grupo Vende Barato",
       nota:"Esse horário alterna de grupo a cada dia (ShopOnline / Vende Barato) pra não publicar nos dois no mesmo dia.",
       ctaSugerido:diaA?"Você teria esse produto em casa? Comenta aqui que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.",
@@ -553,6 +556,7 @@ Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.`
       id:`gd_noite_${grupoKey}`,dia,horaPadrao:"20:00",
       destinos:[canalNoiteId],
       formatoDefault:"Reels",
+      itensVariavel:{min:1,max:5},
       conteudo:"Postagem principal da noite — o produto com maior potencial de engajamento/venda do dia",
       nota:"Esse horário alterna entre Instagram e Facebook Página a cada dia.",
       ctaSugerido:diaA?"Quer o link? Comenta QUERO que eu te mando no direct.":"Gostou? Confira o link e aproveite enquanto estiver disponível.",
