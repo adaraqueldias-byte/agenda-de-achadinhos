@@ -384,7 +384,7 @@
         </select>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
-      <div class="field"><label>🏷️ Preço do produto (R$)</label><input id="banco-preco" type="number" min="0" step="0.01" placeholder="Ex.: 89.90"></div>
+      <div class="field"><label>🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 89,90 ou 3.228,61"></div>
       <div class="grid">
         <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
         <div class="field"><label>Valor da comissão (R$)</label><input id="banco-valor-comissao" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
@@ -1485,8 +1485,7 @@ function adicionarProdutoBanco(){
   const nome=document.getElementById("banco-nome").value.trim();
   const link=document.getElementById("banco-link").value.trim();
   const loja=document.getElementById("banco-loja").value;
-  const precoTexto=document.getElementById("banco-preco").value;
-  const preco=precoTexto===""?undefined:parseFloat(precoTexto);
+  const preco=parsePrecoBR(document.getElementById("banco-preco").value);
   const comissaoValor=document.getElementById("banco-comissao").value;
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
@@ -1514,7 +1513,7 @@ function editarProdutoBanco(id){
   document.getElementById("banco-nome").value=item.nome||"";
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
-  document.getElementById("banco-preco").value=item.preco??"";
+  document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBR(item.preco):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
   document.getElementById("banco-valor-comissao").value=item.valorComissao??"";
   bancoFotoAtual=item.foto||"";
@@ -1548,6 +1547,19 @@ function togglePublicadoBanco(id){
 
 function escaparBanco(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
+function parsePrecoBR(texto){
+  texto=(texto||"").trim().replace(/[^\d.,]/g,"");
+  if(!texto)return undefined;
+  if(texto.includes(",")){
+    texto=texto.replace(/\./g,"").replace(",",".");
+  }
+  const n=parseFloat(texto);
+  return isNaN(n)?undefined:n;
+}
+function formatarPrecoBR(n){
+  return n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+
 function renderizarBanco(){
   const lista=carregarBanco();
   const cont=document.getElementById("lista-banco");
@@ -1563,7 +1575,7 @@ function renderizarBanco(){
       <div class="item-produto-info">
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
-        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ R$ ${p.preco.toFixed(2)}</span>`:""}
+        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ R$ ${formatarPrecoBR(p.preco)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">R$ ${p.valorComissao.toFixed(2)}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
