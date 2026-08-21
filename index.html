@@ -137,6 +137,8 @@
     .destino-chip-texto{flex:1 1 auto;min-width:0}
     .destino-chip-agendado{background:#dbeafe;color:#1e40af;border-color:#60a5fa}
     .destino-chip-publicado{background:#dcfce7;color:#166534;border-color:#4ade80}
+    .destino-chip-ativo{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
+    .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -209,6 +211,7 @@
     .item-produto-comissao{display:inline-block;font-size:10px;font-weight:700;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
     .item-produto-comissao.baixa{background:#fee2e2;color:#991b1b}
     .item-produto-preco{display:inline-block;font-size:10px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
+    .item-produto-categoria{display:inline-block;font-size:10px;font-weight:700;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
     .item-produto-acoes{flex:none;display:grid;grid-template-columns:repeat(2,32px);grid-auto-rows:32px;gap:5px}
     .item-produto-icone{width:32px;height:32px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
     .item-produto-lixeira{background:#ffe2e2;color:var(--danger)}
@@ -383,6 +386,19 @@
           <option value="shein">Shein</option>
         </select>
       </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="banco-categoria" onchange="toggleCategoriaOutra()">
+          <option value="">Sem categoria</option>
+          <option value="organizacao_pequenos_espacos">Organização de pequenos espaços</option>
+          <option value="organizacao_geladeira">Organização de geladeira</option>
+          <option value="organizacao_casa">Organização da casa</option>
+          <option value="limpeza">Limpeza</option>
+          <option value="cozinha">Cozinha</option>
+          <option value="outra">Outra</option>
+        </select>
+        <input id="banco-categoria-outra" style="display:none;margin-top:8px" placeholder="Digite a categoria">
+      </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
       <div class="field"><label>🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 (sem ponto de milhar)"></div>
       <div class="grid">
@@ -394,6 +410,8 @@
     </section>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
+    <div class="banco-filtros" id="banco-filtros-categoria"></div>
+    <div class="banco-filtros" id="banco-filtros-preco"></div>
     <div id="lista-banco"></div>
   </div>
 </div>
@@ -1422,8 +1440,12 @@ async function copiarLegenda(id){
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
 const LOJAS_BANCO={shopee:"Shopee",mercadolivre:"Mercado Livre",amazon:"Amazon",amazon_br:"Amazon 🇧🇷",amazon_eua:"Amazon 🇺🇸",magalu:"Magalu",shein:"Shein"};
+const CATEGORIAS_BANCO={organizacao_pequenos_espacos:"Organização de pequenos espaços",organizacao_geladeira:"Organização de geladeira",organizacao_casa:"Organização da casa",limpeza:"Limpeza",cozinha:"Cozinha",outra:"Outra"};
+const FAIXAS_PRECO_BANCO={ate20:"Até R$20",'20-50':"R$20-50",acima50:"Acima de R$50"};
 let bancoFotoAtual="";
 let bancoEditandoId=null;
+let filtroCategoriaAtual=null;
+let filtroPrecoAtual=null;
 
 function atualizarContadorLojasBanco(){
   const lista=carregarBanco();
@@ -1466,10 +1488,18 @@ function salvarBanco(lista){
   catch(e){alert("⚠️ Memória cheia! Remova fotos de produtos antigos do banco e tente de novo.")}
 }
 
+function toggleCategoriaOutra(){
+  const ehOutra=document.getElementById("banco-categoria").value==="outra";
+  document.getElementById("banco-categoria-outra").style.display=ehOutra?"block":"none";
+}
+
 function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
+  document.getElementById("banco-categoria").value="";
+  document.getElementById("banco-categoria-outra").value="";
+  document.getElementById("banco-categoria-outra").style.display="none";
   document.getElementById("banco-preco").value="";
   document.getElementById("banco-comissao").value="";
   document.getElementById("banco-valor-comissao").value="";
@@ -1485,6 +1515,8 @@ function adicionarProdutoBanco(){
   const nome=document.getElementById("banco-nome").value.trim();
   const link=document.getElementById("banco-link").value.trim();
   const loja=document.getElementById("banco-loja").value;
+  const categoria=document.getElementById("banco-categoria").value;
+  const categoriaOutra=categoria==="outra"?document.getElementById("banco-categoria-outra").value.trim():undefined;
   const preco=parsePrecoBR(document.getElementById("banco-preco").value);
   const comissaoValor=document.getElementById("banco-comissao").value;
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
@@ -1495,11 +1527,11 @@ function adicionarProdutoBanco(){
   if(bancoEditandoId!==null){
     const item=lista.find(p=>p.id===bancoEditandoId);
     if(item){
-      item.nome=nome;item.link=link;item.loja=loja;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;
+      item.nome=nome;item.link=link;item.loja=loja;item.categoria=categoria||undefined;item.categoriaOutra=categoriaOutra;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;
       if(bancoFotoAtual)item.foto=bancoFotoAtual;
     }
   }else{
-    lista.unshift({id:Date.now(),nome,link,loja,preco,comissao,valorComissao,foto:bancoFotoAtual||undefined});
+    lista.unshift({id:Date.now(),nome,link,loja,categoria:categoria||undefined,categoriaOutra,preco,comissao,valorComissao,foto:bancoFotoAtual||undefined});
   }
   salvarBanco(lista);
   limparFormBanco();
@@ -1513,6 +1545,9 @@ function editarProdutoBanco(id){
   document.getElementById("banco-nome").value=item.nome||"";
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
+  document.getElementById("banco-categoria").value=item.categoria||"";
+  document.getElementById("banco-categoria-outra").value=item.categoriaOutra||"";
+  toggleCategoriaOutra();
   document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBR(item.preco):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
   document.getElementById("banco-valor-comissao").value=item.valorComissao??"";
@@ -1560,13 +1595,53 @@ function formatarPrecoBR(n){
   return n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 
+function rotuloCategoriaBanco(p){
+  if(!p.categoria)return "";
+  if(p.categoria==="outra")return p.categoriaOutra||"";
+  return CATEGORIAS_BANCO[p.categoria]||"";
+}
+
+function produtoPassaFiltroPreco(p){
+  if(!filtroPrecoAtual)return true;
+  if(p.preco===undefined||p.preco===null)return false;
+  if(filtroPrecoAtual==="ate20")return p.preco<20;
+  if(filtroPrecoAtual==="20-50")return p.preco>=20&&p.preco<=50;
+  if(filtroPrecoAtual==="acima50")return p.preco>50;
+  return true;
+}
+
+function filtrarCategoriaBanco(chave){
+  filtroCategoriaAtual=chave;
+  renderizarBanco();
+}
+
+function filtrarPrecoBanco(chave){
+  filtroPrecoAtual=chave;
+  renderizarBanco();
+}
+
+function renderizarFiltrosBanco(){
+  const catHtml=`<button type="button" class="destino-chip${filtroCategoriaAtual===null?' destino-chip-ativo':''}" onclick="filtrarCategoriaBanco(null)">Todas</button>`
+    +Object.keys(CATEGORIAS_BANCO).map(chave=>`<button type="button" class="destino-chip${filtroCategoriaAtual===chave?' destino-chip-ativo':''}" onclick="filtrarCategoriaBanco('${chave}')">${CATEGORIAS_BANCO[chave]}</button>`).join("");
+  document.getElementById("banco-filtros-categoria").innerHTML=catHtml;
+  const precoHtml=`<button type="button" class="destino-chip${filtroPrecoAtual===null?' destino-chip-ativo':''}" onclick="filtrarPrecoBanco(null)">Todos</button>`
+    +Object.keys(FAIXAS_PRECO_BANCO).map(chave=>`<button type="button" class="destino-chip${filtroPrecoAtual===chave?' destino-chip-ativo':''}" onclick="filtrarPrecoBanco('${chave}')">${FAIXAS_PRECO_BANCO[chave]}</button>`).join("");
+  document.getElementById("banco-filtros-preco").innerHTML=precoHtml;
+}
+
 function renderizarBanco(){
-  const lista=carregarBanco();
+  const listaCompleta=carregarBanco();
   const cont=document.getElementById("lista-banco");
-  document.getElementById("banco-contador").textContent="("+lista.length+")";
+  document.getElementById("banco-contador").textContent="("+listaCompleta.length+")";
   atualizarContadorLojasBanco();
-  if(lista.length===0){
+  renderizarFiltrosBanco();
+  const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||p.categoria===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
+  if(listaCompleta.length===0){
     cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
+    return;
+  }
+  if(lista.length===0){
+    cont.innerHTML='<div class="banco-vazio">Nenhum produto encontrado com esse filtro.</div>';
     return;
   }
   cont.innerHTML=lista.map(p=>`
@@ -1575,6 +1650,7 @@ function renderizarBanco(){
       <div class="item-produto-info">
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
+        ${rotuloCategoriaBanco(p)?`<span class="item-produto-categoria">${escaparBanco(rotuloCategoriaBanco(p))}</span>`:""}
         ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ R$ ${formatarPrecoBR(p.preco)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">R$ ${p.valorComissao.toFixed(2)}</span>`:""}
