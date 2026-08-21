@@ -1,6 +1,6 @@
 {
-  "name": "Agenda de Achadinhos",
-  "short_name": "Achadinhos",
+  "name": "Painel do Afiliado",
+  "short_name": "Painel",
   "description": "Organizador de postagens para afiliadas.",
   "start_url": "./index.html",
   "scope": "./",

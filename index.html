@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#e83e8c" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />
-  <meta name="apple-mobile-web-app-title" content="Achadinhos" />
+  <meta name="apple-mobile-web-app-title" content="Painel" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="manifest" href="manifest.json" />
-  <title>Agenda de Achadinhos</title>
+  <title>Painel do Afiliado</title>
   <style>
     :root{
       --bg:#fff1f6;
@@ -247,7 +247,7 @@
   <section class="hero">
     <img src="icon-192.png" alt="Ícone do aplicativo">
     <div>
-      <h1>Agenda de Achadinhos</h1>
+      <h1>Painel do Afiliado</h1>
       <p>Seu plano de postagem da semana</p>
     </div>
   </section>
@@ -471,7 +471,7 @@ function importarBackupArquivo(input){
     }
     const chaves=Object.keys(dados).filter(k=>k.startsWith("agenda-achadinhos-"));
     if(chaves.length===0){
-      alert("Esse arquivo não tem nenhum dado do Agenda de Achadinhos.");
+      alert("Esse arquivo não tem nenhum dado do Painel do Afiliado.");
       input.value="";
       return;
     }
