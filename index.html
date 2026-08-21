@@ -154,6 +154,7 @@
     .banco-em-alta-badge{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;min-width:20px;text-align:center}
     .banco-em-alta-badge.zero{background:#fee2e2;color:#991b1b}
     .banco-em-alta-badge.tem{background:#dcfce7;color:#166534}
+    .banco-em-alta-badge.info{background:#dbeafe;color:#1d4ed8}
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -421,6 +422,12 @@
       <span class="seta">▼</span>
     </button>
     <ul class="banco-em-alta-lista" id="banco-em-alta-lista"></ul>
+
+    <button type="button" class="banco-em-alta-toggle" id="banco-comissao-ml-toggle" onclick="toggleComissaoML()">
+      <span>💰 Comissões do Mercado Livre</span>
+      <span class="seta">▼</span>
+    </button>
+    <ul class="banco-em-alta-lista" id="banco-comissao-ml-lista"></ul>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div class="banco-filtros" id="banco-filtros-categoria"></div>
@@ -1685,6 +1692,25 @@ function renderizarEmAlta(){
   }).join("");
 }
 
+const COMISSOES_MERCADO_LIVRE=[
+  {grupo:"Beleza, Calçados, Roupas e Esportes",direta:"16%",indireta:"8%"},
+  {grupo:"Casa, Brinquedos, Ferramentas e outras",direta:"12%",indireta:"6%"},
+  {grupo:"Eletrônicos, Celulares e Informática",direta:"5%",indireta:"2,5%"},
+  {grupo:"Alimentos e Bebidas",direta:"0%",indireta:"0%"}
+];
+let comissaoMLAberto=false;
+function toggleComissaoML(){
+  comissaoMLAberto=!comissaoMLAberto;
+  document.getElementById("banco-comissao-ml-toggle").classList.toggle("aberto",comissaoMLAberto);
+  document.getElementById("banco-comissao-ml-lista").classList.toggle("visivel",comissaoMLAberto);
+}
+function renderizarComissoesML(){
+  const ul=document.getElementById("banco-comissao-ml-lista");
+  const linhas=COMISSOES_MERCADO_LIVRE.map(c=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(c.grupo)}</span><span class="banco-em-alta-badge info">${c.direta} / ${c.indireta}</span></li>`).join("");
+  const rodape=`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Direta / indireta acima. Cupom personalizado: Roupas/Calçados/Esportes 5% · Demais categorias 3%. Pagamento liberado após confirmação de Transação Válida.</li>`;
+  ul.innerHTML=linhas+rodape;
+}
+
 function ordenarBanco(chave){
   if(chave==="preco"&&ordenacaoAtual==="preco"){precoOrdemAsc=!precoOrdemAsc;}
   else{ordenacaoAtual=chave;precoOrdemAsc=true;}
@@ -1767,6 +1793,7 @@ function renderizarBanco(){
   renderizarFiltrosBanco();
   renderizarOrdenacaoBanco();
   renderizarEmAlta();
+  renderizarComissoesML();
   popularDatalistCategorias();
   const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
   if(listaCompleta.length===0){
