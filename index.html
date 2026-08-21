@@ -143,6 +143,17 @@
     .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
     .banco-grupo-header{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;padding:10px 4px 4px;display:flex;align-items:center;gap:8px}
     .banco-grupo-header::before,.banco-grupo-header::after{content:"";flex:1;height:1px;background:var(--line)}
+    .banco-em-alta-toggle{width:100%;background:linear-gradient(135deg,#fff7ed,#fef3c7);border:1px solid #fdba74;border-radius:12px;padding:10px 14px;font-size:13px;font-weight:700;color:#c2410c;cursor:pointer;display:flex;align-items:center;justify-content:space-between;margin:0 0 10px}
+    .banco-em-alta-toggle .seta{transition:transform .2s}
+    .banco-em-alta-toggle.aberto .seta{transform:rotate(180deg)}
+    .banco-em-alta-lista{display:none;margin:0 0 14px;padding:0;list-style:none}
+    .banco-em-alta-lista.visivel{display:block}
+    .banco-em-alta-item{display:flex;align-items:center;justify-content:space-between;padding:8px 10px;border-bottom:1px solid var(--line);font-size:13px}
+    .banco-em-alta-item:last-child{border-bottom:none}
+    .banco-em-alta-nome{flex:1}
+    .banco-em-alta-badge{font-size:11px;font-weight:700;border-radius:999px;padding:2px 8px;min-width:20px;text-align:center}
+    .banco-em-alta-badge.zero{background:#fee2e2;color:#991b1b}
+    .banco-em-alta-badge.tem{background:#dcfce7;color:#166534}
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -404,6 +415,12 @@
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
+
+    <button type="button" class="banco-em-alta-toggle" id="banco-em-alta-toggle" onclick="toggleEmAlta()">
+      <span>🔥 Categorias em Alta — O que cadastrar</span>
+      <span class="seta">▼</span>
+    </button>
+    <ul class="banco-em-alta-lista" id="banco-em-alta-lista"></ul>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div class="banco-filtros" id="banco-filtros-categoria"></div>
@@ -1650,6 +1667,24 @@ function renderizarOrdenacaoBanco(){
   document.getElementById("banco-ordenacao").innerHTML=html;
 }
 
+let emAltaAberto=false;
+function toggleEmAlta(){
+  emAltaAberto=!emAltaAberto;
+  document.getElementById("banco-em-alta-toggle").classList.toggle("aberto",emAltaAberto);
+  document.getElementById("banco-em-alta-lista").classList.toggle("visivel",emAltaAberto);
+}
+function renderizarEmAlta(){
+  const produtos=carregarBanco();
+  const contagem={};
+  produtos.forEach(p=>{const r=rotuloCategoriaBanco(p);if(r&&CATEGORIAS_EM_ALTA.has(r)){contagem[r]=(contagem[r]||0)+1;}});
+  const cats=[...CATEGORIAS_EM_ALTA].sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase(),"pt-BR"));
+  const ul=document.getElementById("banco-em-alta-lista");
+  ul.innerHTML=cats.map(c=>{
+    const n=contagem[c]||0;
+    return `<li class="banco-em-alta-item"><span class="banco-em-alta-nome">🔥 ${escaparBanco(c)}</span><span class="banco-em-alta-badge ${n>0?"tem":"zero"}">${n>0?n+" ✔":"0"}</span></li>`;
+  }).join("");
+}
+
 function ordenarBanco(chave){
   if(chave==="preco"&&ordenacaoAtual==="preco"){precoOrdemAsc=!precoOrdemAsc;}
   else{ordenacaoAtual=chave;precoOrdemAsc=true;}
@@ -1731,6 +1766,7 @@ function renderizarBanco(){
   atualizarContadorLojasBanco();
   renderizarFiltrosBanco();
   renderizarOrdenacaoBanco();
+  renderizarEmAlta();
   popularDatalistCategorias();
   const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
   if(listaCompleta.length===0){
