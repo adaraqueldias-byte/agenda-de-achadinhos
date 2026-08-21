@@ -139,6 +139,10 @@
     .destino-chip-publicado{background:#dcfce7;color:#166534;border-color:#4ade80}
     .destino-chip-ativo{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
     .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
+    .banco-ordenacao{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
+    .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
+    .banco-grupo-header{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;padding:10px 4px 4px;display:flex;align-items:center;gap:8px}
+    .banco-grupo-header::before,.banco-grupo-header::after{content:"";flex:1;height:1px;background:var(--line)}
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -412,6 +416,7 @@
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div class="banco-filtros" id="banco-filtros-categoria"></div>
     <div class="banco-filtros" id="banco-filtros-preco"></div>
+    <div class="banco-ordenacao" id="banco-ordenacao"></div>
     <div id="lista-banco"></div>
   </div>
 </div>
@@ -1446,6 +1451,8 @@ let bancoFotoAtual="";
 let bancoEditandoId=null;
 let filtroCategoriaAtual=null;
 let filtroPrecoAtual=null;
+let ordenacaoAtual="recentes";
+let precoOrdemAsc=true;
 
 function atualizarContadorLojasBanco(){
   const lista=carregarBanco();
@@ -1629,23 +1636,72 @@ function renderizarFiltrosBanco(){
   document.getElementById("banco-filtros-preco").innerHTML=precoHtml;
 }
 
-function renderizarBanco(){
-  const listaCompleta=carregarBanco();
-  const cont=document.getElementById("lista-banco");
-  document.getElementById("banco-contador").textContent="("+listaCompleta.length+")";
-  atualizarContadorLojasBanco();
-  renderizarFiltrosBanco();
-  const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||p.categoria===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
-  if(listaCompleta.length===0){
-    cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
-    return;
+function renderizarOrdenacaoBanco(){
+  const opcoes=[{chave:"recentes",rotulo:"Recentes"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"categoria",rotulo:"Categoria"},{chave:"preco",rotulo:"Preço"},{chave:"nome",rotulo:"Nome"}];
+  const html='<span class="banco-ordenacao-label">Ordenar por:</span>'
+    +opcoes.map(o=>{
+      const ativo=ordenacaoAtual===o.chave;
+      let rotulo=o.rotulo;
+      if(o.chave==="preco"&&ativo)rotulo+=precoOrdemAsc?" ↑":" ↓";
+      return `<button type="button" class="destino-chip${ativo?' destino-chip-ativo':''}" onclick="ordenarBanco('${o.chave}')">${rotulo}</button>`;
+    }).join("");
+  document.getElementById("banco-ordenacao").innerHTML=html;
+}
+
+function ordenarBanco(chave){
+  if(chave==="preco"&&ordenacaoAtual==="preco"){precoOrdemAsc=!precoOrdemAsc;}
+  else{ordenacaoAtual=chave;precoOrdemAsc=true;}
+  renderizarBanco();
+}
+
+function aplicarOrdenacao(lista){
+  if(ordenacaoAtual==="recentes")return{itens:lista,grupos:null};
+  if(ordenacaoAtual==="nome"){
+    const sorted=[...lista].sort((a,b)=>(a.nome||"").toLowerCase().localeCompare((b.nome||"").toLowerCase(),"pt-BR"));
+    return{itens:sorted,grupos:null};
   }
-  if(lista.length===0){
-    cont.innerHTML='<div class="banco-vazio">Nenhum produto encontrado com esse filtro.</div>';
-    return;
+  if(ordenacaoAtual==="preco"){
+    const sorted=[...lista].sort((a,b)=>{
+      const ha=a.preco!==undefined&&a.preco!==null;
+      const hb=b.preco!==undefined&&b.preco!==null;
+      if(!ha&&!hb)return 0;
+      if(!ha)return 1;
+      if(!hb)return -1;
+      return precoOrdemAsc?a.preco-b.preco:b.preco-a.preco;
+    });
+    return{itens:sorted,grupos:null};
   }
-  cont.innerHTML=lista.map(p=>`
-    <div class="item-produto${p.publicado?' publicado':''}">
+  if(ordenacaoAtual==="plataforma"){
+    const ordemLojas=Object.keys(LOJAS_BANCO);
+    const sorted=[...lista].sort((a,b)=>{
+      const ia=a.loja?ordemLojas.indexOf(a.loja):-1;
+      const ib=b.loja?ordemLojas.indexOf(b.loja):-1;
+      const fa=ia===-1?9999:ia;
+      const fb=ib===-1?9999:ib;
+      return fa-fb;
+    });
+    const grupos=[];let ultimaLoja=null;
+    sorted.forEach((p,i)=>{const loja=p.loja||"__sem__";if(loja!==ultimaLoja){grupos.push({indice:i,rotulo:p.loja&&LOJAS_BANCO[p.loja]?LOJAS_BANCO[p.loja]:"Sem plataforma"});ultimaLoja=loja;}});
+    return{itens:sorted,grupos};
+  }
+  if(ordenacaoAtual==="categoria"){
+    const ordemCat=Object.keys(CATEGORIAS_BANCO);
+    const sorted=[...lista].sort((a,b)=>{
+      const ia=a.categoria?ordemCat.indexOf(a.categoria):-1;
+      const ib=b.categoria?ordemCat.indexOf(b.categoria):-1;
+      const fa=ia===-1?9999:ia;
+      const fb=ib===-1?9999:ib;
+      return fa-fb;
+    });
+    const grupos=[];let ultimaCat=null;
+    sorted.forEach((p,i)=>{const cat=p.categoria||"__sem__";if(cat!==ultimaCat){grupos.push({indice:i,rotulo:rotuloCategoriaBanco(p)||"Sem categoria"});ultimaCat=cat;}});
+    return{itens:sorted,grupos};
+  }
+  return{itens:lista,grupos:null};
+}
+
+function cardProdutoBanco(p){
+  return `<div class="item-produto${p.publicado?' publicado':''}">
       ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
       <div class="item-produto-info">
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
@@ -1663,8 +1719,32 @@ function renderizarBanco(){
         <button class="item-produto-icone item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
         <button class="item-produto-icone item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
       </div>
-    </div>
-  `).join("");
+    </div>`;
+}
+
+function renderizarBanco(){
+  const listaCompleta=carregarBanco();
+  const cont=document.getElementById("lista-banco");
+  document.getElementById("banco-contador").textContent="("+listaCompleta.length+")";
+  atualizarContadorLojasBanco();
+  renderizarFiltrosBanco();
+  renderizarOrdenacaoBanco();
+  const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||p.categoria===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
+  if(listaCompleta.length===0){
+    cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
+    return;
+  }
+  if(lista.length===0){
+    cont.innerHTML='<div class="banco-vazio">Nenhum produto encontrado com esse filtro.</div>';
+    return;
+  }
+  const{itens,grupos}=aplicarOrdenacao(lista);
+  let html="";
+  itens.forEach((p,i)=>{
+    if(grupos){const g=grupos.find(g=>g.indice===i);if(g)html+=`<div class="banco-grupo-header">${escaparBanco(g.rotulo)}</div>`;}
+    html+=cardProdutoBanco(p);
+  });
+  cont.innerHTML=html;
 }
 
 async function copiarNomeBanco(id){
