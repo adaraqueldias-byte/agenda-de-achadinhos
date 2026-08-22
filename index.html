@@ -155,6 +155,13 @@
     .banco-em-alta-badge.zero{background:#fee2e2;color:#991b1b}
     .banco-em-alta-badge.tem{background:#dcfce7;color:#166534}
     .banco-em-alta-badge.info{background:#dbeafe;color:#1d4ed8}
+    .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
+    .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
+    .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
+    .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
+    .relatorio-historico-item:hover,.relatorio-historico-item.ativo{border-color:var(--accent)}
+    .relatorio-historico-data{font-size:13px;font-weight:800;color:var(--accent-dark)}
+    .relatorio-historico-resumo{font-size:12px;color:var(--muted);margin-top:3px;white-space:pre-line}
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -262,6 +269,7 @@
   <div class="abas">
     <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">Semana</div>
     <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
+    <div class="aba" id="aba-relatorio" onclick="mostrarView('relatorio')">📋 Relatório</div>
   </div>
 
   <div class="backup-linha">
@@ -434,6 +442,29 @@
     <div class="banco-filtros" id="banco-filtros-preco"></div>
     <div class="banco-ordenacao" id="banco-ordenacao"></div>
     <div id="lista-banco"></div>
+  </div>
+
+  <div id="view-relatorio" style="display:none">
+    <section class="card">
+      <div class="field">
+        <label>Data do relatório</label>
+        <input id="relatorio-data" type="date" onchange="mudarDataRelatorio()">
+      </div>
+    </section>
+    <section class="card">
+      <div class="semana-titulo" style="margin:0 0 10px">Posts feitos no dia</div>
+      <div id="relatorio-posts-lista"></div>
+      <div class="field" style="margin-top:10px">
+        <input id="relatorio-post-novo" type="text" placeholder="Ex.: Reels Shopee - fone bluetooth" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
+      </div>
+      <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
+    </section>
+    <section class="card">
+      <div class="semana-titulo" style="margin:0 0 10px">Anotações do dia</div>
+      <textarea id="relatorio-notas" rows="4" placeholder="Como foi o dia? O que funcionou, ideias, observações..." oninput="salvarRelatorioAtual()"></textarea>
+    </section>
+    <div class="semana-titulo" style="margin:4px 0 8px 4px">Histórico de relatórios</div>
+    <div id="relatorio-historico"></div>
   </div>
 </div>
 
@@ -1490,9 +1521,91 @@ function atualizarContadorLojasBanco(){
 function mostrarView(nome){
   document.getElementById("view-semana").style.display=nome==="semana"?"block":"none";
   document.getElementById("view-banco").style.display=nome==="banco"?"block":"none";
+  document.getElementById("view-relatorio").style.display=nome==="relatorio"?"block":"none";
   document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
   document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
+  document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
   if(nome==="banco")renderizarBanco();
+  if(nome==="relatorio")renderizarRelatorio();
+}
+
+function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
+function salvarRelatorios(dados){localStorage.setItem("agenda-achadinhos-relatorios",JSON.stringify(dados))}
+function relatorioDataAtual(){return document.getElementById("relatorio-data").value}
+function relatorioDoDia(data){const todos=carregarRelatorios();return todos[data]||{posts:[],notas:""}}
+
+function inicializarRelatorio(){
+  const input=document.getElementById("relatorio-data");
+  if(!input.value){
+    const hoje=new Date();
+    input.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+  }
+}
+
+function mudarDataRelatorio(){renderizarRelatorio()}
+
+function renderizarRelatorio(){
+  inicializarRelatorio();
+  const data=relatorioDataAtual();
+  const r=relatorioDoDia(data);
+  const lista=document.getElementById("relatorio-posts-lista");
+  lista.innerHTML=r.posts.length===0
+    ?'<div class="relatorio-vazio">Nenhum post registrado ainda hoje.</div>'
+    :r.posts.map((texto,i)=>`<div class="relatorio-post-item"><span>${escaparBanco(texto)}</span><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`).join("");
+  document.getElementById("relatorio-notas").value=r.notas||"";
+  renderizarHistoricoRelatorios();
+}
+
+function adicionarPostRelatorio(){
+  const input=document.getElementById("relatorio-post-novo");
+  const texto=input.value.trim();
+  if(!texto)return;
+  const data=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  if(!todos[data])todos[data]={posts:[],notas:""};
+  todos[data].posts.push(texto);
+  salvarRelatorios(todos);
+  input.value="";
+  renderizarRelatorio();
+}
+
+function removerPostRelatorio(indice){
+  const data=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  if(!todos[data])return;
+  todos[data].posts.splice(indice,1);
+  salvarRelatorios(todos);
+  renderizarRelatorio();
+}
+
+function salvarRelatorioAtual(){
+  const data=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  if(!todos[data])todos[data]={posts:[],notas:""};
+  todos[data].notas=document.getElementById("relatorio-notas").value;
+  salvarRelatorios(todos);
+}
+
+function abrirRelatorioData(data){
+  document.getElementById("relatorio-data").value=data;
+  renderizarRelatorio();
+}
+
+function renderizarHistoricoRelatorios(){
+  const todos=carregarRelatorios();
+  const dataAtual=relatorioDataAtual();
+  const datas=Object.keys(todos).filter(d=>(todos[d].posts&&todos[d].posts.length)||((todos[d].notas||"").trim())).sort((a,b)=>b.localeCompare(a));
+  const cont=document.getElementById("relatorio-historico");
+  if(datas.length===0){cont.innerHTML='<div class="relatorio-vazio">Nenhum relatório salvo ainda.</div>';return;}
+  cont.innerHTML=datas.map(d=>{
+    const r=todos[d];
+    const[ano,mes,dia]=d.split("-");
+    const dataFormatada=`${dia}/${mes}/${ano}`;
+    const resumoPosts=r.posts.length?`${r.posts.length} post${r.posts.length>1?"s":""}`:"";
+    const resumoNotas=(r.notas||"").trim();
+    const resumo=[resumoPosts,resumoNotas].filter(Boolean).join(" · ");
+    return `<button type="button" class="relatorio-historico-item${d===dataAtual?" ativo":""}" onclick="abrirRelatorioData('${d}')"><div class="relatorio-historico-data">${dataFormatada}</div>${resumo?`<div class="relatorio-historico-resumo">${escaparBanco(resumo)}</div>`:""}</button>`;
+  }).join("");
 }
 
 function onFotoBanco(input){
