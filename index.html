@@ -214,6 +214,10 @@
     .dia-titulo{color:var(--accent-dark)}
     .dia-progresso{font-size:12px;font-weight:700;color:var(--muted);background:var(--accent-soft);border-radius:999px;padding:3px 10px;white-space:nowrap}
     .dia-progresso.completo{background:#dcfce7;color:#166534}
+    .semana-progresso-geral{margin-top:10px}
+    .semana-progresso-texto{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
+    .semana-progresso-barra{height:9px;border-radius:999px;background:var(--accent-soft);overflow:hidden}
+    .semana-progresso-fill{height:100%;background:linear-gradient(135deg,var(--accent),#8b5cf6);border-radius:999px;transition:width .3s;width:0%}
     .dia-card>div{margin-top:6px}
 
     /* Lembretes finais */
@@ -305,6 +309,10 @@
       </div>
       <input type="hidden" id="date" value="">
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
+      <div class="semana-progresso-geral">
+        <div class="semana-progresso-texto" id="semana-progresso-texto"></div>
+        <div class="semana-progresso-barra"><div class="semana-progresso-fill" id="semana-progresso-fill"></div></div>
+      </div>
     </section>
 
     <section class="card">
@@ -822,6 +830,8 @@ const SLOTS_POR_GRUPO={
   sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao"],
   domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","gd_extra_domingo","dashein_enquete"]
 };
+const SLOT_ID_PARA_DIA={};
+Object.entries(SLOTS_POR_GRUPO).forEach(([dia,ids])=>{ids.forEach(id=>SLOT_ID_PARA_DIA[id]=dia)});
 
 function segundaFeiraDeHoje(){
   const d=new Date();
@@ -876,13 +886,18 @@ function progressoDia(chaveDia){
 }
 
 function atualizarProgressoDias(){
+  let totalSemana=0,feitosSemana=0;
   ["segunda","terca","quarta","quinta","sexta","sabado","domingo"].forEach(dia=>{
+    const{feitos,total}=progressoDia(dia);
+    totalSemana+=total;feitosSemana+=feitos;
     const el=document.getElementById("progresso-"+dia);
     if(!el)return;
-    const{feitos,total}=progressoDia(dia);
     el.textContent=total?`${feitos}/${total}`:"";
     el.classList.toggle("completo",total>0&&feitos===total);
   });
+  const pct=totalSemana?Math.round(feitosSemana/totalSemana*100):0;
+  document.getElementById("semana-progresso-texto").textContent=totalSemana?`${feitosSemana} de ${totalSemana} posts feitos essa semana (${pct}%)`:"";
+  document.getElementById("semana-progresso-fill").style.width=pct+"%";
 }
 
 function abrirApenasDia(chaveDia){
@@ -1231,7 +1246,63 @@ function ciclarStatusDestino(slotId,destId){
   atualizarChipDestino(slotId,destId);
   salvarSemana();
   atualizarProgressoDias();
+  if(novoStatus==="publicado")registrarPostNoRelatorio(slotId,destId);
+  else removerPostAutoRelatorio(slotId,destId);
   if(novoStatus==="agendado")dataInput.focus();
+}
+
+function nomeProdutoDoSlot(slot){
+  if(slot.vitrine){
+    for(let n=1;n<=slot.vitrine.max;n++){
+      const el=document.getElementById(`vitrine-nome-${slot.id}-${n}`);
+      if(el&&el.value.trim())return el.value.trim();
+    }
+    return "";
+  }
+  const total=totalItensSlot(slot);
+  for(let i=0;i<total;i++){
+    const key=chaveItemSlot(slot,i);
+    const el=document.getElementById("produto-"+key);
+    if(el&&el.value.trim())return el.value.trim();
+  }
+  return "";
+}
+
+function dataDoSlotNaSemana(slotId){
+  const dia=SLOT_ID_PARA_DIA[slotId];
+  const offsets={segunda:0,terca:1,quarta:2,quinta:3,sexta:4,sabado:5,domingo:6};
+  if(!dia||!date.value)return date.value;
+  const d=isoParaData(date.value);
+  d.setDate(d.getDate()+(offsets[dia]||0));
+  return dataParaIso(d);
+}
+
+function registrarPostNoRelatorio(slotId,destId){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const conta=CONTAS[destId];
+  if(!slot||!conta)return;
+  const dataPost=dataDoSlotNaSemana(slotId);
+  const canal=`${conta.rede} - ${conta.nome}`;
+  const texto=nomeProdutoDoSlot(slot)||slot.conteudo||"Post";
+  const origem=`${slotId}-${destId}`;
+  const todos=carregarRelatorios();
+  if(!todos[dataPost])todos[dataPost]={posts:[],notas:""};
+  const jaExiste=todos[dataPost].posts.some(p=>typeof p==="object"&&p._origem===origem);
+  if(jaExiste)return;
+  todos[dataPost].posts.push({texto,canal,_origem:origem});
+  salvarRelatorios(todos);
+}
+
+function removerPostAutoRelatorio(slotId,destId){
+  const origem=`${slotId}-${destId}`;
+  const todos=carregarRelatorios();
+  let mudou=false;
+  Object.keys(todos).forEach(data=>{
+    const antes=todos[data].posts.length;
+    todos[data].posts=todos[data].posts.filter(p=>!(typeof p==="object"&&p._origem===origem));
+    if(todos[data].posts.length!==antes)mudou=true;
+  });
+  if(mudou)salvarRelatorios(todos);
 }
 
 function producaoTemplate(){
