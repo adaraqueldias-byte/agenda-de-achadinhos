@@ -212,6 +212,8 @@
 
     /* Dias da semana (acordeão) */
     .dia-titulo{color:var(--accent-dark)}
+    .dia-progresso{font-size:12px;font-weight:700;color:var(--muted);background:var(--accent-soft);border-radius:999px;padding:3px 10px;white-space:nowrap}
+    .dia-progresso.completo{background:#dcfce7;color:#166534}
     .dia-card>div{margin-top:6px}
 
     /* Lembretes finais */
@@ -317,6 +319,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-segunda')">
         <span>Segunda-feira</span>
+        <span class="dia-progresso" id="progresso-segunda"></span>
         <span id="dia-segunda-seta">▸</span>
       </button>
       <div id="dia-segunda-corpo" style="display:none"><div id="slots-segunda"></div></div>
@@ -325,6 +328,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-terca')">
         <span>Terça-feira</span>
+        <span class="dia-progresso" id="progresso-terca"></span>
         <span id="dia-terca-seta">▸</span>
       </button>
       <div id="dia-terca-corpo" style="display:none"><div id="slots-terca"></div></div>
@@ -333,6 +337,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-quarta')">
         <span>Quarta-feira</span>
+        <span class="dia-progresso" id="progresso-quarta"></span>
         <span id="dia-quarta-seta">▸</span>
       </button>
       <div id="dia-quarta-corpo" style="display:none"><div id="slots-quarta"></div></div>
@@ -341,6 +346,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-quinta')">
         <span>Quinta-feira</span>
+        <span class="dia-progresso" id="progresso-quinta"></span>
         <span id="dia-quinta-seta">▸</span>
       </button>
       <div id="dia-quinta-corpo" style="display:none"><div id="slots-quinta"></div></div>
@@ -349,6 +355,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-sexta')">
         <span>Sexta-feira</span>
+        <span class="dia-progresso" id="progresso-sexta"></span>
         <span id="dia-sexta-seta">▸</span>
       </button>
       <div id="dia-sexta-corpo" style="display:none"><div id="slots-sexta"></div></div>
@@ -357,6 +364,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-sabado')">
         <span>Sábado</span>
+        <span class="dia-progresso" id="progresso-sabado"></span>
         <span id="dia-sabado-seta">▸</span>
       </button>
       <div id="dia-sabado-corpo" style="display:none"><div id="slots-sabado"></div></div>
@@ -365,6 +373,7 @@
     <section class="card dia-card">
       <button type="button" class="acordeon-titulo dia-titulo" onclick="toggleSecao('dia-domingo')">
         <span>Domingo</span>
+        <span class="dia-progresso" id="progresso-domingo"></span>
         <span id="dia-domingo-seta">▸</span>
       </button>
       <div id="dia-domingo-corpo" style="display:none"><div id="slots-domingo"></div></div>
@@ -851,6 +860,31 @@ function atualizarNavDia(){
   document.getElementById("semana-hoje-btn").classList.toggle("ativo",diaAtualISO===dataParaIso(new Date()));
 }
 
+function progressoDia(chaveDia){
+  const slotIds=SLOTS_POR_GRUPO[chaveDia]||[];
+  let total=0,feitos=0;
+  slotIds.forEach(slotId=>{
+    const slot=SLOTS.find(s=>s.id===slotId);
+    if(!slot)return;
+    slot.destinos.forEach(destId=>{
+      total++;
+      const el=document.getElementById(`status-destino-${slotId}-${destId}`);
+      if(el&&el.value==="publicado")feitos++;
+    });
+  });
+  return{feitos,total};
+}
+
+function atualizarProgressoDias(){
+  ["segunda","terca","quarta","quinta","sexta","sabado","domingo"].forEach(dia=>{
+    const el=document.getElementById("progresso-"+dia);
+    if(!el)return;
+    const{feitos,total}=progressoDia(dia);
+    el.textContent=total?`${feitos}/${total}`:"";
+    el.classList.toggle("completo",total>0&&feitos===total);
+  });
+}
+
 function abrirApenasDia(chaveDia){
   const dias=["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
   dias.forEach(k=>{
@@ -1196,6 +1230,7 @@ function ciclarStatusDestino(slotId,destId){
   input.value=novoStatus;
   atualizarChipDestino(slotId,destId);
   salvarSemana();
+  atualizarProgressoDias();
   if(novoStatus==="agendado")dataInput.focus();
 }
 
@@ -1514,6 +1549,7 @@ function carregarSemana(){
     document.getElementById("story-numero-"+id).textContent=(dados.stories&&dados.stories[id])||0;
   });
   globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
+  atualizarProgressoDias();
 }
 
 async function copiarLegenda(id){
