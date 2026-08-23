@@ -587,6 +587,8 @@ const CONTAS={
   grupo_vende:   {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Vende Barato"},
   grupo_shop:    {rede:"Grupo Facebook", icone:"👥", nome:"Grupo ShopOnline"},
   grupo_shein:   {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Shein"},
+  shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
+  tiktok_garimpo:{rede:"TikTok", icone:"🎵", nome:"garimpodia"},
 };
 const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
@@ -1722,6 +1724,11 @@ function renderizarContadorCanais(){
     .map(c=>linha(c.nome,chaveConta(c))).join("");
   const grupos=Object.values(CONTAS).filter(c=>c.rede==="Grupo Facebook")
     .map(c=>linha(c.nome,chaveConta(c))).join("");
+  const redesPrincipais=["Facebook","Instagram","Grupo Facebook"];
+  const outrasRedesContas=Object.values(CONTAS).filter(c=>!redesPrincipais.includes(c.rede));
+  const outrasRedes=outrasRedesContas.length
+    ?`<div class="relatorio-canal-grupo-titulo">🎥 Outras redes</div>${outrasRedesContas.map(c=>linha(`${c.rede}: ${c.nome}`,chaveConta(c))).join("")}`
+    :"";
   const nomesConhecidos=new Set(Object.values(CONTAS).map(chaveConta));
   const extras=Object.keys(contagem).filter(c=>!nomesConhecidos.has(c));
   const outros=extras.length
@@ -1734,6 +1741,7 @@ function renderizarContadorCanais(){
     </div>
     <div class="relatorio-canal-grupo-titulo">Grupos</div>
     ${grupos}
+    ${outrasRedes}
     ${outros}
   `;
 }
