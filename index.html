@@ -1560,6 +1560,7 @@ function mostrarView(nome){
   document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
   if(nome==="banco")renderizarBanco();
   if(nome==="relatorio")renderizarRelatorio();
+  if(nome==="semana"&&diaAtualISO)abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
 }
 
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
