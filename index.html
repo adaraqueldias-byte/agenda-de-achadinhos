@@ -122,7 +122,10 @@
     .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
     .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
     .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:7px;width:22px;height:22px;padding:0;font-size:11px;cursor:pointer;color:var(--muted)}
-    .slot-destinos{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+    .slot-destinos{display:flex;flex-wrap:wrap;gap:8px;flex:1}
+    .destino-grupo{display:flex;flex-direction:column;gap:4px}
+    .destino-agendamento{display:flex;gap:5px}
+    .destino-agendamento input{width:auto;padding:5px 6px;font-size:11px;border-radius:8px}
     .slot-destinos-linha{display:flex;align-items:center;gap:8px;margin-bottom:6px}
     .slot-toggle-seta{flex:none;width:32px;height:32px;border-radius:10px;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:14px;font-weight:800;cursor:pointer}
     .semana-nav{display:flex;align-items:center;justify-content:space-between;gap:10px}
@@ -998,7 +1001,7 @@ function slotTemplate(slot){
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>
     <div class="slot-destinos-linha">
-      <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><input type="hidden" id="horario-destino-${slot.id}-${destId}" value="">`}).join("")}</div>
+      <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("")}</div>
       <button type="button" class="slot-toggle-seta" id="slot-seta-${slot.id}" onclick="toggleSlotCorpo('${slot.id}')">▸</button>
     </div>
     <div id="slot-corpo-${slot.id}" style="display:none">
@@ -1162,32 +1165,38 @@ const PROXIMO_STATUS_DESTINO={nada:"agendado",agendado:"publicado",publicado:"na
 
 function atualizarChipDestino(slotId,destId){
   const status=document.getElementById(`status-destino-${slotId}-${destId}`).value||"nada";
+  const data=document.getElementById(`data-destino-${slotId}-${destId}`).value||"";
   const horario=document.getElementById(`horario-destino-${slotId}-${destId}`).value||"";
   document.getElementById(`status-icone-${slotId}-${destId}`).textContent=ICONES_STATUS_DESTINO[status];
   const horarioEl=document.getElementById(`status-horario-${slotId}-${destId}`);
-  const mostrarHorario=status!=="nada"&&horario;
-  horarioEl.textContent=mostrarHorario?horario:"";
-  horarioEl.style.display=mostrarHorario?"inline":"none";
+  const dataFormatada=data?data.split("-").slice(1).reverse().join("/"):"";
+  const resumo=[dataFormatada,horario].filter(Boolean).join(" ");
+  const mostrarResumo=status!=="nada"&&resumo;
+  horarioEl.textContent=mostrarResumo?resumo:"";
+  horarioEl.style.display=mostrarResumo?"inline":"none";
   const chip=document.getElementById(`chip-${slotId}-${destId}`);
   chip.classList.remove("destino-chip-agendado","destino-chip-publicado");
   if(status!=="nada")chip.classList.add(`destino-chip-${status}`);
+  document.getElementById(`agendamento-${slotId}-${destId}`).style.display=status==="agendado"?"flex":"none";
 }
 
 function ciclarStatusDestino(slotId,destId){
   const input=document.getElementById(`status-destino-${slotId}-${destId}`);
+  const dataInput=document.getElementById(`data-destino-${slotId}-${destId}`);
   const horarioInput=document.getElementById(`horario-destino-${slotId}-${destId}`);
   const novoStatus=PROXIMO_STATUS_DESTINO[input.value||"nada"];
-  if(novoStatus==="agendado"){
-    const horario=prompt("Que horário foi agendado esse post?",horarioInput.value||"");
-    if(horario===null)return;
-    horarioInput.value=horario.trim();
+  if(novoStatus==="agendado"&&!dataInput.value){
+    const hoje=new Date();
+    dataInput.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
   }
   if(novoStatus==="nada"){
+    dataInput.value="";
     horarioInput.value="";
   }
   input.value=novoStatus;
   atualizarChipDestino(slotId,destId);
   salvarSemana();
+  if(novoStatus==="agendado")dataInput.focus();
 }
 
 function producaoTemplate(){
@@ -1352,11 +1361,14 @@ function coletarDados(){
     }
     const destinosStatus={};
     const destinosHorario={};
+    const destinosData={};
     slot.destinos.forEach(destId=>{
       const el=document.getElementById(`status-destino-${slot.id}-${destId}`);
       destinosStatus[destId]=el?el.value:"nada";
       const elH=document.getElementById(`horario-destino-${slot.id}-${destId}`);
       destinosHorario[destId]=elH?elH.value:"";
+      const elD=document.getElementById(`data-destino-${slot.id}-${destId}`);
+      destinosData[destId]=elD?elD.value:"";
     });
     slots[slot.id]={
       itens,
@@ -1367,6 +1379,7 @@ function coletarDados(){
       legenda:document.getElementById("legenda-"+slot.id).value,
       destinosStatus,
       destinosHorario,
+      destinosData,
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined,
       horarioSlot:slot.horaPadrao!==undefined?document.getElementById("horario-slot-"+slot.id).value:undefined,
       instamagic:slot.instaMagicPadrao!==undefined?document.getElementById("instamagic-"+slot.id).checked:undefined,
@@ -1400,8 +1413,10 @@ function carregarSemana(){
     slot.destinos.forEach(destId=>{
       const status=(s.destinosStatus&&s.destinosStatus[destId])||"nada";
       const horario=(s.destinosHorario&&s.destinosHorario[destId])||"";
+      const dataAgendada=(s.destinosData&&s.destinosData[destId])||"";
       document.getElementById(`status-destino-${slot.id}-${destId}`).value=status;
       document.getElementById(`horario-destino-${slot.id}-${destId}`).value=horario;
+      document.getElementById(`data-destino-${slot.id}-${destId}`).value=dataAgendada;
       atualizarChipDestino(slot.id,destId);
     });
     if(!slot.vitrine){
