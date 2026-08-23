@@ -156,6 +156,8 @@
     .banco-em-alta-badge.tem{background:#dcfce7;color:#166534}
     .banco-em-alta-badge.info{background:#dbeafe;color:#1d4ed8}
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
+    .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
+    .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
     .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
@@ -455,7 +457,11 @@
       <div class="semana-titulo" style="margin:0 0 10px">Posts feitos no dia</div>
       <div id="relatorio-posts-lista"></div>
       <div class="field" style="margin-top:10px">
-        <input id="relatorio-post-novo" type="text" placeholder="Ex.: Reels Shopee - fone bluetooth" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
+        <input id="relatorio-post-novo" type="text" placeholder="Ex.: Reels Shopee - fone bluetooth" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('relatorio-canal-novo').focus();}">
+      </div>
+      <div class="field">
+        <input id="relatorio-canal-novo" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
+        <datalist id="datalist-relatorio-canal"></datalist>
       </div>
       <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
     </section>
@@ -1544,28 +1550,51 @@ function inicializarRelatorio(){
 
 function mudarDataRelatorio(){renderizarRelatorio()}
 
+function rotuloPostRelatorio(post){
+  return typeof post==="string"?{texto:post,canal:""}:{texto:post.texto||"",canal:post.canal||""};
+}
+
+function popularDatalistCanais(){
+  const contas=Object.values(CONTAS).map(c=>`${c.rede} - ${c.nome}`);
+  const todos=carregarRelatorios();
+  const extras=new Set();
+  Object.values(todos).forEach(r=>{
+    (r.posts||[]).forEach(p=>{const canal=rotuloPostRelatorio(p).canal;if(canal&&!contas.includes(canal))extras.add(canal);});
+  });
+  const opcoes=[...contas,...extras];
+  document.getElementById("datalist-relatorio-canal").innerHTML=opcoes.map(c=>`<option value="${escaparBanco(c)}"></option>`).join("");
+}
+
 function renderizarRelatorio(){
   inicializarRelatorio();
+  popularDatalistCanais();
   const data=relatorioDataAtual();
   const r=relatorioDoDia(data);
   const lista=document.getElementById("relatorio-posts-lista");
   lista.innerHTML=r.posts.length===0
     ?'<div class="relatorio-vazio">Nenhum post registrado ainda hoje.</div>'
-    :r.posts.map((texto,i)=>`<div class="relatorio-post-item"><span>${escaparBanco(texto)}</span><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`).join("");
+    :r.posts.map((post,i)=>{
+      const p=rotuloPostRelatorio(post);
+      return `<div class="relatorio-post-item"><div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span></div><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`;
+    }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
 }
 
 function adicionarPostRelatorio(){
   const input=document.getElementById("relatorio-post-novo");
+  const canalInput=document.getElementById("relatorio-canal-novo");
   const texto=input.value.trim();
   if(!texto)return;
+  const canal=canalInput.value.trim();
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
-  todos[data].posts.push(texto);
+  todos[data].posts.push({texto,canal});
   salvarRelatorios(todos);
   input.value="";
+  canalInput.value="";
+  input.focus();
   renderizarRelatorio();
 }
 
