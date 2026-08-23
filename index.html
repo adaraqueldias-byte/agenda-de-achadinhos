@@ -160,9 +160,11 @@
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
     .relatorio-canal-grupo-titulo{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin:10px 0 6px}
     .relatorio-canal-grupo-titulo:first-child{margin-top:0}
-    .relatorio-contador-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;font-size:13px;margin-bottom:4px}
-    .relatorio-contador-grid span{color:var(--muted);font-weight:600}
-    .relatorio-contador-grid strong{color:var(--accent-dark);font-weight:800}
+    .relatorio-contador-cols{display:flex;gap:16px}
+    .relatorio-contador-cols>div{flex:1;min-width:0}
+    .relatorio-contador-linha{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
+    .relatorio-contador-linha span{color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .relatorio-contador-linha strong{color:var(--accent-dark);font-weight:800;flex:none}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
     .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
@@ -558,6 +560,7 @@ const PASSOS=[
 const CONTAS={
   face_garimpo:  {rede:"Facebook",  icone:"📘", nome:"Página Garimpo do Dia"},
   face_dashein:  {rede:"Facebook",  icone:"📘", nome:"Página Dashein"},
+  face_cleverfinds: {rede:"Facebook", icone:"📘", nome:"CleverFinds"},
   insta_garimpo: {rede:"Instagram", icone:"📸", nome:"garimpodia"},
   insta_dashein: {rede:"Instagram", icone:"📸", nome:"DaShein"},
   grupo_garimpo: {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Garimpo"},
@@ -1588,21 +1591,28 @@ function contarCanaisRelatorio(){
 
 function renderizarContadorCanais(){
   const contagem=contarCanaisRelatorio();
-  const grupos={"📘 Páginas Facebook":[],"📸 Instagram":[],"👥 Grupos Facebook":[]};
-  const nomesConhecidos=new Set();
-  Object.values(CONTAS).forEach(c=>{
-    const chave=`${c.rede} - ${c.nome}`;
-    nomesConhecidos.add(chave);
-    const titulo=c.rede==="Facebook"?"📘 Páginas Facebook":c.rede==="Instagram"?"📸 Instagram":"👥 Grupos Facebook";
-    grupos[titulo].push({nome:c.nome,total:contagem[chave]||0});
-  });
+  const linha=(nome,chave)=>`<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><strong>${contagem[chave]||0}</strong></div>`;
+  const chaveConta=c=>`${c.rede} - ${c.nome}`;
+  const paginas=Object.values(CONTAS).filter(c=>c.rede==="Facebook")
+    .map(c=>linha(c.nome.replace(/^Página\s*/,""),chaveConta(c))).join("");
+  const instagram=Object.values(CONTAS).filter(c=>c.rede==="Instagram")
+    .map(c=>linha(c.nome,chaveConta(c))).join("");
+  const grupos=Object.values(CONTAS).filter(c=>c.rede==="Grupo Facebook")
+    .map(c=>linha(c.nome,chaveConta(c))).join("");
+  const nomesConhecidos=new Set(Object.values(CONTAS).map(chaveConta));
   const extras=Object.keys(contagem).filter(c=>!nomesConhecidos.has(c));
-  if(extras.length)grupos["🌐 Outros canais"]=extras.map(nome=>({nome,total:contagem[nome]}));
-  const cont=document.getElementById("relatorio-contador-canais");
-  cont.innerHTML=Object.entries(grupos).filter(([,itens])=>itens.length).map(([titulo,itens])=>
-    `<div class="relatorio-canal-grupo-titulo">${titulo}</div>`+
-    `<div class="relatorio-contador-grid">${itens.map(it=>`<span>${escaparBanco(it.nome)} <strong>${it.total}</strong></span>`).join("")}</div>`
-  ).join("");
+  const outros=extras.length
+    ?`<div class="relatorio-canal-grupo-titulo">🌐 Outros canais</div>${extras.map(nome=>linha(nome,nome)).join("")}`
+    :"";
+  document.getElementById("relatorio-contador-canais").innerHTML=`
+    <div class="relatorio-contador-cols">
+      <div><div class="relatorio-canal-grupo-titulo">Facebook (página)</div>${paginas}</div>
+      <div><div class="relatorio-canal-grupo-titulo">Instagram</div>${instagram}</div>
+    </div>
+    <div class="relatorio-canal-grupo-titulo">Grupos</div>
+    ${grupos}
+    ${outros}
+  `;
 }
 
 function renderizarRelatorio(){
