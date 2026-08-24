@@ -1104,6 +1104,7 @@ function slotTemplate(slot){
       <button class="secondary" onclick="colarLegenda('${slot.id}')">📋 Colar legenda</button>
       <button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button>
     </div>
+    <button type="button" class="danger" style="width:100%;margin-top:6px" onclick="limparLegenda('${slot.id}')">🗑️ Limpar legenda</button>
     <div id="status-${slot.id}" class="status"></div>
     ${slot.checklist?`
     <div class="checklist-postagem">
@@ -1669,9 +1670,9 @@ function carregarSemana(){
       const modoSalvo=(s.modo&&slot.alterna[s.modo])?s.modo:Object.keys(slot.alterna)[0];
       document.getElementById("modo-"+slot.id).value=modoSalvo;
       aplicarModoVisual(slot.id,modoSalvo);
-      document.getElementById("legenda-"+slot.id).value=s.legenda||slot.alterna[modoSalvo].modelo;
+      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.alterna[modoSalvo].modelo;
     }else{
-      document.getElementById("legenda-"+slot.id).value=s.legenda||slot.modelo;
+      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.modelo;
     }
     if(slot.horaPadrao!==undefined){
       document.getElementById("horario-slot-"+slot.id).value=s.horarioSlot||slot.horaPadrao;
@@ -1713,6 +1714,12 @@ async function colarLegenda(id){
   }catch{
     alert("Não foi possível colar automaticamente. Cole manualmente no campo (toque e segure → Colar).");
   }
+}
+
+function limparLegenda(id){
+  if(!confirm("Apagar o texto dessa legenda?"))return;
+  document.getElementById("legenda-"+id).value="";
+  salvarSemana();
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
