@@ -986,7 +986,6 @@ function itemProdutoSlotTemplate(slot,i,total){
         <input type="hidden" id="foto-valor-${key}">
       </div>
       <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
-      <div class="field"><label>Comissão (%)</label><input id="comissao-${key}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
       ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
       <button type="button" class="success" style="width:100%;margin-top:4px" onclick="salvarItemSlot('${key}')">✓ Salvar produto</button>
     </div>
@@ -1000,12 +999,10 @@ function itemDisplayHTML(key){
   const linkEl=document.getElementById("link-"+key);
   const link=linkEl?linkEl.value:"";
   const foto=document.getElementById("foto-valor-"+key).value;
-  const comissaoTexto=document.getElementById("comissao-"+key).value;
   return `
     ${foto?`<img class="item-produto-foto" src="${foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
     <div class="item-produto-info">
       ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
-      ${comissaoTexto?`<span class="item-produto-comissao ${parseFloat(comissaoTexto)<10?"baixa":""}">${comissaoTexto}% comissão</span>`:""}
       <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
     </div>
     <div class="item-produto-acoes">
@@ -1039,7 +1036,6 @@ function limparItemSlot(key){
   document.getElementById("produto-"+key).value="";
   const linkEl=document.getElementById("link-"+key);
   if(linkEl)linkEl.value="";
-  document.getElementById("comissao-"+key).value="";
   removerFotoSilencioso(key);
   mostrarItemEdicao(key);
   salvarSemana();
@@ -1163,7 +1159,6 @@ function vitrineTemplate(slot){
     return `<div class="produto-vitrine" id="produto-vitrine-${slot.id}-${n}" style="display:${n<=min?"block":"none"}">
       <div class="item-slot-titulo">Produto ${n}</div>
       <div class="field"><label>Nome do produto</label><input id="vitrine-nome-${slot.id}-${n}" placeholder="Ex.: Vestido midi"></div>
-      <div class="field"><label>Comissão (%)</label><input id="vitrine-comissao-${slot.id}-${n}" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 15"></div>
       <div class="field"><label>Link de afiliado — controle interno, nunca entra na legenda</label><input id="vitrine-link-${slot.id}-${n}" type="url" placeholder="Cole o link aqui"></div>
       <button type="button" class="secondary" onclick="copiarLinkVitrine('${slot.id}',${n})">📋 Copiar link</button>
     </div>`;
@@ -1516,12 +1511,10 @@ function coletarDados(){
     if(!slot.vitrine){
       for(let i=0;i<total;i++){
         const key=chaveItemSlot(slot,i);
-        const comissaoTexto=document.getElementById("comissao-"+key).value;
         itens.push({
           produto:document.getElementById("produto-"+key).value,
           link:slot.semLink?"":document.getElementById("link-"+key).value,
-          foto:document.getElementById("foto-valor-"+key).value||undefined,
-          comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto)
+          foto:document.getElementById("foto-valor-"+key).value||undefined
         });
       }
     }
@@ -1530,10 +1523,8 @@ function coletarDados(){
     if(slot.vitrine){
       const produtos=[];
       for(let n=1;n<=slot.vitrine.max;n++){
-        const comissaoTexto=document.getElementById(`vitrine-comissao-${slot.id}-${n}`).value;
         produtos.push({
           nome:document.getElementById(`vitrine-nome-${slot.id}-${n}`).value,
-          comissao:comissaoTexto===""?undefined:parseFloat(comissaoTexto),
           link:document.getElementById(`vitrine-link-${slot.id}-${n}`).value
         });
       }
@@ -1614,7 +1605,6 @@ function carregarSemana(){
         const key=chaveItemSlot(slot,i);
         const it=itensSalvos[i]||{};
         document.getElementById("produto-"+key).value=it.produto||"";
-        document.getElementById("comissao-"+key).value=it.comissao??"";
         if(!slot.semLink){
           document.getElementById("link-"+key).value=it.link||"";
         }
@@ -1651,7 +1641,6 @@ function carregarSemana(){
       for(let n=1;n<=slot.vitrine.max;n++){
         const p=(vd.produtos&&vd.produtos[n-1])||{};
         document.getElementById(`vitrine-nome-${slot.id}-${n}`).value=p.nome||"";
-        document.getElementById(`vitrine-comissao-${slot.id}-${n}`).value=p.comissao??"";
         document.getElementById(`vitrine-link-${slot.id}-${n}`).value=p.link||"";
         document.getElementById(`produto-vitrine-${slot.id}-${n}`).style.display=n<=count?"block":"none";
       }
@@ -2289,7 +2278,7 @@ if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker
 let autoSalvarTimeout=null;
 document.getElementById("view-semana").addEventListener("input",e=>{
   const id=e.target.id||"";
-  if(/^(produto|link|palavra|legenda|comissao|vitrine)-/.test(id)){
+  if(/^(produto|link|palavra|legenda|vitrine)-/.test(id)){
     clearTimeout(autoSalvarTimeout);
     autoSalvarTimeout=setTimeout(salvarSemana,500);
   }
