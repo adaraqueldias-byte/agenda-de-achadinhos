@@ -161,6 +161,9 @@
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
+    .relatorio-vinculo{background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#1d4ed8}
+    .relatorio-vinculo select{margin-top:6px;font-size:13px;padding:8px}
+    .relatorio-vinculo-aviso{background:#fff7ed;border:1px solid #fdba74;color:#9a5b1f}
     .relatorio-canal-grupo-titulo{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin:10px 0 6px}
     .relatorio-canal-grupo-titulo:first-child{margin-top:0}
     .relatorio-contador-cols{display:flex;gap:16px}
@@ -491,9 +494,10 @@
         <input id="relatorio-post-novo" type="text" placeholder="Ex.: Reels Shopee - fone bluetooth" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('relatorio-canal-novo').focus();}">
       </div>
       <div class="field">
-        <input id="relatorio-canal-novo" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
+        <input id="relatorio-canal-novo" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off" oninput="atualizarVinculoSemana()" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
         <datalist id="datalist-relatorio-canal"></datalist>
       </div>
+      <div id="relatorio-vinculo-semana" style="display:none"></div>
       <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
     </section>
     <section class="card">
@@ -590,6 +594,11 @@ const CONTAS={
   shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
   tiktok_garimpo:{rede:"TikTok", icone:"🎵", nome:"garimpodia"},
 };
+function chaveConta(c){return `${c.rede} - ${c.nome}`}
+function chaveContaPorCanal(canalTexto){
+  const [id]=Object.entries(CONTAS).find(([,c])=>chaveConta(c)===canalTexto)||[null];
+  return id;
+}
 const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
 function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId].rede==="Instagram")}
@@ -1308,6 +1317,57 @@ function removerPostAutoRelatorio(slotId,destId){
   if(mudou)salvarRelatorios(todos);
 }
 
+function nomeProdutoDoSlotSalvo(slot,s){
+  if(!s)return "";
+  if(slot.vitrine){
+    const produtos=(s.vitrine&&s.vitrine.produtos)||[];
+    for(const p of produtos){if(p&&p.nome&&p.nome.trim())return p.nome.trim();}
+    return "";
+  }
+  const itens=s.itens||[];
+  for(const it of itens){if(it&&it.produto&&it.produto.trim())return it.produto.trim();}
+  return "";
+}
+
+function candidatosSemanaParaData(dataIso,destId){
+  if(!dataIso||!destId)return[];
+  const d=isoParaData(dataIso);
+  const diaSemana=CHAVE_DIA_POR_INDICE[d.getDay()];
+  const monday=dataParaIso(segundaDaData(d));
+  const slotIds=(SLOTS_POR_GRUPO[diaSemana]||[]).filter(id=>{
+    const slot=SLOTS.find(s=>s.id===id);
+    return slot&&slot.destinos.includes(destId);
+  });
+  const raw=localStorage.getItem("agenda-achadinhos-semana-"+monday);
+  const dados=raw?JSON.parse(raw):{};
+  return slotIds.map(slotId=>{
+    const slot=SLOTS.find(s=>s.id===slotId);
+    const s=(dados.slots&&dados.slots[slotId])||{};
+    const status=(s.destinosStatus&&s.destinosStatus[destId])||"nada";
+    const nomeProduto=nomeProdutoDoSlotSalvo(slot,s);
+    return{slotId,monday,status,nomeProduto};
+  });
+}
+
+function marcarPublicadoNaSemana(monday,slotId,destId){
+  const chaveSemana="agenda-achadinhos-semana-"+monday;
+  const raw=localStorage.getItem(chaveSemana);
+  const dados=raw?JSON.parse(raw):{slots:{}};
+  if(!dados.slots)dados.slots={};
+  if(!dados.slots[slotId])dados.slots[slotId]={};
+  if(!dados.slots[slotId].destinosStatus)dados.slots[slotId].destinosStatus={};
+  dados.slots[slotId].destinosStatus[destId]="publicado";
+  localStorage.setItem(chaveSemana,JSON.stringify(dados));
+  if(typeof date!=="undefined"&&date&&date.value===monday){
+    const statusEl=document.getElementById(`status-destino-${slotId}-${destId}`);
+    if(statusEl){
+      statusEl.value="publicado";
+      atualizarChipDestino(slotId,destId);
+      atualizarProgressoDias();
+    }
+  }
+}
+
 function producaoTemplate(){
   return `<section class="card producao-card">
     <button type="button" class="acordeon-titulo producao-titulo" onclick="toggleSecao('producao')">
@@ -1718,7 +1778,6 @@ function contarCanaisRelatorio(){
 function renderizarContadorCanais(){
   const contagem=contarCanaisRelatorio();
   const linha=(nome,chave)=>`<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><strong>${contagem[chave]||0}</strong></div>`;
-  const chaveConta=c=>`${c.rede} - ${c.nome}`;
   const paginas=Object.values(CONTAS).filter(c=>c.rede==="Facebook")
     .map(c=>linha(c.nome.replace(/^Página\s*/,""),chaveConta(c))).join("");
   const instagram=Object.values(CONTAS).filter(c=>c.rede==="Instagram")
@@ -1762,6 +1821,39 @@ function renderizarRelatorio(){
     }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
+  atualizarVinculoSemana();
+}
+
+let vinculoSemanaCandidatos=[];
+let vinculoSemanaSelecionado=null;
+
+function atualizarVinculoSemana(){
+  vinculoSemanaSelecionado=null;
+  vinculoSemanaCandidatos=[];
+  const cont=document.getElementById("relatorio-vinculo-semana");
+  const canal=document.getElementById("relatorio-canal-novo").value.trim();
+  const data=relatorioDataAtual();
+  const destId=chaveContaPorCanal(canal);
+  if(!destId){cont.style.display="none";cont.innerHTML="";return;}
+  const candidatos=candidatosSemanaParaData(data,destId);
+  const pendentes=candidatos.filter(c=>c.status!=="publicado");
+  const jaPublicados=candidatos.filter(c=>c.status==="publicado");
+  if(!pendentes.length&&!jaPublicados.length){cont.style.display="none";cont.innerHTML="";return;}
+  vinculoSemanaCandidatos=pendentes.map(c=>({...c,destId}));
+  let html="";
+  if(jaPublicados.length){
+    html+=`<div class="relatorio-vinculo relatorio-vinculo-aviso">⚠️ Esse canal já está marcado como publicado nesse dia na Semana — adicionar mesmo assim pode duplicar o registro.</div>`;
+  }
+  if(pendentes.length){
+    html+=`<div class="relatorio-vinculo">Tem post pendente na Semana pra esse dia/canal. Vincular a ele já marca como publicado lá também:<br>
+      <select onchange="vinculoSemanaSelecionado=this.value===''?null:vinculoSemanaCandidatos[this.value]">
+        <option value="">Nenhum</option>
+        ${pendentes.map((c,i)=>`<option value="${i}">${escaparBanco(c.nomeProduto||"Post sem nome")}</option>`).join("")}
+      </select>
+    </div>`;
+  }
+  cont.innerHTML=html;
+  cont.style.display="block";
 }
 
 function adicionarPostRelatorio(){
@@ -1773,10 +1865,18 @@ function adicionarPostRelatorio(){
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
-  todos[data].posts.push({texto,canal});
+  const post={texto,canal};
+  if(vinculoSemanaSelecionado){
+    post._origem=`${vinculoSemanaSelecionado.slotId}-${vinculoSemanaSelecionado.destId}`;
+    marcarPublicadoNaSemana(vinculoSemanaSelecionado.monday,vinculoSemanaSelecionado.slotId,vinculoSemanaSelecionado.destId);
+  }
+  todos[data].posts.push(post);
   salvarRelatorios(todos);
   input.value="";
   canalInput.value="";
+  vinculoSemanaSelecionado=null;
+  vinculoSemanaCandidatos=[];
+  document.getElementById("relatorio-vinculo-semana").style.display="none";
   input.focus();
   renderizarRelatorio();
 }
