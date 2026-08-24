@@ -1833,25 +1833,35 @@ function atualizarVinculoSemana(){
   const cont=document.getElementById("relatorio-vinculo-semana");
   const canal=document.getElementById("relatorio-canal-novo").value.trim();
   const data=relatorioDataAtual();
-  const destId=chaveContaPorCanal(canal);
-  if(!destId){cont.style.display="none";cont.innerHTML="";return;}
-  const candidatos=candidatosSemanaParaData(data,destId);
-  const pendentes=candidatos.filter(c=>c.status!=="publicado");
-  const jaPublicados=candidatos.filter(c=>c.status==="publicado");
-  if(!pendentes.length&&!jaPublicados.length){cont.style.display="none";cont.innerHTML="";return;}
-  vinculoSemanaCandidatos=pendentes.map(c=>({...c,destId}));
   let html="";
-  if(jaPublicados.length){
-    html+=`<div class="relatorio-vinculo relatorio-vinculo-aviso">⚠️ Esse canal já está marcado como publicado nesse dia na Semana — adicionar mesmo assim pode duplicar o registro.</div>`;
+
+  if(canal){
+    const jaTemNoDia=relatorioDoDia(data).posts.some(p=>rotuloPostRelatorio(p).canal===canal);
+    if(jaTemNoDia){
+      html+=`<div class="relatorio-vinculo relatorio-vinculo-aviso">⚠️ Você já tem um post registrado nesse canal hoje — confira antes de adicionar de novo, pra não duplicar.</div>`;
+    }
   }
-  if(pendentes.length){
-    html+=`<div class="relatorio-vinculo">Tem post pendente na Semana pra esse dia/canal. Vincular a ele já marca como publicado lá também:<br>
-      <select onchange="vinculoSemanaSelecionado=this.value===''?null:vinculoSemanaCandidatos[this.value]">
-        <option value="">Nenhum</option>
-        ${pendentes.map((c,i)=>`<option value="${i}">${escaparBanco(c.nomeProduto||"Post sem nome")}</option>`).join("")}
-      </select>
-    </div>`;
+
+  const destId=chaveContaPorCanal(canal);
+  if(destId){
+    const candidatos=candidatosSemanaParaData(data,destId);
+    const pendentes=candidatos.filter(c=>c.status!=="publicado");
+    const jaPublicados=candidatos.filter(c=>c.status==="publicado");
+    vinculoSemanaCandidatos=pendentes.map(c=>({...c,destId}));
+    if(jaPublicados.length){
+      html+=`<div class="relatorio-vinculo relatorio-vinculo-aviso">⚠️ Esse canal já está marcado como publicado nesse dia na Semana — adicionar mesmo assim pode duplicar o registro.</div>`;
+    }
+    if(pendentes.length){
+      html+=`<div class="relatorio-vinculo">Tem post pendente na Semana pra esse dia/canal. Vincular a ele já marca como publicado lá também:<br>
+        <select onchange="vinculoSemanaSelecionado=this.value===''?null:vinculoSemanaCandidatos[this.value]">
+          <option value="">Nenhum</option>
+          ${pendentes.map((c,i)=>`<option value="${i}">${escaparBanco(c.nomeProduto||"Post sem nome")}</option>`).join("")}
+        </select>
+      </div>`;
+    }
   }
+
+  if(!html){cont.style.display="none";cont.innerHTML="";return;}
   cont.innerHTML=html;
   cont.style.display="block";
 }
