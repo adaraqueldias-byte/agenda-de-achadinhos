@@ -409,6 +409,22 @@
       </div>
     </section>
 
+    <section class="card lembretes-card">
+      <button type="button" class="acordeon-titulo lembretes-titulo" onclick="toggleSecao('formula-copy')">
+        <span>✍️ Fórmula de copy e checklist</span>
+        <span id="formula-copy-seta">▸</span>
+      </button>
+      <div id="formula-copy-corpo" style="display:none">
+        <ul>
+          <li><strong>Prioridade de formato:</strong> 🎬 Reels primeiro (demonstração, antes/depois, movimento) → 🖼️ Carrossel (comparações, listas, benefícios) → 📷 Foto (complementar) → 📱 Story só quando fizer sentido (baixa prioridade agora, com a página ainda crescendo).</li>
+          <li><strong>Fórmula da legenda:</strong> Problema ou curiosidade (frase forte) → Benefício (por que interessa) → Produto → CTA → hashtags.</li>
+          <li><strong>Gancho (primeiros segundos/primeira frase):</strong> pergunte "isso faria alguém parar de rolar o feed?" Se a resposta for não, reescreva — curto, natural, específico, ligado ao produto, sem sensacionalismo.</li>
+          <li><strong>Antes de publicar, confira:</strong> o gancho prende atenção? o benefício ficou claro? o texto soa natural (não parece propaganda forçada)? não tem nenhuma informação inventada (preço, comissão, avaliação)? o formato é o mais adequado pro conteúdo que você tem? o CTA está certo pro canal (QUERO no Instagram, link ou comentário fixado no Facebook)? as hashtags são específicas do nicho, não genéricas?</li>
+          <li><strong>Evite exageros</strong> tipo "CORRA", "IMPERDÍVEL", "ÚLTIMA CHANCE" — a menos que seja informação real (oferta com prazo, por exemplo). O tom é de recomendação/descoberta, não de anúncio agressivo.</li>
+        </ul>
+      </div>
+    </section>
+
     <section class="card">
       <strong>Como colocar na página inicial</strong>
       <p class="tip">Abra este aplicativo pelo Google Chrome. Depois toque nos três pontinhos do Chrome e escolha <b>Adicionar à tela inicial</b> ou <b>Instalar aplicativo</b>.</p>
@@ -632,12 +648,14 @@ Comenta QUERO que eu te mando o link no direct.
     slots.push({
       id:`gd_pagina_${grupoKey}`,dia,horaPadrao:"11:30",
       destinos:["face_garimpo"],
-      formatoDefault:"Foto",conteudo:"Produto/oferta do dia",
+      formatoDefault:"Carrossel",conteudo:"Produto/oferta do dia",
       itensVariavel:{min:1,max:5},
+      nota:"Teste as duas formas de colocar o link: direto na publicação, ou nos comentários (deixando 'Deixei o link no primeiro comentário 👇'). Vá comparando qual traz mais alcance/cliques.",
       ctaSugerido:"Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.",
       modelo:`[Nome do produto] — [1 frase sobre a oferta/benefício]
 
 Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.
+(ou, se for testar link no comentário: "Deixei o link no primeiro comentário 👇")
 
 #[hashtagnicho1] #[hashtagnicho2]`
     });
@@ -645,12 +663,14 @@ Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver dispon
     slots.push({
       id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
       destinos:["grupo_garimpo"],
-      formatoDefault:"Foto",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
+      formatoDefault:"Carrossel",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
       itensVariavel:{min:1,max:5},
+      nota:"Teste as duas formas de colocar o link: direto na publicação, ou nos comentários (deixando 'Deixei o link no primeiro comentário 👇'). Vá comparando qual traz mais alcance/cliques.",
       ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.",
       modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
 
-Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.`
+Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.
+(ou, se for testar link no comentário: "Quem quiser conferir, o link está no comentário fixado 👇")`
     });
 
     const grupoAltId=diaA?"grupo_shop":"grupo_vende";
@@ -768,16 +788,15 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
   {id:"dashein_enquete",dia:"Dashein — Domingo",hora:"19h",
    destinos:["insta_dashein","face_dashein","grupo_shein"],
-   formato:"Enquete no Story (sem foto/link)",conteudo:"Qual look você prefere?",tipo:"Engajamento",
-   semLink:true,
-   modelo:`Enquete no Story: qual desses looks você usaria essa semana?
+   itensVariavel:{min:2,max:3},
+   formato:"Carrossel",conteudo:"Repost de bastidor/foto de quem já comprou + pergunta pra engajar",tipo:"Shein",
+   nota:"Antes era enquete no Story — trocamos por Carrossel porque Story só alcança quem já segue a página, e Carrossel/Reels alcançam gente nova (prioridade atual: crescer o perfil).",
+   ctaSugerido:"Comenta aqui qual dessas peças você quer que eu poste amanhã 👇",
+   modelo:`[Bastidor ou foto de quem já comprou] — [1 frase curta sobre a peça]
 
-A) [Look A]
-B) [Look B]
+Comenta aqui qual dessas peças você quer ver amanhã 👇
 
-Vota aí 👆 quero saber o que vocês preferem!
-
-(sem link, só pra engajar e conhecer o gosto de quem segue)`},
+#[hashtagmoda1] #[hashtagmoda2]`},
 
   {id:"dashein_favoritos",dia:"Dashein — Terça",hora:"21h",
    destinos:["insta_dashein","face_dashein","grupo_shein"],
