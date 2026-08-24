@@ -878,11 +878,12 @@ function progressoDia(chaveDia){
   slotIds.forEach(slotId=>{
     const slot=SLOTS.find(s=>s.id===slotId);
     if(!slot)return;
-    slot.destinos.forEach(destId=>{
-      total++;
+    total++;
+    const todosPublicados=slot.destinos.every(destId=>{
       const el=document.getElementById(`status-destino-${slotId}-${destId}`);
-      if(el&&el.value==="publicado")feitos++;
+      return el&&el.value==="publicado";
     });
+    if(todosPublicados)feitos++;
   });
   return{feitos,total};
 }
