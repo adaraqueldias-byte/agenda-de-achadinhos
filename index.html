@@ -607,6 +607,7 @@ const CONTAS={
   grupo_vende:   {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Vende Barato"},
   grupo_shop:    {rede:"Grupo Facebook", icone:"👥", nome:"Grupo ShopOnline"},
   grupo_shein:   {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Shein"},
+  grupo_cleverfinds: {rede:"Grupo Facebook", icone:"👥", nome:"Clever Finds USA"},
   shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
   tiktok_garimpo:{rede:"TikTok", icone:"🎵", nome:"garimpodia"},
 };
@@ -849,15 +850,57 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
 
 #[hashtagmoda1] #[hashtagmoda2]`},
 
+  {id:"cleverfinds_terca",dia:"Clever Finds — Terça",hora:"19h",
+   destinos:["face_cleverfinds","grupo_cleverfinds"],
+   itensVariavel:{min:1,max:5},
+   formato:"Carrossel",conteudo:"Achado da semana (Amazon americana)",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
+   ctaSugerido:"Gostou desse achado? Comenta aqui que eu te passo o link 👇",
+   modelo:`[Nome do produto] — [1 frase sobre o que ele resolve ou por que vale a pena]
+
+Achado direto da Amazon americana 🇺🇸
+
+Comenta aqui que eu te passo o link 👇
+
+#[hashtagnicho1] #[hashtagnicho2]`},
+
+  {id:"cleverfinds_quinta",dia:"Clever Finds — Quinta",hora:"19h",
+   destinos:["face_cleverfinds","grupo_cleverfinds"],
+   itensVariavel:{min:1,max:5},
+   formato:"Carrossel",conteudo:"Novidade da Amazon americana",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
+   ctaSugerido:"Quem quiser o link, comenta aqui 👇",
+   modelo:`[Nome do produto] — [1 frase: novidade ou diferencial do produto]
+
+Direto da Amazon americana 🇺🇸
+
+Quem quiser o link, comenta aqui 👇
+
+#[hashtagnicho1] #[hashtagnicho2]`},
+
+  {id:"cleverfinds_sabado",dia:"Clever Finds — Sábado",hora:"19h",
+   destinos:["face_cleverfinds","grupo_cleverfinds"],
+   itensVariavel:{min:1,max:5},
+   formato:"Carrossel",conteudo:"Recomendação de fim de semana (Amazon americana)",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
+   ctaSugerido:"Bom pra dar de presente ou pra você mesma — comenta aqui que eu passo o link 👇",
+   modelo:`[Nome do produto] — [1 frase sobre o benefício]
+
+Achado da Amazon americana 🇺🇸 pra aproveitar o fim de semana
+
+Comenta aqui que eu passo o link 👇
+
+#[hashtagnicho1] #[hashtagnicho2]`},
+
 ];
 
 const SLOTS_POR_GRUPO={
   segunda:["gd_manha_segunda","gd_pagina_segunda","gd_grupo_segunda","gd_grupo_alt_segunda","gd_noite_segunda","gd_extra_segunda","dashein_dica"],
-  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","gd_extra_terca","dashein_favoritos"],
+  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","gd_extra_terca","dashein_favoritos","cleverfinds_terca"],
   quarta:["gd_manha_quarta","gd_pagina_quarta","gd_grupo_quarta","gd_grupo_alt_quarta","gd_noite_quarta","gd_extra_quarta","dashein_comparacao"],
-  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","gd_extra_quinta","dashein_vitrine"],
+  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","gd_extra_quinta","dashein_vitrine","cleverfinds_quinta"],
   sexta:["gd_manha_sexta","gd_pagina_sexta","gd_grupo_sexta","gd_grupo_alt_sexta","gd_noite_sexta","gd_extra_sexta","dashein_moda"],
-  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao"],
+  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao","cleverfinds_sabado"],
   domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","gd_extra_domingo","dashein_enquete"]
 };
 const SLOT_ID_PARA_DIA={};
