@@ -448,7 +448,7 @@
       <div class="field"><label>Nome do produto</label><input id="banco-nome" placeholder="Ex.: Jaqueta masculina"></div>
       <div class="field">
         <label>Loja / plataforma</label>
-        <select id="banco-loja">
+        <select id="banco-loja" onchange="atualizarLabelPreco()">
           <option value="">Selecione a loja</option>
           <option value="shopee">Shopee</option>
           <option value="mercadolivre">Mercado Livre</option>
@@ -464,7 +464,7 @@
         <datalist id="datalist-banco-categoria"></datalist>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
-      <div class="field"><label>🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 (sem ponto de milhar)"></div>
+      <div class="field"><label id="banco-preco-label">🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 (sem ponto de milhar)"></div>
       <div class="grid">
         <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
         <div class="field"><label>Valor da comissão (R$)</label><input id="banco-valor-comissao" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
@@ -853,44 +853,44 @@ Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
   {id:"cleverfinds_terca",dia:"Clever Finds — Terça",hora:"19h",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
-   formato:"Carrossel",conteudo:"Achado da semana (Amazon americana)",tipo:"CleverFinds",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
-   ctaSugerido:"Gostou desse achado? Comenta aqui que eu te passo o link 👇",
-   modelo:`[Nome do produto] — [1 frase sobre o que ele resolve ou por que vale a pena]
+   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
+   ctaSugerido:"Link in the first comment 👇",
+   modelo:`[Product name] — [1 short sentence about it]
 
-Achado direto da Amazon americana 🇺🇸
+Found this on Amazon US 🇺🇸
 
-Comenta aqui que eu te passo o link 👇
+Link in the first comment 👇
 
-#[hashtagnicho1] #[hashtagnicho2]`},
+#[hashtag1] #[hashtag2]`},
 
   {id:"cleverfinds_quinta",dia:"Clever Finds — Quinta",hora:"19h",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
-   formato:"Carrossel",conteudo:"Novidade da Amazon americana",tipo:"CleverFinds",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
-   ctaSugerido:"Quem quiser o link, comenta aqui 👇",
-   modelo:`[Nome do produto] — [1 frase: novidade ou diferencial do produto]
+   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
+   ctaSugerido:"Link in the first comment 👇",
+   modelo:`[Product name] — [1 short sentence: what makes it worth it]
 
-Direto da Amazon americana 🇺🇸
+Straight from Amazon US 🇺🇸
 
-Quem quiser o link, comenta aqui 👇
+Link in the first comment 👇
 
-#[hashtagnicho1] #[hashtagnicho2]`},
+#[hashtag1] #[hashtag2]`},
 
   {id:"cleverfinds_sabado",dia:"Clever Finds — Sábado",hora:"19h",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
-   formato:"Carrossel",conteudo:"Recomendação de fim de semana (Amazon americana)",tipo:"CleverFinds",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui.",
-   ctaSugerido:"Bom pra dar de presente ou pra você mesma — comenta aqui que eu passo o link 👇",
-   modelo:`[Nome do produto] — [1 frase sobre o benefício]
+   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"CleverFinds",
+   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
+   ctaSugerido:"Link in the first comment 👇",
+   modelo:`[Product name] — [1 short sentence about the benefit]
 
-Achado da Amazon americana 🇺🇸 pra aproveitar o fim de semana
+Weekend find from Amazon US 🇺🇸
 
-Comenta aqui que eu passo o link 👇
+Link in the first comment 👇
 
-#[hashtagnicho1] #[hashtagnicho2]`},
+#[hashtag1] #[hashtag2]`},
 
 ];
 
@@ -2035,6 +2035,7 @@ function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
+  atualizarLabelPreco();
   document.getElementById("banco-categoria").value="";
   document.getElementById("banco-preco").value="";
   document.getElementById("banco-comissao").value="";
@@ -2053,7 +2054,7 @@ function adicionarProdutoBanco(){
   const loja=document.getElementById("banco-loja").value;
   const categoriaTexto=document.getElementById("banco-categoria").value.trim();
   const categoria=categoriaTexto||undefined;
-  const preco=parsePrecoBR(document.getElementById("banco-preco").value);
+  const preco=parsePrecoBanco(document.getElementById("banco-preco").value,loja);
   const comissaoValor=document.getElementById("banco-comissao").value;
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
@@ -2081,8 +2082,9 @@ function editarProdutoBanco(id){
   document.getElementById("banco-nome").value=item.nome||"";
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
+  atualizarLabelPreco();
   document.getElementById("banco-categoria").value=rotuloCategoriaBanco(item);
-  document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBR(item.preco):"";
+  document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBanco(item.preco,item.loja):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
   document.getElementById("banco-valor-comissao").value=item.valorComissao??"";
   bancoFotoAtual=item.foto||"";
@@ -2127,6 +2129,31 @@ function parsePrecoBR(texto){
 }
 function formatarPrecoBR(n){
   return n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function parsePrecoUS(texto){
+  texto=(texto||"").trim().replace(/[^\d.,]/g,"");
+  if(!texto)return undefined;
+  texto=texto.replace(/,/g,"");
+  const n=parseFloat(texto);
+  return isNaN(n)?undefined:n;
+}
+function formatarPrecoUS(n){
+  return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
+}
+function moedaBanco(loja){return loja==="amazon_eua"?"US$":"R$"}
+function parsePrecoBanco(texto,loja){return loja==="amazon_eua"?parsePrecoUS(texto):parsePrecoBR(texto)}
+function formatarPrecoBanco(n,loja){return loja==="amazon_eua"?formatarPrecoUS(n):formatarPrecoBR(n)}
+function atualizarLabelPreco(){
+  const loja=document.getElementById("banco-loja").value;
+  const label=document.getElementById("banco-preco-label");
+  const input=document.getElementById("banco-preco");
+  if(loja==="amazon_eua"){
+    label.textContent="🏷️ Preço do produto (US$)";
+    input.placeholder="Ex.: 29.99 (ponto decimal, sem vírgula)";
+  }else{
+    label.textContent="🏷️ Preço do produto (R$)";
+    input.placeholder="Ex.: 3228,61 (sem ponto de milhar)";
+  }
 }
 
 function rotuloCategoriaBanco(p){
@@ -2277,7 +2304,7 @@ function cardProdutoBanco(p){
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
         ${rotuloCategoriaBanco(p)?`<span class="item-produto-categoria">${CATEGORIAS_EM_ALTA.has(rotuloCategoriaBanco(p))?"🔥 ":""}${escaparBanco(rotuloCategoriaBanco(p))}</span>`:""}
-        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ R$ ${formatarPrecoBR(p.preco)}</span>`:""}
+        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${moedaBanco(p.loja)} ${formatarPrecoBanco(p.preco,p.loja)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">R$ ${p.valorComissao.toFixed(2)}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
