@@ -618,7 +618,10 @@ function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId]
 
 // ===== Linhas de conteúdo: cada uma tem, todo dia, 1 post sempre visível + um pool de extras revelados com "+" =====
 const LINHAS_CONTEUDO=[
-  {prefixo:"garimpo",tipo:"Garimpo do Dia",destinos:["insta_garimpo","face_garimpo","grupo_garimpo","grupo_shop","grupo_vende","shopee_video","tiktok_garimpo"]},
+  {prefixo:"garimpo",tipo:"Garimpo do Dia",destinos:["face_garimpo","grupo_garimpo","grupo_shop","grupo_vende"]},
+  {prefixo:"garimpo_insta",tipo:"Garimpo do Dia — Instagram",destinos:["insta_garimpo"]},
+  {prefixo:"garimpo_shopee",tipo:"Garimpo do Dia — Shopee Video",destinos:["shopee_video"]},
+  {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"]},
   {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
   {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds"]}
 ];
