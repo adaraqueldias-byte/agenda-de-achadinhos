@@ -1158,15 +1158,12 @@ function slotTemplate(slot,extraHtml){
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
-  const temHorario=slot.horaPadrao!==undefined;
   const temInstaMagic=slot.instaMagicPadrao!==undefined;
   const temFormatoSelect=slot.formatoDefault!==undefined;
   const temInstagram=slotTemInstagram(slot);
-  const horarioInputHtml=temHorario?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:"";
   const cabecalhoHtml=`<div class="slot-cabecalho">
       <div>
         <span class="slot-dia-hora">${slot.dia}</span>
-        ${horarioInputHtml}
       </div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>`;
@@ -1217,13 +1214,10 @@ function slotTemplate(slot,extraHtml){
   </section>`;
   if(slot.oculto){
     return `<div class="extra-wrapper">
-      <div class="extra-cabecalho-linha">
-        <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
-          <span>➕ Postagem extra</span>
-          <span id="extra-${slot.id}-seta">▸</span>
-        </button>
-        ${horarioInputHtml}
-      </div>
+      <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
+        <span>➕ Postagem extra</span>
+        <span id="extra-${slot.id}-seta">▸</span>
+      </button>
       <div id="extra-${slot.id}-corpo" style="display:none">${cardHtml}</div>
     </div>`;
   }
@@ -1677,7 +1671,6 @@ function coletarDados(){
       destinosHorario,
       destinosData,
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined,
-      horarioSlot:slot.horaPadrao!==undefined?document.getElementById("horario-slot-"+slot.id).value:undefined,
       instamagic:slot.instaMagicPadrao!==undefined?document.getElementById("instamagic-"+slot.id).checked:undefined,
       formatoSelecionado:slot.formatoDefault!==undefined?document.getElementById("formato-select-"+slot.id).value:undefined
     };
@@ -1786,9 +1779,6 @@ function carregarSemana(){
       document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.alterna[modoSalvo].modelo;
     }else if(document.getElementById("legenda-"+slot.id)){
       document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.modelo;
-    }
-    if(slot.horaPadrao!==undefined){
-      document.getElementById("horario-slot-"+slot.id).value=s.horarioSlot||slot.horaPadrao;
     }
     if(slot.instaMagicPadrao!==undefined){
       const checado=s.instamagic!==undefined?s.instamagic:slot.instaMagicPadrao;
