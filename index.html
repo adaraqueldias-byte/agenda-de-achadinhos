@@ -894,49 +894,13 @@ Link in the first comment 👇
 #[hashtag1] #[hashtag2]`},
 
   {id:"cleverfinds_extra_terca",extraDe:"cleverfinds_terca",dia:"Clever Finds USA — Terça",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
-   tipo:"Clever Finds USA",oculto:true,
-   nota:"Espaço livre pra registrar quantas postagens extras você fizer nesse dia na Página/Grupo Clever Finds, além do post fixo. Preencha o horário que quiser e marque só o(s) canal(is) que usar. Só produtos da Amazon americana, link no primeiro comentário.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence about it]
-
-Found this on Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
+   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
 
   {id:"cleverfinds_extra_quinta",extraDe:"cleverfinds_quinta",dia:"Clever Finds USA — Quinta",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
-   tipo:"Clever Finds USA",oculto:true,
-   nota:"Espaço livre pra registrar quantas postagens extras você fizer nesse dia na Página/Grupo Clever Finds, além do post fixo. Preencha o horário que quiser e marque só o(s) canal(is) que usar. Só produtos da Amazon americana, link no primeiro comentário.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence about it]
-
-Found this on Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
+   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
 
   {id:"cleverfinds_extra_sabado",extraDe:"cleverfinds_sabado",dia:"Clever Finds USA — Sábado",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
-   tipo:"Clever Finds USA",oculto:true,
-   nota:"Espaço livre pra registrar quantas postagens extras você fizer nesse dia na Página/Grupo Clever Finds, além do post fixo. Preencha o horário que quiser e marque só o(s) canal(is) que usar. Só produtos da Amazon americana, link no primeiro comentário.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence about it]
-
-Found this on Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
+   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
 
 ];
 
@@ -1147,7 +1111,28 @@ async function copiarLinkItemSlot(key){
 
 const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
 
+function destinosChipsHtml(slot){
+  return slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("");
+}
+
 function slotTemplate(slot,extraHtml){
+  if(slot.extraDe){
+    const horarioHtml=slot.horaPadrao!==undefined?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:"";
+    return `<div class="extra-wrapper">
+      <div class="extra-cabecalho-linha">
+        <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
+          <span>➕ Postagem extra</span>
+          <span id="extra-${slot.id}-seta">▸</span>
+        </button>
+        ${horarioHtml}
+      </div>
+      <div id="extra-${slot.id}-corpo" style="display:none">
+        <div class="slot-destinos-linha"><div class="slot-destinos">${destinosChipsHtml(slot)}</div></div>
+        ${itemProdutoSlotTemplate(slot,0,1)}
+        <div id="status-${slot.id}" class="status"></div>
+      </div>
+    </div>`;
+  }
   const total=totalItensSlot(slot);
   const itensHtml=slot.vitrine?vitrineTemplate(slot):slot.itensVariavel?itensVariavelTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
@@ -1168,7 +1153,7 @@ function slotTemplate(slot,extraHtml){
   const cardHtml=`<section class="card">
     ${slot.oculto?"":cabecalhoHtml}
     <div class="slot-destinos-linha">
-      <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("")}</div>
+      <div class="slot-destinos">${destinosChipsHtml(slot)}</div>
       <button type="button" class="slot-toggle-seta" id="slot-seta-${slot.id}" onclick="toggleSlotCorpo('${slot.id}')">▸</button>
     </div>
     <div id="slot-corpo-${slot.id}" style="display:none">
@@ -1667,7 +1652,7 @@ function coletarDados(){
       vitrine,
       checklist,
       palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id).value,
-      legenda:document.getElementById("legenda-"+slot.id).value,
+      legenda:document.getElementById("legenda-"+slot.id)?.value,
       destinosStatus,
       destinosHorario,
       destinosData,
@@ -1779,7 +1764,7 @@ function carregarSemana(){
       document.getElementById("modo-"+slot.id).value=modoSalvo;
       aplicarModoVisual(slot.id,modoSalvo);
       document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.alterna[modoSalvo].modelo;
-    }else{
+    }else if(document.getElementById("legenda-"+slot.id)){
       document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.modelo;
     }
     if(slot.horaPadrao!==undefined){
