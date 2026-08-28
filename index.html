@@ -736,6 +736,15 @@ Gostou? Confira o link e aproveite enquanto estiver disponível.`
   return slots;
 }
 
+function criarExtrasCleverFinds(parentId,diaLabel){
+  const extras=[];
+  for(let n=1;n<=5;n++){
+    extras.push({id:`${parentId}_extra${n}`,extraDe:parentId,extraIndice:n,dia:diaLabel,
+      destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"});
+  }
+  return extras;
+}
+
 // ===== Slots de conteúdo da semana (do estudo, adaptado pras suas contas) =====
 const SLOTS=[
   ...criarSlotsGarimpoDoDia(),
@@ -893,24 +902,19 @@ Link in the first comment 👇
 
 #[hashtag1] #[hashtag2]`},
 
-  {id:"cleverfinds_extra_terca",extraDe:"cleverfinds_terca",dia:"Clever Finds USA — Terça",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
-
-  {id:"cleverfinds_extra_quinta",extraDe:"cleverfinds_quinta",dia:"Clever Finds USA — Quinta",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
-
-  {id:"cleverfinds_extra_sabado",extraDe:"cleverfinds_sabado",dia:"Clever Finds USA — Sábado",horaPadrao:"",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"},
+  ...criarExtrasCleverFinds("cleverfinds_terca","Clever Finds USA — Terça"),
+  ...criarExtrasCleverFinds("cleverfinds_quinta","Clever Finds USA — Quinta"),
+  ...criarExtrasCleverFinds("cleverfinds_sabado","Clever Finds USA — Sábado"),
 
 ];
 
 const SLOTS_POR_GRUPO={
   segunda:["gd_manha_segunda","gd_pagina_segunda","gd_grupo_segunda","gd_grupo_alt_segunda","gd_noite_segunda","gd_extra_segunda","dashein_dica"],
-  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","gd_extra_terca","dashein_favoritos","cleverfinds_terca","cleverfinds_extra_terca"],
+  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","gd_extra_terca","dashein_favoritos","cleverfinds_terca","cleverfinds_terca_extra1","cleverfinds_terca_extra2","cleverfinds_terca_extra3","cleverfinds_terca_extra4","cleverfinds_terca_extra5"],
   quarta:["gd_manha_quarta","gd_pagina_quarta","gd_grupo_quarta","gd_grupo_alt_quarta","gd_noite_quarta","gd_extra_quarta","dashein_comparacao"],
-  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","gd_extra_quinta","dashein_vitrine","cleverfinds_quinta","cleverfinds_extra_quinta"],
+  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","gd_extra_quinta","dashein_vitrine","cleverfinds_quinta","cleverfinds_quinta_extra1","cleverfinds_quinta_extra2","cleverfinds_quinta_extra3","cleverfinds_quinta_extra4","cleverfinds_quinta_extra5"],
   sexta:["gd_manha_sexta","gd_pagina_sexta","gd_grupo_sexta","gd_grupo_alt_sexta","gd_noite_sexta","gd_extra_sexta","dashein_moda"],
-  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao","cleverfinds_sabado","cleverfinds_extra_sabado"],
+  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao","cleverfinds_sabado","cleverfinds_sabado_extra1","cleverfinds_sabado_extra2","cleverfinds_sabado_extra3","cleverfinds_sabado_extra4","cleverfinds_sabado_extra5"],
   domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","gd_extra_domingo","dashein_enquete"]
 };
 const SLOT_ID_PARA_DIA={};
@@ -959,6 +963,10 @@ function progressoDia(chaveDia){
   slotIds.forEach(slotId=>{
     const slot=SLOTS.find(s=>s.id===slotId);
     if(!slot)return;
+    if(slot.extraDe){
+      const wrapper=document.getElementById("extra-"+slotId);
+      if(!wrapper||wrapper.style.display==="none")return;
+    }
     total++;
     const todosPublicados=slot.destinos.every(destId=>{
       const el=document.getElementById(`status-destino-${slotId}-${destId}`);
@@ -1115,24 +1123,36 @@ function destinosChipsHtml(slot){
   return slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("");
 }
 
-function slotTemplate(slot,extraHtml){
-  if(slot.extraDe){
-    const horarioHtml=slot.horaPadrao!==undefined?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:"";
-    return `<div class="extra-wrapper">
-      <div class="extra-cabecalho-linha">
-        <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
-          <span>➕ Postagem extra</span>
-          <span id="extra-${slot.id}-seta">▸</span>
-        </button>
-        ${horarioHtml}
-      </div>
-      <div id="extra-${slot.id}-corpo" style="display:none">
-        <div class="slot-destinos-linha"><div class="slot-destinos">${destinosChipsHtml(slot)}</div></div>
-        ${itemProdutoSlotTemplate(slot,0,1)}
-        <div id="status-${slot.id}" class="status"></div>
-      </div>
-    </div>`;
+function extraCleverFindsTemplate(slot){
+  return `<div class="extra-wrapper">
+    <div class="slot-destinos-linha"><div class="slot-destinos">${destinosChipsHtml(slot)}</div></div>
+    ${itemProdutoSlotTemplate(slot,0,1)}
+    <div id="status-${slot.id}" class="status"></div>
+  </div>`;
+}
+
+function extrasCleverFindsWrapperHtml(parentId){
+  const blocos=[1,2,3,4,5].map(n=>{
+    const s=SLOTS.find(x=>x.id===`${parentId}_extra${n}`);
+    return `<div id="extra-${s.id}" style="display:none">${extraCleverFindsTemplate(s)}</div>`;
+  }).join("");
+  return `${blocos}<input type="hidden" id="extra-count-${parentId}" value="0"><button type="button" class="secondary" id="extra-add-${parentId}" style="width:100%;margin-top:6px" onclick="adicionarExtraCleverFinds('${parentId}')">➕</button>`;
+}
+
+function adicionarExtraCleverFinds(parentId){
+  const contInput=document.getElementById("extra-count-"+parentId);
+  let count=parseInt(contInput.value)||0;
+  if(count>=5)return;
+  count++;
+  contInput.value=count;
+  document.getElementById(`extra-${parentId}_extra${count}`).style.display="block";
+  if(count>=5){
+    document.getElementById("extra-add-"+parentId).style.display="none";
   }
+  salvarSemana();
+}
+
+function slotTemplate(slot,extraHtml){
   const total=totalItensSlot(slot);
   const itensHtml=slot.vitrine?vitrineTemplate(slot):slot.itensVariavel?itensVariavelTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
@@ -1496,18 +1516,18 @@ function toggleSecao(id){
 
 function renderizarSlotsDia(dia){
   const ids=SLOTS_POR_GRUPO[dia];
-  const extraPorPai={};
+  const paisComExtra=new Set();
   ids.forEach(id=>{
     const s=SLOTS.find(x=>x.id===id);
-    if(s&&s.extraDe)extraPorPai[s.extraDe]=s;
+    if(s&&s.extraDe)paisComExtra.add(s.extraDe);
   });
   return ids.filter(id=>{
     const s=SLOTS.find(x=>x.id===id);
     return !(s&&s.extraDe);
   }).map(id=>{
     const slot=SLOTS.find(s=>s.id===id);
-    const extraSlot=extraPorPai[id];
-    return slotTemplate(slot,extraSlot?slotTemplate(extraSlot):"");
+    const extraHtml=paisComExtra.has(id)?extrasCleverFindsWrapperHtml(id):"";
+    return slotTemplate(slot,extraHtml);
   }).join("");
 }
 
@@ -1786,6 +1806,25 @@ function carregarSemana(){
   });
   CONTAS_STORY.forEach(id=>{
     document.getElementById("story-numero-"+id).textContent=(dados.stories&&dados.stories[id])||0;
+  });
+  ["cleverfinds_terca","cleverfinds_quinta","cleverfinds_sabado"].forEach(parentId=>{
+    const contInput=document.getElementById("extra-count-"+parentId);
+    if(!contInput)return;
+    let maxComDados=0;
+    for(let n=1;n<=5;n++){
+      const extraId=`${parentId}_extra${n}`;
+      const s=(dados.slots&&dados.slots[extraId])||{};
+      const temNome=s.itens&&s.itens[0]&&s.itens[0].produto;
+      const temStatus=s.destinosStatus&&Object.values(s.destinosStatus).some(v=>v!=="nada");
+      if(temNome||temStatus)maxComDados=n;
+    }
+    contInput.value=maxComDados;
+    for(let n=1;n<=5;n++){
+      const el=document.getElementById(`extra-${parentId}_extra${n}`);
+      if(el)el.style.display=n<=maxComDados?"block":"none";
+    }
+    const addBtn=document.getElementById("extra-add-"+parentId);
+    if(addBtn)addBtn.style.display=maxComDados>=5?"none":"block";
   });
   globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
   atualizarProgressoDias();
