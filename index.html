@@ -502,6 +502,7 @@
       <div class="field">
         <label>Data do relatório</label>
         <input id="relatorio-data" type="date" onchange="mudarDataRelatorio()">
+        <span id="relatorio-data-dia-semana" class="badge" style="display:inline-block;margin-top:6px"></span>
       </div>
     </section>
     <section class="card">
@@ -721,7 +722,7 @@ Gostou? Confira o link e aproveite enquanto estiver disponível.`
       id:`gd_extra_${grupoKey}`,dia,horaPadrao:"",
       destinos:["insta_garimpo","face_garimpo","grupo_garimpo","grupo_shop","grupo_vende"],
       formatoDefault:"Foto",
-      conteudo:"Postagem extra do dia — produto avulso, fora dos 5 horários fixos",
+      conteudo:"Postagem extra do dia — produto avulso, fora dos posts fixos",
       tipo:"Extra",
       oculto:true,
       instaMagicPadrao:true,
@@ -1407,7 +1408,7 @@ function registrarPostNoRelatorio(slotId,destId){
   if(!slot||!conta)return;
   const dataPost=dataDoSlotNaSemana(slotId);
   const canal=`${conta.rede} - ${conta.nome}`;
-  const texto=nomeProdutoDoSlot(slot)||slot.conteudo||"Post";
+  const texto=nomeProdutoDoSlot(slot)||"Post sem nome do produto";
   const origem=`${slotId}-${destId}`;
   const todos=carregarRelatorios();
   if(!todos[dataPost])todos[dataPost]={posts:[],notas:""};
@@ -1895,9 +1896,20 @@ function inicializarRelatorio(){
     const hoje=new Date();
     input.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
   }
+  atualizarDiaSemanaRelatorio();
 }
 
-function mudarDataRelatorio(){renderizarRelatorio()}
+function diaSemanaExtenso(iso){
+  const nomes=["Domingo","Segunda-feira","Terça-feira","Quarta-feira","Quinta-feira","Sexta-feira","Sábado"];
+  return nomes[isoParaData(iso).getDay()];
+}
+
+function atualizarDiaSemanaRelatorio(){
+  const iso=document.getElementById("relatorio-data").value;
+  document.getElementById("relatorio-data-dia-semana").textContent=iso?diaSemanaExtenso(iso):"";
+}
+
+function mudarDataRelatorio(){atualizarDiaSemanaRelatorio();renderizarRelatorio()}
 
 function rotuloPostRelatorio(post){
   return typeof post==="string"?{texto:post,canal:""}:{texto:post.texto||"",canal:post.canal||""};
@@ -2061,6 +2073,7 @@ function salvarRelatorioAtual(){
 
 function abrirRelatorioData(data){
   document.getElementById("relatorio-data").value=data;
+  atualizarDiaSemanaRelatorio();
   renderizarRelatorio();
 }
 
