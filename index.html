@@ -42,7 +42,7 @@
       gap:10px;
       box-shadow:0 6px 14px rgba(232,62,140,.18)
     }
-    .hero img{width:34px;height:34px;border-radius:9px}
+    .hero img{width:26px;height:26px;border-radius:7px}
     h1{font-size:16px;margin:0}
     .hero p{margin:0;color:#f3d9e6;font-size:11px;line-height:1.3}
     .card{
@@ -205,11 +205,8 @@
     /* Dias da semana (acordeão) */
     .dia-titulo{color:var(--accent-dark)}
     .dia-progresso{font-size:12px;font-weight:700;color:var(--muted);background:var(--accent-soft);border-radius:999px;padding:3px 10px;white-space:nowrap}
-    .dia-progresso.completo{background:#dcfce7;color:#166534}
     .semana-progresso-geral{margin-top:10px}
     .semana-progresso-texto{font-size:12px;font-weight:700;color:var(--muted);margin-bottom:5px}
-    .semana-progresso-barra{height:9px;border-radius:999px;background:var(--accent-soft);overflow:hidden}
-    .semana-progresso-fill{height:100%;background:linear-gradient(135deg,var(--accent),#8b5cf6);border-radius:999px;transition:width .3s;width:0%}
     .dia-card>div{margin-top:6px}
 
     /* Lembretes finais */
@@ -303,7 +300,6 @@
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
       <div class="semana-progresso-geral">
         <div class="semana-progresso-texto" id="semana-progresso-texto"></div>
-        <div class="semana-progresso-barra"><div class="semana-progresso-fill" id="semana-progresso-fill"></div></div>
       </div>
     </section>
 
@@ -404,6 +400,26 @@
           <li><strong>Antes de publicar, confira:</strong> o gancho prende atenção? o benefício ficou claro? o texto soa natural (não parece propaganda forçada)? não tem nenhuma informação inventada (preço, comissão, avaliação)? o formato é o mais adequado pro conteúdo que você tem? o CTA está certo pro canal (QUERO no Instagram, link ou comentário fixado no Facebook)? as hashtags são específicas do nicho, não genéricas?</li>
           <li><strong>Evite exageros</strong> tipo "CORRA", "IMPERDÍVEL", "ÚLTIMA CHANCE" — a menos que seja informação real (oferta com prazo, por exemplo). O tom é de recomendação/descoberta, não de anúncio agressivo.</li>
         </ul>
+        <p class="slot-meta" style="margin-top:12px"><strong>Ideias de conteúdo — Garimpo do Dia:</strong></p>
+        <ul>
+          <li>Dica, produto útil ou comparação do dia</li>
+          <li>Produto/oferta do dia</li>
+          <li>Novidade ou bom custo-benefício</li>
+          <li>Destaque da noite — o produto com maior potencial de engajamento/venda</li>
+        </ul>
+        <p class="slot-meta"><strong>CTAs que já funcionaram:</strong> "Comenta QUERO que eu te mando o link no direct." · "Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível." · "Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link."</p>
+        <p class="slot-meta" style="margin-top:12px"><strong>Ideias de conteúdo — Dashein:</strong></p>
+        <ul>
+          <li>Dica de combinação/styling</li>
+          <li>Comparação entre 2 peças parecidas</li>
+          <li>Look/peça da semana</li>
+          <li>Bastidor ou foto de quem já comprou + pergunta pra engajar</li>
+          <li>Favoritos da semana</li>
+          <li>Avaliação de quem já comprou</li>
+          <li>Vitrine em vídeo — numere de 3 a 5 produtos e grave uma sequência rápida (registre como 1 post normal, com a foto de capa)</li>
+        </ul>
+        <p class="slot-meta"><strong>CTA padrão:</strong> "Comenta [PALAVRA-CHAVE] que eu te mando o link no direct" (ou "QUERO + número do produto" na vitrine).</p>
+        <p class="slot-meta" style="margin-top:12px"><strong>Clever Finds USA:</strong> só foto do produto + comentário curto, em inglês, sem carrossel de comparação. O link vai sempre no primeiro comentário, nunca na publicação. CTA: "Link in the first comment 👇".</p>
       </div>
     </section>
 
@@ -603,302 +619,28 @@ const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
 function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId].rede==="Instagram")}
 
-// ===== Cronograma fixo do Garimpo do Dia: 5 horários por dia, todo dia =====
-const DIAS_GD=["Segunda","Terça","Quarta","Quinta","Sexta","Sábado","Domingo"];
-const GRUPOS_GD=["segunda","terca","quarta","quinta","sexta","sabado","domingo"];
-
-function criarSlotsGarimpoDoDia(){
-  const slots=[];
-  GRUPOS_GD.forEach((grupoKey,i)=>{
-    const dia=DIAS_GD[i];
-    const diaA=i%2===0; // Segunda, Quarta, Sexta, Domingo = dia A
-
-    slots.push({
-      id:`gd_manha_${grupoKey}`,dia,horaPadrao:"09:00",
-      destinos:["insta_garimpo"],
-      formatoDefault:"Carrossel",conteudo:"Dica, produto útil, comparação ou carrossel",
-      itensVariavel:{min:1,max:5},
-      instaMagicPadrao:true,
-      ctaSugerido:"Comenta QUERO que eu te mando o link no direct.",
-      modelo:`[Nome do produto] — [1 frase sobre o que ele resolve ou por que vale a pena]
-
-[Detalhe extra: comparação, dica de uso ou por que esse achado é bom]
-
-Comenta QUERO que eu te mando o link no direct.
-
-#[hashtagnicho1] #[hashtagnicho2] #[hashtagnicho3]`
-    });
-
-    slots.push({
-      id:`gd_pagina_${grupoKey}`,dia,horaPadrao:"11:30",
-      destinos:["face_garimpo"],
-      formatoDefault:"Carrossel",conteudo:"Produto/oferta do dia",
-      itensVariavel:{min:1,max:5},
-      nota:"Teste as duas formas de colocar o link: direto na publicação, ou nos comentários (deixando 'Deixei o link no primeiro comentário 👇'). Vá comparando qual traz mais alcance/cliques.",
-      ctaSugerido:"Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.",
-      modelo:`[Nome do produto] — [1 frase sobre a oferta/benefício]
-
-Gostou desse achado? Confira o link e aproveite enquanto a oferta estiver disponível.
-(ou, se for testar link no comentário: "Deixei o link no primeiro comentário 👇")
-
-#[hashtagnicho1] #[hashtagnicho2]`
-    });
-
-    slots.push({
-      id:`gd_grupo_${grupoKey}`,dia,horaPadrao:"14:00",
-      destinos:["grupo_garimpo"],
-      formatoDefault:"Carrossel",conteudo:"Produto útil, novidade, promoção ou bom custo-benefício",
-      itensVariavel:{min:1,max:5},
-      nota:"Teste as duas formas de colocar o link: direto na publicação, ou nos comentários (deixando 'Deixei o link no primeiro comentário 👇'). Vá comparando qual traz mais alcance/cliques.",
-      ctaSugerido:"Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.",
-      modelo:`[Nome do produto] — [1 frase: novidade, promoção ou bom custo-benefício]
-
-Quem estava procurando algo assim? 👀 Comenta aqui que eu te passo o link.
-(ou, se for testar link no comentário: "Quem quiser conferir, o link está no comentário fixado 👇")`
-    });
-
-    const grupoAltId=diaA?"grupo_shop":"grupo_vende";
-    slots.push({
-      id:`gd_grupo_alt_${grupoKey}`,dia,horaPadrao:"17:30",
-      destinos:[grupoAltId],
-      formatoDefault:"Foto",
-      itensVariavel:{min:1,max:5},
-      conteudo:diaA?"Alternando grupos — hoje é a vez do Grupo ShopOnline":"Alternando grupos — hoje é a vez do Grupo Vende Barato",
-      nota:"Esse horário alterna de grupo a cada dia (ShopOnline / Vende Barato) pra não publicar nos dois no mesmo dia.",
-      ctaSugerido:diaA?"Você teria esse produto em casa? Comenta aqui que eu te passo o link.":"Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.",
-      modelo:diaA?
-`[Nome do produto] — [1 frase sobre o produto]
-
-Você teria esse produto em casa? Comenta aqui que eu te passo o link.`
-      :
-`[Nome do produto] — [1 frase sobre o preço/oferta]
-
-Olha o preço que encontrei 👀 Quem quiser o link, comenta aqui.`
-    });
-
-    const canalNoiteId=diaA?"insta_garimpo":"face_garimpo";
-    const slotNoite={
-      id:`gd_noite_${grupoKey}`,dia,horaPadrao:"20:00",
-      destinos:[canalNoiteId],
-      formatoDefault:"Reels",
-      itensVariavel:{min:1,max:5},
-      conteudo:"Postagem principal da noite — o produto com maior potencial de engajamento/venda do dia",
-      nota:"Esse horário alterna entre Instagram e Facebook Página a cada dia.",
-      ctaSugerido:diaA?"Quer o link? Comenta QUERO que eu te mando no direct.":"Gostou? Confira o link e aproveite enquanto estiver disponível.",
-      modelo:diaA?
-`[Nome do produto] — [1 frase: por que é o destaque do dia]
-
-Quer o link? Comenta QUERO que eu te mando no direct.
-
-#[hashtagnicho1] #[hashtagnicho2]`
-      :
-`[Nome do produto] — [1 frase: por que é o destaque do dia]
-
-Gostou? Confira o link e aproveite enquanto estiver disponível.`
-    };
-    if(diaA)slotNoite.instaMagicPadrao=true; // só o Instagram usa InstaMagic — nos dias de Facebook essa opção nem aparece
-    slots.push(slotNoite);
-
-    slots.push({
-      id:`gd_extra_${grupoKey}`,dia,horaPadrao:"",
-      destinos:["insta_garimpo","face_garimpo","grupo_garimpo","grupo_shop","grupo_vende"],
-      formatoDefault:"Foto",
-      conteudo:"Postagem extra do dia — produto avulso, fora dos posts fixos",
-      tipo:"Extra",
-      oculto:true,
-      instaMagicPadrao:true,
-      nota:"Espaço livre pra controlar uma postagem extra que você fizer nesse dia. Preencha o horário que quiser e marque só o(s) canal(is) que usar.",
-      modelo:`[Nome do produto] — [1 frase sobre o produto]
-
-[Legenda livre — escreva do seu jeito]
-
-#[hashtagnicho1] #[hashtagnicho2]`
-    });
-  });
-  return slots;
-}
-
-function criarExtrasCleverFinds(parentId,diaLabel){
-  const extras=[];
-  for(let n=1;n<=5;n++){
-    extras.push({id:`${parentId}_extra${n}`,extraDe:parentId,extraIndice:n,dia:diaLabel,
-      destinos:["face_cleverfinds","grupo_cleverfinds"],tipo:"Clever Finds USA"});
-  }
-  return extras;
-}
-
-// ===== Slots de conteúdo da semana (do estudo, adaptado pras suas contas) =====
-const SLOTS=[
-  ...criarSlotsGarimpoDoDia(),
-
-  {id:"dashein_dica",dia:"Dashein — Segunda",hora:"19h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:1,max:5},
-   formato:"Foto + texto",conteudo:"Dica de combinação/styling",tipo:"Shein",
-   modelo:`Como combinar essa peça de mais de um jeito 👇
-
-[Combinação 1: com o quê usar]
-[Combinação 2: com o quê usar]
-[Combinação 3: com o quê usar]
-
-Qual combinação você usaria? Comenta aqui 👇
-
-#[hashtagmoda1] #[hashtagmoda2]`},
-
-  {id:"dashein_comparacao",dia:"Dashein — Quarta",hora:"19h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:2,max:5},
-   formato:"Carrossel",conteudo:"Comparação entre 2 peças parecidas",tipo:"Shein",
-   modelo:`[Categoria]: essa ou essa? 🤔
-
-[+] [Peça A]: [ponto forte]
-[-] [Peça A]: [ponto fraco]
-[+] [Peça B]: [ponto forte]
-[-] [Peça B]: [ponto fraco]
-
-Comenta a letra que você escolheria!
-A) [Peça A] - R$[preço]
-B) [Peça B] - R$[preço]
-
-Comenta [PALAVRA-CHAVE] que eu te mando o link de cada uma no direct
-
-#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
-
-  {id:"dashein_moda",dia:"Dashein — Sexta",hora:"18h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:1,max:5},
-   formato:"Carrossel de moda",conteudo:"Look/peça da semana",tipo:"Shein",
-   nota:"Mantenha simples: só carrossel (moda tem muita foto pronta de anúncio), sem vídeo aqui. Publique junto no Instagram DaShein e na Página Dashein.",
-   modelo:`Look/peça da semana: [nome da peça]
-
-Serve super bem, o tecido é [observação real], e o preço tá em R$[valor].
-Numeração que peguei: [tamanho]
-Recomendo pegar [tamanho normal/menor/maior]
-
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
-
-  {id:"dashein_enquete",dia:"Dashein — Domingo",hora:"19h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:2,max:3},
-   formato:"Carrossel",conteudo:"Repost de bastidor/foto de quem já comprou + pergunta pra engajar",tipo:"Shein",
-   nota:"Antes era enquete no Story — trocamos por Carrossel porque Story só alcança quem já segue a página, e Carrossel/Reels alcançam gente nova (prioridade atual: crescer o perfil).",
-   ctaSugerido:"Comenta aqui qual dessas peças você quer que eu poste amanhã 👇",
-   modelo:`[Bastidor ou foto de quem já comprou] — [1 frase curta sobre a peça]
-
-Comenta aqui qual dessas peças você quer ver amanhã 👇
-
-#[hashtagmoda1] #[hashtagmoda2]`},
-
-  {id:"dashein_favoritos",dia:"Dashein — Terça",hora:"21h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:3,max:5},
-   formato:"Carrossel",conteudo:"3 favoritos da semana",tipo:"Shein",
-   modelo:`3 favoritos dessa semana por menos de R$[valor] 👗
-
-1. [Peça 1] - [1 frase sobre o motivo de gostar]
-2. [Peça 2] - [1 frase sobre o motivo de gostar]
-3. [Peça 3] - [1 frase sobre o motivo de gostar]
-
-Salva esse post pra não perder!
-Comenta [PALAVRA-CHAVE] que eu te mando o link de cada uma no direct
-
-#[hashtagmoda1] #[hashtagmoda2] #[hashtagmoda3]`},
-
-  {id:"dashein_vitrine",dia:"Dashein — Quinta",horaPadrao:"19:30",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   formato:"Reels / Vídeo — sequência de produtos",conteudo:"Vitrine SHEIN — Escolhas da Semana: 3 a 5 produtos em sequência",tipo:"Shein",
-   nota:"Use pequenos trechos dos vídeos dos produtos da SHEIN e monte uma sequência rápida (3-5s cada produto, total de 15-25s). Numere cada produto no vídeo pra facilitar o pedido do link nos comentários.",
-   ctaSugerido:"QUERO + número do produto",
-   vitrine:{min:3,max:5},
-   checklist:[
-     "Escolhi de 3 a 5 produtos",
-     "Baixei/separei os vídeos dos produtos",
-     "Montei o Reels",
-     "Coloquei os números dos produtos no vídeo",
-     "Cadastrei os links no aplicativo",
-     "Preparei a capa",
-     "Legenda pronta"
-   ],
-   modelo:`Olha essa seleção que encontrei na SHEIN 😍
-
-Qual você escolheria: 1, 2, 3, 4 ou 5?
-
-Comenta QUERO + o número que eu te mando o link no direct.
-
-#Shein #ModaFeminina #Looks #AchadinhosShein #DaShein`},
-
-  {id:"dashein_avaliacao",dia:"Dashein — Sábado",hora:"19h",
-   destinos:["insta_dashein","face_dashein","grupo_shein"],
-   itensVariavel:{min:1,max:5},
-   formato:"Foto + texto",conteudo:"Avaliação de quem já comprou",tipo:"Shein",
-   modelo:`Olha essa avaliação de quem já comprou [a peça]! 😍
-
-"[trecho da avaliação real]"
-
-Link nos comentários/direct pra garantir o seu 💕
-Comenta [PALAVRA-CHAVE] que eu te mando o link no direct
-
-#[hashtagmoda1] #[hashtagmoda2]`},
-
-  {id:"cleverfinds_terca",dia:"Clever Finds USA — Terça",hora:"19h",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"Clever Finds USA",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence about it]
-
-Found this on Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
-
-  {id:"cleverfinds_quinta",dia:"Clever Finds USA — Quinta",hora:"19h",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"Clever Finds USA",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence: what makes it worth it]
-
-Straight from Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
-
-  {id:"cleverfinds_sabado",dia:"Clever Finds USA — Sábado",hora:"19h",
-   destinos:["face_cleverfinds","grupo_cleverfinds"],
-   itensVariavel:{min:1,max:5},
-   formato:"Foto",conteudo:"Foto do produto + comentário curto (Amazon americana) — sem comparação",tipo:"Clever Finds USA",
-   nota:"Linha exclusiva de produtos da Amazon americana (Amazon 🇺🇸) — não misture com Shopee, Mercado Livre ou outras plataformas aqui. Postagens em inglês. Só foto do produto + comentário curto, sem carrossel de comparação. O link vai no PRIMEIRO COMENTÁRIO, nunca na publicação.",
-   ctaSugerido:"Link in the first comment 👇",
-   modelo:`[Product name] — [1 short sentence about the benefit]
-
-Weekend find from Amazon US 🇺🇸
-
-Link in the first comment 👇
-
-#[hashtag1] #[hashtag2]`},
-
-  ...criarExtrasCleverFinds("cleverfinds_terca","Clever Finds USA — Terça"),
-  ...criarExtrasCleverFinds("cleverfinds_quinta","Clever Finds USA — Quinta"),
-  ...criarExtrasCleverFinds("cleverfinds_sabado","Clever Finds USA — Sábado"),
-
+// ===== Linhas de conteúdo: cada uma tem, todo dia, 1 post sempre visível + um pool de extras revelados com "+" =====
+const LINHAS_CONTEUDO=[
+  {prefixo:"garimpo",tipo:"Garimpo do Dia",destinos:["insta_garimpo","face_garimpo","grupo_garimpo","grupo_shop","grupo_vende","shopee_video","tiktok_garimpo"]},
+  {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
+  {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds"]}
 ];
+const POOL_MAX=6; // 1 post sempre visível + até 5 extras revelados com o "+"
+const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
 
-const SLOTS_POR_GRUPO={
-  segunda:["gd_manha_segunda","gd_pagina_segunda","gd_grupo_segunda","gd_grupo_alt_segunda","gd_noite_segunda","gd_extra_segunda","dashein_dica"],
-  terca:["gd_manha_terca","gd_pagina_terca","gd_grupo_terca","gd_grupo_alt_terca","gd_noite_terca","gd_extra_terca","dashein_favoritos","cleverfinds_terca","cleverfinds_terca_extra1","cleverfinds_terca_extra2","cleverfinds_terca_extra3","cleverfinds_terca_extra4","cleverfinds_terca_extra5"],
-  quarta:["gd_manha_quarta","gd_pagina_quarta","gd_grupo_quarta","gd_grupo_alt_quarta","gd_noite_quarta","gd_extra_quarta","dashein_comparacao"],
-  quinta:["gd_manha_quinta","gd_pagina_quinta","gd_grupo_quinta","gd_grupo_alt_quinta","gd_noite_quinta","gd_extra_quinta","dashein_vitrine","cleverfinds_quinta","cleverfinds_quinta_extra1","cleverfinds_quinta_extra2","cleverfinds_quinta_extra3","cleverfinds_quinta_extra4","cleverfinds_quinta_extra5"],
-  sexta:["gd_manha_sexta","gd_pagina_sexta","gd_grupo_sexta","gd_grupo_alt_sexta","gd_noite_sexta","gd_extra_sexta","dashein_moda"],
-  sabado:["gd_manha_sabado","gd_pagina_sabado","gd_grupo_sabado","gd_grupo_alt_sabado","gd_noite_sabado","gd_extra_sabado","dashein_avaliacao","cleverfinds_sabado","cleverfinds_sabado_extra1","cleverfinds_sabado_extra2","cleverfinds_sabado_extra3","cleverfinds_sabado_extra4","cleverfinds_sabado_extra5"],
-  domingo:["gd_manha_domingo","gd_pagina_domingo","gd_grupo_domingo","gd_grupo_alt_domingo","gd_noite_domingo","gd_extra_domingo","dashein_enquete"]
-};
+// ===== Slots de conteúdo da semana (livres: sem horário, formato ou canal fixos — só onde postou) =====
+const SLOTS=[];
+const SLOTS_POR_GRUPO={};
+DIAS_SEMANA.forEach(([diaChave,diaLabel])=>{
+  SLOTS_POR_GRUPO[diaChave]=[];
+  LINHAS_CONTEUDO.forEach(linha=>{
+    const baseId=`${linha.prefixo}_${diaChave}`;
+    const base={id:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos};
+    const extras=Array.from({length:POOL_MAX-1},(_,i)=>({id:`${baseId}_extra${i+1}`,extraDe:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos}));
+    SLOTS.push(base,...extras);
+    SLOTS_POR_GRUPO[diaChave].push(base.id,...extras.map(e=>e.id));
+  });
+});
 const SLOT_ID_PARA_DIA={};
 Object.entries(SLOTS_POR_GRUPO).forEach(([dia,ids])=>{ids.forEach(id=>SLOT_ID_PARA_DIA[id]=dia)});
 
@@ -941,37 +683,29 @@ function atualizarNavDia(){
 
 function progressoDia(chaveDia){
   const slotIds=SLOTS_POR_GRUPO[chaveDia]||[];
-  let total=0,feitos=0;
+  let feitos=0;
   slotIds.forEach(slotId=>{
     const slot=SLOTS.find(s=>s.id===slotId);
     if(!slot)return;
-    if(slot.extraDe){
-      const wrapper=document.getElementById("extra-"+slotId);
-      if(!wrapper||wrapper.style.display==="none")return;
-    }
-    total++;
-    const todosPublicados=slot.destinos.every(destId=>{
+    const publicado=slot.destinos.some(destId=>{
       const el=document.getElementById(`status-destino-${slotId}-${destId}`);
       return el&&el.value==="publicado";
     });
-    if(todosPublicados)feitos++;
+    if(publicado)feitos++;
   });
-  return{feitos,total};
+  return feitos;
 }
 
 function atualizarProgressoDias(){
-  let totalSemana=0,feitosSemana=0;
+  let feitosSemana=0;
   ["segunda","terca","quarta","quinta","sexta","sabado","domingo"].forEach(dia=>{
-    const{feitos,total}=progressoDia(dia);
-    totalSemana+=total;feitosSemana+=feitos;
+    const feitos=progressoDia(dia);
+    feitosSemana+=feitos;
     const el=document.getElementById("progresso-"+dia);
     if(!el)return;
-    el.textContent=total?`${feitos}/${total}`:"";
-    el.classList.toggle("completo",total>0&&feitos===total);
+    el.textContent=feitos?`${feitos} post${feitos>1?"s":""}`:"";
   });
-  const pct=totalSemana?Math.round(feitosSemana/totalSemana*100):0;
-  document.getElementById("semana-progresso-texto").textContent=totalSemana?`${feitosSemana} de ${totalSemana} posts feitos essa semana (${pct}%)`:"";
-  document.getElementById("semana-progresso-fill").style.width=pct+"%";
+  document.getElementById("semana-progresso-texto").textContent=feitosSemana?`${feitosSemana} post${feitosSemana>1?"s":""} feito${feitosSemana>1?"s":""} essa semana`:"Nenhum post feito ainda essa semana.";
 }
 
 function abrirApenasDia(chaveDia){
@@ -1105,7 +839,7 @@ function destinosChipsHtml(slot){
   return slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("");
 }
 
-function extraCleverFindsTemplate(slot){
+function extraPostTemplate(slot){
   return `<div class="extra-wrapper">
     <div class="slot-destinos-linha"><div class="slot-destinos">${destinosChipsHtml(slot)}</div></div>
     ${itemProdutoSlotTemplate(slot,0,1)}
@@ -1113,22 +847,25 @@ function extraCleverFindsTemplate(slot){
   </div>`;
 }
 
-function extrasCleverFindsWrapperHtml(parentId){
-  const blocos=[1,2,3,4,5].map(n=>{
+function poolWrapperHtml(parentId){
+  const max=POOL_MAX-1;
+  const blocos=Array.from({length:max},(_,i)=>{
+    const n=i+1;
     const s=SLOTS.find(x=>x.id===`${parentId}_extra${n}`);
-    return `<div id="extra-${s.id}" style="display:none">${extraCleverFindsTemplate(s)}</div>`;
+    return `<div id="extra-${s.id}" style="display:none">${extraPostTemplate(s)}</div>`;
   }).join("");
-  return `${blocos}<input type="hidden" id="extra-count-${parentId}" value="0"><button type="button" class="secondary" id="extra-add-${parentId}" style="width:100%;margin-top:6px" onclick="adicionarExtraCleverFinds('${parentId}')">➕</button>`;
+  return `${blocos}<input type="hidden" id="extra-count-${parentId}" value="0"><button type="button" class="secondary" id="extra-add-${parentId}" style="width:100%;margin-top:6px" onclick="adicionarExtraPool('${parentId}')">➕</button>`;
 }
 
-function adicionarExtraCleverFinds(parentId){
+function adicionarExtraPool(parentId){
+  const max=POOL_MAX-1;
   const contInput=document.getElementById("extra-count-"+parentId);
   let count=parseInt(contInput.value)||0;
-  if(count>=5)return;
+  if(count>=max)return;
   count++;
   contInput.value=count;
   document.getElementById(`extra-${parentId}_extra${count}`).style.display="block";
-  if(count>=5){
+  if(count>=max){
     document.getElementById("extra-add-"+parentId).style.display="none";
   }
   salvarSemana();
@@ -1136,7 +873,7 @@ function adicionarExtraCleverFinds(parentId){
 
 function slotTemplate(slot,extraHtml){
   const total=totalItensSlot(slot);
-  const itensHtml=slot.vitrine?vitrineTemplate(slot):slot.itensVariavel?itensVariavelTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
+  const itensHtml=Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
@@ -1150,7 +887,7 @@ function slotTemplate(slot,extraHtml){
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>`;
   const cardHtml=`<section class="card">
-    ${slot.oculto?"":cabecalhoHtml}
+    ${cabecalhoHtml}
     <div class="slot-destinos-linha">
       <div class="slot-destinos">${destinosChipsHtml(slot)}</div>
       <button type="button" class="slot-toggle-seta" id="slot-seta-${slot.id}" onclick="toggleSlotCorpo('${slot.id}')">▸</button>
@@ -1168,7 +905,7 @@ function slotTemplate(slot,extraHtml){
       </select>
     </div>
     <p class="slot-meta">${slot.conteudo}</p>`:`
-    <p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>`}
+    ${(cfgPadrao.formato||cfgPadrao.conteudo)?`<p class="slot-meta" id="formato-${slot.id}"><strong>Formato:</strong> ${cfgPadrao.formato} — ${cfgPadrao.conteudo}</p>`:""}`}
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
@@ -1181,106 +918,12 @@ function slotTemplate(slot,extraHtml){
     </div>
     <button type="button" class="danger" style="width:100%;margin-top:6px" onclick="limparLegenda('${slot.id}')">🗑️ Limpar legenda</button>
     <div id="status-${slot.id}" class="status"></div>
-    ${slot.checklist?`
-    <div class="checklist-postagem">
-      <button type="button" class="acordeon-titulo item-slot-titulo" onclick="toggleSecao('checklist-${slot.id}')">
-        <span>Checklist da postagem</span>
-        <span id="checklist-${slot.id}-seta">▸</span>
-      </button>
-      <div id="checklist-${slot.id}-corpo" style="display:none">
-        ${slot.checklist.map((item,i)=>`<label class="checklist-item"><input type="checkbox" id="checklist-${slot.id}-${i}" onchange="salvarSemana()"> ${item}</label>`).join("")}
-      </div>
-    </div>`:""}
     </div>
     ${extraHtml||""}
   </section>`;
-  if(slot.oculto){
-    return `<div class="extra-wrapper">
-      <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
-        <span>➕ Postagem extra</span>
-        <span id="extra-${slot.id}-seta">▸</span>
-      </button>
-      <div id="extra-${slot.id}-corpo" style="display:none">${cardHtml}</div>
-    </div>`;
-  }
   return cardHtml;
 }
 
-function itensVariavelTemplate(slot){
-  const min=slot.itensVariavel.min,max=slot.itensVariavel.max;
-  const itensHtml=Array.from({length:max},(_,idx)=>{
-    return `<div id="item-variavel-${slot.id}-${idx}" style="display:${idx<min?"block":"none"}">${itemProdutoSlotTemplate(slot,idx,max)}</div>`;
-  }).join("");
-  return `
-    <input type="hidden" id="item-variavel-count-${slot.id}" value="${min}">
-    ${itensHtml}
-    <button type="button" class="secondary" id="item-variavel-add-${slot.id}" style="width:100%;margin:6px 0" onclick="adicionarItemVariavel('${slot.id}')">+ Adicionar produto</button>
-  `;
-}
-
-function adicionarItemVariavel(slotId){
-  const slot=SLOTS.find(s=>s.id===slotId);
-  const contInput=document.getElementById("item-variavel-count-"+slotId);
-  let count=parseInt(contInput.value)||slot.itensVariavel.min;
-  if(count>=slot.itensVariavel.max)return;
-  document.getElementById(`item-variavel-${slotId}-${count}`).style.display="block";
-  count++;
-  contInput.value=count;
-  if(count>=slot.itensVariavel.max){
-    document.getElementById("item-variavel-add-"+slotId).style.display="none";
-  }
-  salvarSemana();
-}
-
-function vitrineTemplate(slot){
-  const min=slot.vitrine.min,max=slot.vitrine.max;
-  const produtosHtml=Array.from({length:max},(_,idx)=>{
-    const n=idx+1;
-    return `<div class="produto-vitrine" id="produto-vitrine-${slot.id}-${n}" style="display:${n<=min?"block":"none"}">
-      <div class="item-slot-titulo">Produto ${n}</div>
-      <div class="field"><label>Nome do produto</label><input id="vitrine-nome-${slot.id}-${n}" placeholder="Ex.: Vestido midi"></div>
-      <div class="field"><label>Link de afiliado — controle interno, nunca entra na legenda</label><input id="vitrine-link-${slot.id}-${n}" type="url" placeholder="Cole o link aqui"></div>
-      <button type="button" class="secondary" onclick="copiarLinkVitrine('${slot.id}',${n})">📋 Copiar link</button>
-    </div>`;
-  }).join("");
-  return `
-    <input type="hidden" id="vitrine-count-${slot.id}" value="${min}">
-    <div class="foto-linha">
-      <img id="foto-preview-${slot.id}" class="foto-preview" alt="Capa do Reels">
-      <div class="foto-botoes">
-        <button type="button" class="secondary" onclick="document.getElementById('foto-input-${slot.id}').click()">📷 Escolher capa do Reels</button>
-        <button type="button" id="foto-remover-${slot.id}" class="danger" style="display:none" onclick="removerFoto('${slot.id}')">✕ Remover foto</button>
-      </div>
-      <input type="file" id="foto-input-${slot.id}" accept="image/*" style="display:none" onchange="onFotoChange('${slot.id}',this)">
-      <input type="hidden" id="foto-valor-${slot.id}">
-    </div>
-    <div class="item-slot-titulo">Produtos do vídeo</div>
-    ${produtosHtml}
-    <button type="button" class="secondary" id="vitrine-add-${slot.id}" style="width:100%;margin:6px 0" onclick="adicionarProdutoVitrine('${slot.id}')">+ Adicionar produto</button>
-    <button type="button" class="success" style="width:100%" onclick="salvarSemana()">✓ Salvar produtos</button>
-  `;
-}
-
-function adicionarProdutoVitrine(slotId){
-  const slot=SLOTS.find(s=>s.id===slotId);
-  const contInput=document.getElementById("vitrine-count-"+slotId);
-  let count=parseInt(contInput.value)||slot.vitrine.min;
-  if(count>=slot.vitrine.max)return;
-  count++;
-  contInput.value=count;
-  document.getElementById(`produto-vitrine-${slotId}-${count}`).style.display="block";
-  if(count>=slot.vitrine.max){
-    document.getElementById("vitrine-add-"+slotId).style.display="none";
-  }
-  salvarSemana();
-}
-
-async function copiarLinkVitrine(slotId,n){
-  const link=document.getElementById(`vitrine-link-${slotId}-${n}`).value;
-  if(!link){alert("Sem link pra copiar.");return}
-  try{await navigator.clipboard.writeText(link);alert("Link copiado!")}
-  catch{alert("Não foi possível copiar.")}
-}
 
 function toggleSlotCorpo(slotId){
   const corpo=document.getElementById("slot-corpo-"+slotId);
@@ -1502,7 +1145,7 @@ function renderizarSlotsDia(dia){
     return !(s&&s.extraDe);
   }).map(id=>{
     const slot=SLOTS.find(s=>s.id===id);
-    const extraHtml=paisComExtra.has(id)?extrasCleverFindsWrapperHtml(id):"";
+    const extraHtml=paisComExtra.has(id)?poolWrapperHtml(id):"";
     return slotTemplate(slot,extraHtml);
   }).join("");
 }
@@ -1612,7 +1255,7 @@ function coletarDados(){
       itensVariavelCount,
       vitrine,
       checklist,
-      palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id).value,
+      palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id)?.value,
       legenda:document.getElementById("legenda-"+slot.id)?.value,
       destinosStatus,
       destinosHorario,
@@ -1715,7 +1358,8 @@ function carregarSemana(){
       });
     }
     if(!slot.semLink&&slotTemInstagram(slot)){
-      document.getElementById("palavra-"+slot.id).value=s.palavra??"QUERO";
+      const palavraEl=document.getElementById("palavra-"+slot.id);
+      if(palavraEl)palavraEl.value=s.palavra??"QUERO";
     }
     if(slot.alterna){
       const modoSalvo=(s.modo&&slot.alterna[s.modo])?s.modo:Object.keys(slot.alterna)[0];
@@ -1723,7 +1367,7 @@ function carregarSemana(){
       aplicarModoVisual(slot.id,modoSalvo);
       document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.alterna[modoSalvo].modelo;
     }else if(document.getElementById("legenda-"+slot.id)){
-      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.modelo;
+      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:(slot.modelo||"");
     }
     if(slot.instaMagicPadrao!==undefined){
       const checado=s.instamagic!==undefined?s.instamagic:slot.instaMagicPadrao;
@@ -1739,24 +1383,28 @@ function carregarSemana(){
     const marcados=(dados.producao&&dados.producao[dia])||[];
     PASSOS.forEach((_,i)=>{document.getElementById("passo-"+dia+"-"+i).checked=!!marcados[i]});
   });
-  ["cleverfinds_terca","cleverfinds_quinta","cleverfinds_sabado"].forEach(parentId=>{
-    const contInput=document.getElementById("extra-count-"+parentId);
-    if(!contInput)return;
-    let maxComDados=0;
-    for(let n=1;n<=5;n++){
-      const extraId=`${parentId}_extra${n}`;
-      const s=(dados.slots&&dados.slots[extraId])||{};
-      const temNome=s.itens&&s.itens[0]&&s.itens[0].produto;
-      const temStatus=s.destinosStatus&&Object.values(s.destinosStatus).some(v=>v!=="nada");
-      if(temNome||temStatus)maxComDados=n;
-    }
-    contInput.value=maxComDados;
-    for(let n=1;n<=5;n++){
-      const el=document.getElementById(`extra-${parentId}_extra${n}`);
-      if(el)el.style.display=n<=maxComDados?"block":"none";
-    }
-    const addBtn=document.getElementById("extra-add-"+parentId);
-    if(addBtn)addBtn.style.display=maxComDados>=5?"none":"block";
+  Object.keys(SLOTS_POR_GRUPO).forEach(diaChave=>{
+    LINHAS_CONTEUDO.forEach(linha=>{
+      const parentId=`${linha.prefixo}_${diaChave}`;
+      const contInput=document.getElementById("extra-count-"+parentId);
+      if(!contInput)return;
+      const max=POOL_MAX-1;
+      let maxComDados=0;
+      for(let n=1;n<=max;n++){
+        const extraId=`${parentId}_extra${n}`;
+        const s=(dados.slots&&dados.slots[extraId])||{};
+        const temNome=s.itens&&s.itens[0]&&s.itens[0].produto;
+        const temStatus=s.destinosStatus&&Object.values(s.destinosStatus).some(v=>v!=="nada");
+        if(temNome||temStatus)maxComDados=n;
+      }
+      contInput.value=maxComDados;
+      for(let n=1;n<=max;n++){
+        const el=document.getElementById(`extra-${parentId}_extra${n}`);
+        if(el)el.style.display=n<=maxComDados?"block":"none";
+      }
+      const addBtn=document.getElementById("extra-add-"+parentId);
+      if(addBtn)addBtn.style.display=maxComDados>=max?"none":"block";
+    });
   });
   globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
   atualizarProgressoDias();
