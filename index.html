@@ -198,7 +198,8 @@
     /* Quadros que abrem/fecham (acordeão) */
     .acordeon-titulo{font-size:16px;font-weight:800;width:100%;background:none;border:none;padding:0;margin:0;text-align:left;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:space-between;gap:8px}
     .extra-wrapper{background:#fff;border:1px dashed var(--line);border-radius:16px;padding:12px 15px;margin-bottom:10px}
-    .extra-titulo{color:var(--muted);font-size:14px}
+    .extra-titulo{color:var(--muted);font-size:14px;flex:1}
+    .extra-cabecalho-linha{display:flex;align-items:center;gap:8px}
     .extra-wrapper .card{margin:10px 0 0;box-shadow:none}
 
     /* Sessão de produção */
@@ -1156,14 +1157,16 @@ function slotTemplate(slot){
   const temInstaMagic=slot.instaMagicPadrao!==undefined;
   const temFormatoSelect=slot.formatoDefault!==undefined;
   const temInstagram=slotTemInstagram(slot);
-  const cardHtml=`<section class="card">
-    <div class="slot-cabecalho">
+  const horarioInputHtml=temHorario?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:"";
+  const cabecalhoHtml=`<div class="slot-cabecalho">
       <div>
         <span class="slot-dia-hora">${slot.dia}</span>
-        ${temHorario?`<input type="text" class="slot-hora-editavel" id="horario-slot-${slot.id}" value="${slot.horaPadrao}" onchange="salvarSemana()">`:""}
+        ${horarioInputHtml}
       </div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
-    </div>
+    </div>`;
+  const cardHtml=`<section class="card">
+    ${slot.oculto?"":cabecalhoHtml}
     <div class="slot-destinos-linha">
       <div class="slot-destinos">${slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("")}</div>
       <button type="button" class="slot-toggle-seta" id="slot-seta-${slot.id}" onclick="toggleSlotCorpo('${slot.id}')">▸</button>
@@ -1208,10 +1211,13 @@ function slotTemplate(slot){
   </section>`;
   if(slot.oculto){
     return `<div class="extra-wrapper">
-      <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
-        <span>➕ Postagem extra</span>
-        <span id="extra-${slot.id}-seta">▸</span>
-      </button>
+      <div class="extra-cabecalho-linha">
+        <button type="button" class="acordeon-titulo extra-titulo" onclick="toggleSecao('extra-${slot.id}')">
+          <span>➕ Postagem extra</span>
+          <span id="extra-${slot.id}-seta">▸</span>
+        </button>
+        ${horarioInputHtml}
+      </div>
       <div id="extra-${slot.id}-corpo" style="display:none">${cardHtml}</div>
     </div>`;
   }
