@@ -71,7 +71,6 @@
     input[type="number"]::-webkit-outer-spin-button,
     input[type="number"]::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
     input[type="number"]{-moz-appearance:textfield}
-    .legenda-textarea{min-height:150px;font-size:14px;line-height:1.5}
     .field{margin-bottom:11px}
     .grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .badge{
@@ -108,8 +107,6 @@
     .slot-nota{font-size:12px;color:#9a5b1f;background:#fff3e0;border-radius:10px;padding:8px 10px;margin:8px 0}
     .slot-hora-editavel{width:66px;display:inline-block;border:1px solid var(--line);border-radius:8px;padding:3px 6px;font-size:12px;font-weight:700;color:var(--accent-dark);margin-left:6px;background:#fff}
     .cta-sugerido{font-size:12px;color:#7d214f;background:var(--accent-soft);border-radius:10px;padding:6px 10px;margin:6px 0}
-    .instamagic-check{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);margin:10px 0 4px}
-    .instamagic-check input{width:auto}
     .slot-destinos{display:flex;flex-wrap:wrap;gap:8px;flex:1}
     .destino-grupo{display:flex;flex-direction:column;gap:4px}
     .destino-agendamento{display:flex;gap:5px}
@@ -877,9 +874,7 @@ function slotTemplate(slot,extraHtml){
   const temAlterna=!!slot.alterna;
   const modoPadrao=temAlterna?Object.keys(slot.alterna)[0]:null;
   const cfgPadrao=temAlterna?slot.alterna[modoPadrao]:slot;
-  const temInstaMagic=slot.instaMagicPadrao!==undefined;
   const temFormatoSelect=slot.formatoDefault!==undefined;
-  const temInstagram=slotTemInstagram(slot);
   const cabecalhoHtml=`<div class="slot-cabecalho">
       <div>
         <span class="slot-dia-hora">${slot.dia}</span>
@@ -909,14 +904,6 @@ function slotTemplate(slot,extraHtml){
     ${slot.nota?`<p class="slot-nota">💡 ${slot.nota}</p>`:""}
     ${slot.ctaSugerido?`<p class="cta-sugerido">💬 <strong>CTA sugerido:</strong> "${slot.ctaSugerido}"</p>`:""}
     ${temAlterna?`<div id="itens-${slot.id}" style="display:${cfgPadrao.usaItens?"block":"none"}">${itensHtml}</div>`:itensHtml}
-    ${temInstaMagic?`<label class="instamagic-check"><input type="checkbox" id="instamagic-${slot.id}" ${slot.instaMagicPadrao?"checked":""} onchange="togglePalavraChave('${slot.id}')"> Usar InstaMagic</label>`:""}
-    ${(slot.semLink||!temInstagram)?"":`<div class="field" id="palavra-container-${slot.id}" style="display:${(temInstaMagic&&!slot.instaMagicPadrao)?"none":"block"}"><label>Palavra-chave</label><input id="palavra-${slot.id}" placeholder="Ex.: QUERO"></div>`}
-    <div class="field"><label>Legenda (preencha os [colchetes])</label><textarea id="legenda-${slot.id}" class="legenda-textarea"></textarea></div>
-    <div class="buttons">
-      <button class="secondary" onclick="colarLegenda('${slot.id}')">📋 Colar legenda</button>
-      <button class="secondary" onclick="copiarLegenda('${slot.id}')">Copiar legenda</button>
-    </div>
-    <button type="button" class="danger" style="width:100%;margin-top:6px" onclick="limparLegenda('${slot.id}')">🗑️ Limpar legenda</button>
     <div id="status-${slot.id}" class="status"></div>
     </div>
     ${extraHtml||""}
@@ -933,13 +920,6 @@ function toggleSlotCorpo(slotId){
   seta.textContent=aberto?"▸":"▾";
 }
 
-function togglePalavraChave(slotId){
-  const checked=document.getElementById("instamagic-"+slotId).checked;
-  const container=document.getElementById("palavra-container-"+slotId);
-  if(container)container.style.display=checked?"block":"none";
-  salvarSemana();
-}
-
 function aplicarModoVisual(slotId,modo){
   const slot=SLOTS.find(s=>s.id===slotId);
   const cfg=slot.alterna[modo];
@@ -954,7 +934,8 @@ function aplicarModoVisual(slotId,modo){
 function escolherModoSlot(slotId,modo){
   document.getElementById("modo-"+slotId).value=modo;
   aplicarModoVisual(slotId,modo);
-  document.getElementById("legenda-"+slotId).value=SLOTS.find(s=>s.id===slotId).alterna[modo].modelo;
+  const legendaEl=document.getElementById("legenda-"+slotId);
+  if(legendaEl)legendaEl.value=SLOTS.find(s=>s.id===slotId).alterna[modo].modelo;
   salvarSemana();
 }
 
@@ -1255,13 +1236,10 @@ function coletarDados(){
       itensVariavelCount,
       vitrine,
       checklist,
-      palavra:(slot.semLink||!slotTemInstagram(slot))?"":document.getElementById("palavra-"+slot.id)?.value,
-      legenda:document.getElementById("legenda-"+slot.id)?.value,
       destinosStatus,
       destinosHorario,
       destinosData,
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined,
-      instamagic:slot.instaMagicPadrao!==undefined?document.getElementById("instamagic-"+slot.id).checked:undefined,
       formatoSelecionado:slot.formatoDefault!==undefined?document.getElementById("formato-select-"+slot.id).value:undefined
     };
   });
@@ -1357,23 +1335,10 @@ function carregarSemana(){
         document.getElementById(`checklist-${slot.id}-${i}`).checked=!!(s.checklist&&s.checklist[i]);
       });
     }
-    if(!slot.semLink&&slotTemInstagram(slot)){
-      const palavraEl=document.getElementById("palavra-"+slot.id);
-      if(palavraEl)palavraEl.value=s.palavra??"QUERO";
-    }
     if(slot.alterna){
       const modoSalvo=(s.modo&&slot.alterna[s.modo])?s.modo:Object.keys(slot.alterna)[0];
       document.getElementById("modo-"+slot.id).value=modoSalvo;
       aplicarModoVisual(slot.id,modoSalvo);
-      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:slot.alterna[modoSalvo].modelo;
-    }else if(document.getElementById("legenda-"+slot.id)){
-      document.getElementById("legenda-"+slot.id).value=s.legenda!==undefined?s.legenda:(slot.modelo||"");
-    }
-    if(slot.instaMagicPadrao!==undefined){
-      const checado=s.instamagic!==undefined?s.instamagic:slot.instaMagicPadrao;
-      document.getElementById("instamagic-"+slot.id).checked=checado;
-      const container=document.getElementById("palavra-container-"+slot.id);
-      if(container)container.style.display=checado?"block":"none";
     }
     if(slot.formatoDefault!==undefined){
       document.getElementById("formato-select-"+slot.id).value=s.formatoSelecionado||slot.formatoDefault;
@@ -1408,30 +1373,6 @@ function carregarSemana(){
   });
   globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
   atualizarProgressoDias();
-}
-
-async function copiarLegenda(id){
-  const t=document.getElementById("legenda-"+id).value.trim();
-  if(!t){alert("A legenda está vazia.");return}
-  try{await navigator.clipboard.writeText(t);document.getElementById("status-"+id).textContent="Legenda copiada. Agora cole na rede social."}
-  catch{alert("Não foi possível copiar.")}
-}
-
-async function colarLegenda(id){
-  try{
-    const texto=await navigator.clipboard.readText();
-    if(!texto){alert("Área de transferência vazia.");return}
-    document.getElementById("legenda-"+id).value=texto;
-    salvarSemana();
-  }catch{
-    alert("Não foi possível colar automaticamente. Cole manualmente no campo (toque e segure → Colar).");
-  }
-}
-
-function limparLegenda(id){
-  if(!confirm("Apagar o texto dessa legenda?"))return;
-  document.getElementById("legenda-"+id).value="";
-  salvarSemana();
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
@@ -2049,7 +1990,7 @@ window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPro
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
 if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
 
-// Salva sozinho enquanto a pessoa digita nos campos da semana (produto, link, palavra-chave, legenda)
+// Salva sozinho enquanto a pessoa digita nos campos da semana (produto, link)
 let autoSalvarTimeout=null;
 document.getElementById("view-semana").addEventListener("input",e=>{
   const id=e.target.id||"";
