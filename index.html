@@ -893,7 +893,7 @@ Link in the first comment 👇
 
 #[hashtag1] #[hashtag2]`},
 
-  {id:"cleverfinds_extra_terca",dia:"Clever Finds USA — Terça",horaPadrao:"",
+  {id:"cleverfinds_extra_terca",extraDe:"cleverfinds_terca",dia:"Clever Finds USA — Terça",horaPadrao:"",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
    formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
@@ -908,7 +908,7 @@ Link in the first comment 👇
 
 #[hashtag1] #[hashtag2]`},
 
-  {id:"cleverfinds_extra_quinta",dia:"Clever Finds USA — Quinta",horaPadrao:"",
+  {id:"cleverfinds_extra_quinta",extraDe:"cleverfinds_quinta",dia:"Clever Finds USA — Quinta",horaPadrao:"",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
    formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
@@ -923,7 +923,7 @@ Link in the first comment 👇
 
 #[hashtag1] #[hashtag2]`},
 
-  {id:"cleverfinds_extra_sabado",dia:"Clever Finds USA — Sábado",horaPadrao:"",
+  {id:"cleverfinds_extra_sabado",extraDe:"cleverfinds_sabado",dia:"Clever Finds USA — Sábado",horaPadrao:"",
    destinos:["face_cleverfinds","grupo_cleverfinds"],
    itensVariavel:{min:1,max:5},
    formatoDefault:"Foto",conteudo:"Postagem extra do dia — além do post fixo do horário principal",
@@ -1147,7 +1147,7 @@ async function copiarLinkItemSlot(key){
 
 const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
 
-function slotTemplate(slot){
+function slotTemplate(slot,extraHtml){
   const total=totalItensSlot(slot);
   const itensHtml=slot.vitrine?vitrineTemplate(slot):slot.itensVariavel?itensVariavelTemplate(slot):Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
   const temAlterna=!!slot.alterna;
@@ -1208,6 +1208,7 @@ function slotTemplate(slot){
       </div>
     </div>`:""}
     </div>
+    ${extraHtml||""}
   </section>`;
   if(slot.oculto){
     return `<div class="extra-wrapper">
@@ -1508,15 +1509,28 @@ function toggleSecao(id){
   if(seta)seta.textContent=aberto?"▸":"▾";
 }
 
+function renderizarSlotsDia(dia){
+  const ids=SLOTS_POR_GRUPO[dia];
+  const extraPorPai={};
+  ids.forEach(id=>{
+    const s=SLOTS.find(x=>x.id===id);
+    if(s&&s.extraDe)extraPorPai[s.extraDe]=s;
+  });
+  return ids.filter(id=>{
+    const s=SLOTS.find(x=>x.id===id);
+    return !(s&&s.extraDe);
+  }).map(id=>{
+    const slot=SLOTS.find(s=>s.id===id);
+    const extraSlot=extraPorPai[id];
+    return slotTemplate(slot,extraSlot?slotTemplate(extraSlot):"");
+  }).join("");
+}
+
 function montarTela(){
   document.getElementById("producao-segunda").innerHTML=producaoTemplate();
-  document.getElementById("slots-segunda").innerHTML=SLOTS_POR_GRUPO.segunda.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-terca").innerHTML=SLOTS_POR_GRUPO.terca.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-quarta").innerHTML=SLOTS_POR_GRUPO.quarta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-quinta").innerHTML=SLOTS_POR_GRUPO.quinta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-sexta").innerHTML=SLOTS_POR_GRUPO.sexta.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-sabado").innerHTML=SLOTS_POR_GRUPO.sabado.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
-  document.getElementById("slots-domingo").innerHTML=SLOTS_POR_GRUPO.domingo.map(id=>slotTemplate(SLOTS.find(s=>s.id===id))).join("");
+  ["segunda","terca","quarta","quinta","sexta","sabado","domingo"].forEach(dia=>{
+    document.getElementById("slots-"+dia).innerHTML=renderizarSlotsDia(dia);
+  });
   document.getElementById("contadores-story").innerHTML=CONTAS_STORY.map(storyContadorTemplate).join("");
 }
 
