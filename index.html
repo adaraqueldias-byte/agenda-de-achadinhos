@@ -110,18 +110,6 @@
     .cta-sugerido{font-size:12px;color:#7d214f;background:var(--accent-soft);border-radius:10px;padding:6px 10px;margin:6px 0}
     .instamagic-check{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;color:var(--text);margin:10px 0 4px}
     .instamagic-check input{width:auto}
-    .story-contador{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 0;border-top:1px solid var(--line)}
-    .story-contador:first-child{border-top:none}
-    .story-contador-nome{font-size:13px;font-weight:600;color:var(--text);display:flex;flex-direction:column;gap:2px}
-    .story-contador-rede{display:flex;align-items:center;gap:5px}
-    .story-contador-perfil{font-size:11px;color:var(--muted);font-weight:500;margin-left:18px}
-    .icone-rede{display:inline-flex;align-items:center;justify-content:center;width:13px;height:13px;border-radius:3px;font-size:7px;font-weight:600;flex:none;line-height:1}
-    .icone-facebook{background:#1877f2;color:#fff;font-family:Georgia,serif;font-style:italic;font-weight:400}
-    .icone-instagram{background:linear-gradient(45deg,#f58529,#dd2a7b,#8134af);font-size:8px}
-    .story-contador-controles{display:flex;align-items:center;gap:8px}
-    .story-contador-numero{font-size:15px;font-weight:800;color:var(--accent-dark);min-width:20px;text-align:center}
-    .story-btn-mais{background:var(--accent-soft);color:#7d214f;border:none;border-radius:10px;padding:6px 10px;font-size:12px;font-weight:700;cursor:pointer}
-    .story-btn-zerar{background:none;border:1px solid var(--line);border-radius:7px;width:22px;height:22px;padding:0;font-size:11px;cursor:pointer;color:var(--muted)}
     .slot-destinos{display:flex;flex-wrap:wrap;gap:8px;flex:1}
     .destino-grupo{display:flex;flex-direction:column;gap:4px}
     .destino-agendamento{display:flex;gap:5px}
@@ -317,13 +305,6 @@
         <div class="semana-progresso-texto" id="semana-progresso-texto"></div>
         <div class="semana-progresso-barra"><div class="semana-progresso-fill" id="semana-progresso-fill"></div></div>
       </div>
-    </section>
-
-    <section class="card">
-      <div class="slot-dia-hora">📱 Todos os dias <span class="slot-hora">de manhã, 5 min</span></div>
-      <p class="slot-meta"><strong>Conteúdo:</strong> Foto/repost rápido — Bastidor ou enquete</p>
-      <p class="slot-nota">💡 Poste Story todos os dias, sem limite de quantidade — quanto mais story, melhor pro alcance. Esse calendário é a base mínima da semana, não um teto: poste mais sempre que quiser.</p>
-      <div id="contadores-story"></div>
     </section>
 
     <div id="producao-segunda"></div>
@@ -1531,41 +1512,6 @@ function montarTela(){
   ["segunda","terca","quarta","quinta","sexta","sabado","domingo"].forEach(dia=>{
     document.getElementById("slots-"+dia).innerHTML=renderizarSlotsDia(dia);
   });
-  document.getElementById("contadores-story").innerHTML=CONTAS_STORY.map(storyContadorTemplate).join("");
-}
-
-const CONTAS_STORY=["insta_garimpo","face_garimpo","insta_dashein","face_dashein"];
-
-function iconeRedeHTML(rede){
-  if(rede==="Facebook")return `<span class="icone-rede icone-facebook">f</span>`;
-  if(rede==="Instagram")return `<span class="icone-rede icone-instagram">📷</span>`;
-  return "";
-}
-
-function storyContadorTemplate(id){
-  const c=CONTAS[id];
-  return `<div class="story-contador">
-    <span class="story-contador-nome">
-      <span class="story-contador-rede">${iconeRedeHTML(c.rede)} <strong>${c.rede}</strong></span>
-      <span class="story-contador-perfil">${c.nome}</span>
-    </span>
-    <div class="story-contador-controles">
-      <button type="button" class="story-btn-zerar" onclick="zerarStory('${id}')">↺</button>
-      <span class="story-contador-numero" id="story-numero-${id}">0</span>
-      <button type="button" class="story-btn-mais" onclick="incrementarStory('${id}')">+1 Story</button>
-    </div>
-  </div>`;
-}
-
-function incrementarStory(id){
-  const el=document.getElementById("story-numero-"+id);
-  el.textContent=parseInt(el.textContent)+1;
-  salvarSemana();
-}
-
-function zerarStory(id){
-  document.getElementById("story-numero-"+id).textContent="0";
-  salvarSemana();
 }
 
 function storageKey(){return"agenda-achadinhos-semana-"+document.getElementById("date").value}
@@ -1680,9 +1626,7 @@ function coletarDados(){
   ["segunda","quinta"].forEach(dia=>{
     producao[dia]=PASSOS.map((_,i)=>document.getElementById("passo-"+dia+"-"+i).checked);
   });
-  const stories={};
-  CONTAS_STORY.forEach(id=>{stories[id]=parseInt(document.getElementById("story-numero-"+id).textContent)||0});
-  return{data:date.value,slots,producao,stories};
+  return{data:date.value,slots,producao};
 }
 
 function salvarSemana(){
@@ -1794,9 +1738,6 @@ function carregarSemana(){
   ["segunda","quinta"].forEach(dia=>{
     const marcados=(dados.producao&&dados.producao[dia])||[];
     PASSOS.forEach((_,i)=>{document.getElementById("passo-"+dia+"-"+i).checked=!!marcados[i]});
-  });
-  CONTAS_STORY.forEach(id=>{
-    document.getElementById("story-numero-"+id).textContent=(dados.stories&&dados.stories[id])||0;
   });
   ["cleverfinds_terca","cleverfinds_quinta","cleverfinds_sabado"].forEach(parentId=>{
     const contInput=document.getElementById("extra-count-"+parentId);
