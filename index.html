@@ -497,7 +497,7 @@
 
   <div id="view-relatorio" style="display:none">
     <section class="card">
-      <div class="semana-titulo" style="margin:0 0 10px">📊 Posts por canal (total)</div>
+      <div class="semana-titulo" style="margin:0 0 10px">📊 Posts por canal</div>
       <div id="relatorio-contador-canais"></div>
     </section>
     <section class="card">
@@ -526,6 +526,9 @@
     </section>
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Histórico de relatórios</div>
     <div id="relatorio-historico"></div>
+    <div style="text-align:center;margin-top:14px">
+      <button type="button" class="backup-link" onclick="zerarRelatorio()">🗑️ Zerar histórico do Relatório</button>
+    </div>
   </div>
 </div>
 
@@ -1428,6 +1431,15 @@ function mostrarView(nome){
 
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
 function salvarRelatorios(dados){localStorage.setItem("agenda-achadinhos-relatorios",JSON.stringify(dados))}
+
+function zerarRelatorio(){
+  if(!confirm("Isso vai apagar TODO o histórico do Relatório (todos os posts e anotações já registrados). Não afeta o Banco de Produtos nem a Semana. Essa ação não pode ser desfeita. Quer continuar?"))return;
+  localStorage.removeItem("agenda-achadinhos-relatorios");
+  const hoje=new Date();
+  document.getElementById("relatorio-data").value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+  atualizarDiaSemanaRelatorio();
+  renderizarRelatorio();
+}
 function relatorioDataAtual(){return document.getElementById("relatorio-data").value}
 function relatorioDoDia(data){const todos=carregarRelatorios();return todos[data]||{posts:[],notas:""}}
 
