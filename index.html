@@ -1467,13 +1467,35 @@ function popularDatalistCanais(){
   document.getElementById("datalist-relatorio-canal").innerHTML=opcoes.map(c=>`<option value="${escaparBanco(c)}"></option>`).join("");
 }
 
+function normalizarTexto(s){
+  return (s||"").normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase().replace(/[^a-z0-9]/g,"");
+}
+
+function resolverChaveConta(canalTexto){
+  const norm=normalizarTexto(canalTexto);
+  if(!norm)return null;
+  for(const c of Object.values(CONTAS)){
+    if(normalizarTexto(chaveConta(c))===norm)return chaveConta(c);
+  }
+  for(const c of Object.values(CONTAS)){
+    if(normalizarTexto(c.nome)===norm)return chaveConta(c);
+  }
+  for(const c of Object.values(CONTAS)){
+    const nomeNorm=normalizarTexto(c.nome);
+    if(nomeNorm.length>=4&&(norm.includes(nomeNorm)||nomeNorm.includes(norm)))return chaveConta(c);
+  }
+  return null;
+}
+
 function ultimaDataPorCanal(){
   const todos=carregarRelatorios();
   const ultimas={};
   Object.entries(todos).forEach(([data,r])=>{
     (r.posts||[]).forEach(post=>{
-      const canal=rotuloPostRelatorio(post).canal;
-      if(canal&&(!ultimas[canal]||data>ultimas[canal]))ultimas[canal]=data;
+      const canalOriginal=rotuloPostRelatorio(post).canal;
+      if(!canalOriginal)return;
+      const canal=resolverChaveConta(canalOriginal)||canalOriginal;
+      if(!ultimas[canal]||data>ultimas[canal])ultimas[canal]=data;
     });
   });
   return ultimas;
@@ -1589,7 +1611,8 @@ function adicionarPostRelatorio(){
   const canalInput=document.getElementById("relatorio-canal-novo");
   const texto=input.value.trim();
   if(!texto)return;
-  const canal=canalInput.value.trim();
+  const canalDigitado=canalInput.value.trim();
+  const canal=resolverChaveConta(canalDigitado)||canalDigitado;
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
