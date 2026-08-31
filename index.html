@@ -21,7 +21,11 @@
       --accent-dark:#b91c63;
       --accent-soft:#ffe0ec;
       --ok:#1f9d66;
+      --ok-soft:#e3f7ec;
+      --warn:#b5730f;
+      --warn-soft:#fdf0dc;
       --danger:#c62828;
+      --danger-soft:#fbe4e4;
     }
     *{box-sizing:border-box}
     body{
@@ -156,6 +160,10 @@
     .relatorio-contador-linha{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
     .relatorio-contador-linha span{color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .relatorio-contador-linha strong{color:var(--accent-dark);font-weight:800;flex:none}
+    .pill-dias{flex:none;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
+    .pill-dias.ok{background:var(--ok-soft);color:var(--ok)}
+    .pill-dias.warn{background:var(--warn-soft);color:var(--warn)}
+    .pill-dias.danger{background:var(--danger-soft);color:var(--danger)}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
     .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
@@ -1459,21 +1467,35 @@ function popularDatalistCanais(){
   document.getElementById("datalist-relatorio-canal").innerHTML=opcoes.map(c=>`<option value="${escaparBanco(c)}"></option>`).join("");
 }
 
-function contarCanaisRelatorio(){
+function ultimaDataPorCanal(){
   const todos=carregarRelatorios();
-  const contagem={};
-  Object.values(todos).forEach(r=>{
+  const ultimas={};
+  Object.entries(todos).forEach(([data,r])=>{
     (r.posts||[]).forEach(post=>{
       const canal=rotuloPostRelatorio(post).canal;
-      if(canal)contagem[canal]=(contagem[canal]||0)+1;
+      if(canal&&(!ultimas[canal]||data>ultimas[canal]))ultimas[canal]=data;
     });
   });
-  return contagem;
+  return ultimas;
+}
+
+function pillDiasSemPostar(dataIso){
+  if(!dataIso)return{classe:"danger",texto:"sem posts ainda"};
+  const hoje=new Date();
+  const hojeIso=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+  const dias=Math.round((isoParaData(hojeIso)-isoParaData(dataIso))/86400000);
+  if(dias<=0)return{classe:"ok",texto:"hoje"};
+  if(dias===1)return{classe:"ok",texto:"1 dia"};
+  if(dias<=6)return{classe:"warn",texto:`${dias} dias sem postar`};
+  return{classe:"danger",texto:`${dias} dias sem postar`};
 }
 
 function renderizarContadorCanais(){
-  const contagem=contarCanaisRelatorio();
-  const linha=(nome,chave)=>`<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><strong>${contagem[chave]||0}</strong></div>`;
+  const ultimas=ultimaDataPorCanal();
+  const linha=(nome,chave)=>{
+    const{classe,texto}=pillDiasSemPostar(ultimas[chave]);
+    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
+  };
   const paginas=Object.values(CONTAS).filter(c=>c.rede==="Facebook")
     .map(c=>linha(c.nome.replace(/^Página\s*/,""),chaveConta(c))).join("");
   const instagram=Object.values(CONTAS).filter(c=>c.rede==="Instagram")
@@ -1486,7 +1508,7 @@ function renderizarContadorCanais(){
     ?`<div class="relatorio-canal-grupo-titulo">🎥 Outras redes</div>${outrasRedesContas.map(c=>linha(`${c.rede}: ${c.nome}`,chaveConta(c))).join("")}`
     :"";
   const nomesConhecidos=new Set(Object.values(CONTAS).map(chaveConta));
-  const extras=Object.keys(contagem).filter(c=>!nomesConhecidos.has(c));
+  const extras=Object.keys(ultimas).filter(c=>!nomesConhecidos.has(c));
   const outros=extras.length
     ?`<div class="relatorio-canal-grupo-titulo">🌐 Outros canais</div>${extras.map(nome=>linha(nome,nome)).join("")}`
     :"";
