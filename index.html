@@ -535,13 +535,25 @@
         <span id="relatorio-lote-seta">▸</span>
       </button>
       <div id="relatorio-lote-corpo" style="display:none">
-        <div class="grid">
-          <div class="field"><label>Canal (usado em todos)</label><input id="relatorio-lote-canal" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off"></div>
-          <div class="field"><label>Formato (usado em todos)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
+        <div class="field">
+          <label>📋 Colar lista (1 post por linha): Nome | Canal | Data | Horário | Visualizações</label>
+          <textarea id="relatorio-colar-lista" rows="6" placeholder="Perfume Importado | COMPRA E VENDA BRASIL | 17/07/2026 | 10:06 | 5
+Perfume Importado | GrupoGarimpododia | 17/07/2026 | 10:05 | 16"></textarea>
+          <p class="tip" style="margin:4px 0 0">Data, horário e visualizações podem ficar em branco (ex.: "Nome | Canal | | | 5"). Formato usa o campo abaixo pra todas as linhas.</p>
         </div>
-        <div id="relatorio-lote-linhas"></div>
-        <button type="button" class="secondary" style="width:100%;margin:6px 0" onclick="adicionarLinhaLote()">+ Adicionar linha</button>
-        <button type="button" class="primary" style="width:100%" onclick="salvarLoteRelatorio()">✓ Salvar todos os posts</button>
+        <div class="field"><label>Formato (usado em toda a lista colada)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
+        <button type="button" class="primary" style="width:100%" onclick="importarListaRelatorio()">📋 Importar lista colada</button>
+
+        <button type="button" class="acordeon-titulo" style="margin-top:14px" onclick="toggleSecao('relatorio-lote-manual')">
+          <span>Ou preencher linha por linha</span>
+          <span id="relatorio-lote-manual-seta">▸</span>
+        </button>
+        <div id="relatorio-lote-manual-corpo" style="display:none">
+          <div class="field"><label>Canal (usado em todas as linhas abaixo)</label><input id="relatorio-lote-canal" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off"></div>
+          <div id="relatorio-lote-linhas"></div>
+          <button type="button" class="secondary" style="width:100%;margin:6px 0" onclick="adicionarLinhaLote()">+ Adicionar linha</button>
+          <button type="button" class="primary" style="width:100%" onclick="salvarLoteRelatorio()">✓ Salvar todos os posts</button>
+        </div>
       </div>
     </section>
     <section class="card">
@@ -1785,6 +1797,36 @@ function adicionarLinhaLote(){
   if(loteRelatorioLinhas>=15)return;
   loteRelatorioLinhas++;
   renderizarLinhasLote();
+}
+
+function importarListaRelatorio(){
+  const texto=document.getElementById("relatorio-colar-lista").value;
+  const linhas=texto.split("\n").map(l=>l.trim()).filter(Boolean);
+  if(!linhas.length){alert("Cole ao menos uma linha.");return}
+  const formatoPadrao=document.getElementById("relatorio-lote-formato").value||"";
+  const dataPadrao=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  let adicionados=0;
+  linhas.forEach(linha=>{
+    const partes=linha.split("|").map(p=>p.trim());
+    const nome=partes[0];
+    if(!nome)return;
+    const canalDigitado=partes[1]||"";
+    const canal=canalDigitado?(resolverChaveConta(canalDigitado)||canalDigitado):"";
+    const dataDigitada=partes[2]?brParaIso(partes[2]):null;
+    const data=dataDigitada||dataPadrao;
+    const horario=partes[3]||"";
+    const visTexto=partes[4];
+    const visualizacoes=visTexto===undefined||visTexto===""?undefined:parseInt(visTexto);
+    if(!todos[data])todos[data]={posts:[],notas:""};
+    todos[data].posts.push({texto:nome,canal,formato:formatoPadrao,horario,visualizacoes});
+    adicionados++;
+  });
+  if(!adicionados){alert("Não consegui identificar nenhuma linha válida.");return}
+  salvarRelatorios(todos);
+  document.getElementById("relatorio-colar-lista").value="";
+  renderizarRelatorio();
+  alert(`${adicionados} post(s) importado(s) com sucesso!`);
 }
 
 function salvarLoteRelatorio(){
