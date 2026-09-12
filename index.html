@@ -1061,12 +1061,14 @@ function registrarPostNoRelatorio(slotId,destId){
   const dataPost=dataDoSlotNaSemana(slotId);
   const canal=`${conta.rede} - ${conta.nome}`;
   const texto=nomeProdutoDoSlot(slot)||"Post sem nome do produto";
+  const horarioEl=document.getElementById(`horario-destino-${slotId}-${destId}`);
+  const horario=horarioEl?horarioEl.value||"":"";
   const origem=`${slotId}-${destId}`;
   const todos=carregarRelatorios();
   if(!todos[dataPost])todos[dataPost]={posts:[],notas:""};
   const jaExiste=todos[dataPost].posts.some(p=>typeof p==="object"&&p._origem===origem);
   if(jaExiste)return;
-  todos[dataPost].posts.push({texto,canal,_origem:origem});
+  todos[dataPost].posts.push({texto,canal,horario,_origem:origem});
   salvarRelatorios(todos);
 }
 
