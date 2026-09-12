@@ -467,6 +467,7 @@
         <datalist id="datalist-banco-categoria"></datalist>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
+      <div class="field"><label>📅 Data que encontrou o produto</label><input id="banco-data" type="date"></div>
       <div class="field"><label id="banco-preco-label">🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 ou 58,00 - 219,00 (faixa por quantidade)" oninput="calcularComissaoAutomatica()"></div>
       <div class="grid">
         <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12" oninput="calcularComissaoAutomatica()"></div>
@@ -1713,11 +1714,19 @@ function popularDatalistCategorias(){
   }).join("");
 }
 
+function hojeIsoBanco(){
+  const d=new Date();
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
 function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
   atualizarLabelPreco();
+  const dataInput=document.getElementById("banco-data");
+  dataInput.max=hojeIsoBanco();
+  dataInput.value=hojeIsoBanco();
   document.getElementById("banco-categoria").value="";
   document.getElementById("banco-preco").value="";
   document.getElementById("banco-comissao").value="";
@@ -1741,16 +1750,17 @@ function adicionarProdutoBanco(){
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
   const valorComissao=valorComissaoTexto===""?undefined:parsePrecoBanco(valorComissaoTexto,loja);
+  const dataAdicionado=document.getElementById("banco-data").value||hojeIsoBanco();
   if(!nome){alert("Escreve o nome do produto.");return}
   const lista=carregarBanco();
   if(bancoEditandoId!==null){
     const item=lista.find(p=>p.id===bancoEditandoId);
     if(item){
-      item.nome=nome;item.link=link;item.loja=loja;item.categoria=categoria;delete item.categoriaOutra;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;
+      item.nome=nome;item.link=link;item.loja=loja;item.categoria=categoria;delete item.categoriaOutra;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;item.dataAdicionado=dataAdicionado;
       if(bancoFotoAtual)item.foto=bancoFotoAtual;
     }
   }else{
-    lista.unshift({id:Date.now(),nome,link,loja,categoria,preco,comissao,valorComissao,foto:bancoFotoAtual||undefined});
+    lista.unshift({id:Date.now(),nome,link,loja,categoria,preco,comissao,valorComissao,dataAdicionado,foto:bancoFotoAtual||undefined});
   }
   salvarBanco(lista);
   limparFormBanco();
@@ -1765,6 +1775,9 @@ function editarProdutoBanco(id){
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
   atualizarLabelPreco();
+  const dataInput=document.getElementById("banco-data");
+  dataInput.max=hojeIsoBanco();
+  dataInput.value=item.dataAdicionado||isoDoIdBanco(item.id);
   document.getElementById("banco-categoria").value=rotuloCategoriaBanco(item);
   document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBanco(item.preco,item.loja):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
@@ -2020,6 +2033,19 @@ function aplicarOrdenacao(lista){
   return{itens:lista,grupos:null};
 }
 
+function isoDoIdBanco(id){
+  if(!id)return "";
+  const d=new Date(id);
+  return d.getFullYear()+"-"+String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0");
+}
+
+function dataAdicionadoBanco(p){
+  const iso=p.dataAdicionado||isoDoIdBanco(p.id);
+  if(!iso)return "";
+  const[ano,mes,dia]=iso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+
 function cardProdutoBanco(p){
   return `<div class="item-produto${p.publicado?' publicado':''}">
       ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
@@ -2030,6 +2056,7 @@ function cardProdutoBanco(p){
         ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${formatarPrecoBancoComMoeda(p.preco,p.loja)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}</span>`:""}
+        <span class="item-produto-link">📅 Cadastrado em ${dataAdicionadoBanco(p)}</span>
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
         <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
       </div>
@@ -2104,6 +2131,8 @@ date.value=segundaFeiraDeHoje();
 atualizarNavDia();
 carregarSemana();
 abrirApenasDia(CHAVE_DIA_POR_INDICE[new Date().getDay()]);
+document.getElementById("banco-data").max=hojeIsoBanco();
+document.getElementById("banco-data").value=hojeIsoBanco();
 </script>
 </body>
 </html>
