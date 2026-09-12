@@ -150,6 +150,7 @@
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
+    .relatorio-post-meta{font-size:11px;color:var(--muted);font-weight:600}
     .relatorio-vinculo{background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#1d4ed8}
     .relatorio-vinculo select{margin-top:6px;font-size:13px;padding:8px}
     .relatorio-vinculo-aviso{background:#fff7ed;border:1px solid #fdba74;color:#9a5b1f}
@@ -504,7 +505,7 @@
     <section class="card">
       <div class="field">
         <label>Data do relatório</label>
-        <input id="relatorio-data" type="date" onchange="mudarDataRelatorio()">
+        <input id="relatorio-data" type="text" inputmode="numeric" placeholder="DD/MM/AAAA" maxlength="10" oninput="mascararDataRelatorio(this)" onchange="mudarDataRelatorio()">
         <span id="relatorio-data-dia-semana" class="badge" style="display:inline-block;margin-top:6px"></span>
       </div>
     </section>
@@ -517,6 +518,10 @@
       <div class="field">
         <input id="relatorio-canal-novo" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off" oninput="atualizarVinculoSemana()" onkeydown="if(event.key==='Enter'){event.preventDefault();adicionarPostRelatorio();}">
         <datalist id="datalist-relatorio-canal"></datalist>
+      </div>
+      <div class="grid">
+        <div class="field"><label>Horário (opcional)</label><input id="relatorio-horario-novo" type="time"></div>
+        <div class="field"><label>Visualizações (opcional)</label><input id="relatorio-visualizacoes-novo" type="number" min="0" placeholder="Ex.: 57"></div>
       </div>
       <div id="relatorio-vinculo-semana" style="display:none"></div>
       <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
@@ -1433,22 +1438,38 @@ function mostrarView(nome){
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
 function salvarRelatorios(dados){localStorage.setItem("agenda-achadinhos-relatorios",JSON.stringify(dados))}
 
+function isoParaBR(iso){
+  if(!iso)return "";
+  const[ano,mes,dia]=iso.split("-");
+  return `${dia}/${mes}/${ano}`;
+}
+function brParaIso(br){
+  const m=(br||"").trim().match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(!m)return null;
+  const dia=m[1].padStart(2,"0"),mes=m[2].padStart(2,"0"),ano=m[3];
+  return `${ano}-${mes}-${dia}`;
+}
+function mascararDataRelatorio(input){
+  let v=input.value.replace(/\D/g,"").slice(0,8);
+  if(v.length>=5)v=v.slice(0,2)+"/"+v.slice(2,4)+"/"+v.slice(4);
+  else if(v.length>=3)v=v.slice(0,2)+"/"+v.slice(2);
+  input.value=v;
+}
+
 function zerarRelatorio(){
   if(!confirm("Isso vai apagar TODO o histórico do Relatório (todos os posts e anotações já registrados). Não afeta o Banco de Produtos nem a Semana. Essa ação não pode ser desfeita. Quer continuar?"))return;
   localStorage.removeItem("agenda-achadinhos-relatorios");
-  const hoje=new Date();
-  document.getElementById("relatorio-data").value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+  document.getElementById("relatorio-data").value=isoParaBR(hojeIsoBanco());
   atualizarDiaSemanaRelatorio();
   renderizarRelatorio();
 }
-function relatorioDataAtual(){return document.getElementById("relatorio-data").value}
+function relatorioDataAtual(){return brParaIso(document.getElementById("relatorio-data").value)||hojeIsoBanco()}
 function relatorioDoDia(data){const todos=carregarRelatorios();return todos[data]||{posts:[],notas:""}}
 
 function inicializarRelatorio(){
   const input=document.getElementById("relatorio-data");
   if(!input.value){
-    const hoje=new Date();
-    input.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+    input.value=isoParaBR(hojeIsoBanco());
   }
   atualizarDiaSemanaRelatorio();
 }
@@ -1459,14 +1480,16 @@ function diaSemanaExtenso(iso){
 }
 
 function atualizarDiaSemanaRelatorio(){
-  const iso=document.getElementById("relatorio-data").value;
+  const iso=brParaIso(document.getElementById("relatorio-data").value);
   document.getElementById("relatorio-data-dia-semana").textContent=iso?diaSemanaExtenso(iso):"";
 }
 
 function mudarDataRelatorio(){atualizarDiaSemanaRelatorio();renderizarRelatorio()}
 
 function rotuloPostRelatorio(post){
-  return typeof post==="string"?{texto:post,canal:""}:{texto:post.texto||"",canal:post.canal||""};
+  return typeof post==="string"
+    ?{texto:post,canal:"",horario:"",visualizacoes:undefined}
+    :{texto:post.texto||"",canal:post.canal||"",horario:post.horario||"",visualizacoes:post.visualizacoes};
 }
 
 function popularDatalistCanais(){
@@ -1570,7 +1593,8 @@ function renderizarRelatorio(){
     ?'<div class="relatorio-vazio">Nenhum post registrado ainda hoje.</div>'
     :r.posts.map((post,i)=>{
       const p=rotuloPostRelatorio(post);
-      return `<div class="relatorio-post-item"><div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span></div><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`;
+      const meta=[p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:""].filter(Boolean).join(" · ");
+      return `<div class="relatorio-post-item"><div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}</div><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`;
     }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
@@ -1622,14 +1646,18 @@ function atualizarVinculoSemana(){
 function adicionarPostRelatorio(){
   const input=document.getElementById("relatorio-post-novo");
   const canalInput=document.getElementById("relatorio-canal-novo");
+  const horarioInput=document.getElementById("relatorio-horario-novo");
+  const visualizacoesInput=document.getElementById("relatorio-visualizacoes-novo");
   const texto=input.value.trim();
   if(!texto)return;
   const canalDigitado=canalInput.value.trim();
   const canal=resolverChaveConta(canalDigitado)||canalDigitado;
+  const horario=horarioInput.value||"";
+  const visualizacoes=visualizacoesInput.value===""?undefined:parseInt(visualizacoesInput.value);
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
-  const post={texto,canal};
+  const post={texto,canal,horario,visualizacoes};
   if(vinculoSemanaSelecionado){
     post._origem=`${vinculoSemanaSelecionado.slotId}-${vinculoSemanaSelecionado.destId}`;
     marcarPublicadoNaSemana(vinculoSemanaSelecionado.monday,vinculoSemanaSelecionado.slotId,vinculoSemanaSelecionado.destId);
@@ -1638,6 +1666,8 @@ function adicionarPostRelatorio(){
   salvarRelatorios(todos);
   input.value="";
   canalInput.value="";
+  horarioInput.value="";
+  visualizacoesInput.value="";
   vinculoSemanaSelecionado=null;
   vinculoSemanaCandidatos=[];
   document.getElementById("relatorio-vinculo-semana").style.display="none";
@@ -1663,7 +1693,7 @@ function salvarRelatorioAtual(){
 }
 
 function abrirRelatorioData(data){
-  document.getElementById("relatorio-data").value=data;
+  document.getElementById("relatorio-data").value=isoParaBR(data);
   atualizarDiaSemanaRelatorio();
   renderizarRelatorio();
 }
