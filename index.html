@@ -1621,7 +1621,7 @@ function pillDiasSemPostar(dataIso){
   return{classe:"danger",texto:`${dias} dias sem postar`};
 }
 
-const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","grupo_garimpo","grupo_shein","grupo_cleverfinds"];
+const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","grupo_garimpo","grupo_shein","grupo_cleverfinds","insta_garimpo","shopee_video","tiktok_garimpo"];
 
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
@@ -1634,11 +1634,15 @@ function renderizarContadorCanais(){
     .map(c=>linha(c.nome.replace(/^Página\s*/,""),chaveConta(c))).join("");
   const grupos=contasFoco.filter(c=>c.rede==="Grupo Facebook")
     .map(c=>linha(c.nome,chaveConta(c))).join("");
+  const outras=contasFoco.filter(c=>c.rede!=="Facebook"&&c.rede!=="Grupo Facebook")
+    .map(c=>linha(`${c.rede}: ${c.nome}`,chaveConta(c))).join("");
   document.getElementById("relatorio-contador-canais").innerHTML=`
     <div class="relatorio-canal-grupo-titulo">Páginas</div>
     ${paginas}
     <div class="relatorio-canal-grupo-titulo">Grupos</div>
     ${grupos}
+    <div class="relatorio-canal-grupo-titulo">Outras redes</div>
+    ${outras}
   `;
 }
 
