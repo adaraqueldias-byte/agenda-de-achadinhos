@@ -523,9 +523,10 @@
         <datalist id="datalist-relatorio-canal"></datalist>
       </div>
       <div class="grid">
+        <div class="field"><label>Formato</label><select id="relatorio-formato-novo"><option value="">—</option></select></div>
         <div class="field"><label>Horário (opcional)</label><input id="relatorio-horario-novo" type="time"></div>
-        <div class="field"><label>Visualizações (opcional)</label><input id="relatorio-visualizacoes-novo" type="number" min="0" placeholder="Ex.: 57"></div>
       </div>
+      <div class="field"><label>Visualizações (opcional)</label><input id="relatorio-visualizacoes-novo" type="number" min="0" placeholder="Ex.: 57"></div>
       <div id="relatorio-vinculo-semana" style="display:none"></div>
       <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
 
@@ -534,7 +535,10 @@
         <span id="relatorio-lote-seta">▸</span>
       </button>
       <div id="relatorio-lote-corpo" style="display:none">
-        <div class="field"><label>Canal (usado em todos os posts abaixo)</label><input id="relatorio-lote-canal" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off"></div>
+        <div class="grid">
+          <div class="field"><label>Canal (usado em todos)</label><input id="relatorio-lote-canal" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off"></div>
+          <div class="field"><label>Formato (usado em todos)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
+        </div>
         <div id="relatorio-lote-linhas"></div>
         <button type="button" class="secondary" style="width:100%;margin:6px 0" onclick="adicionarLinhaLote()">+ Adicionar linha</button>
         <button type="button" class="primary" style="width:100%" onclick="salvarLoteRelatorio()">✓ Salvar todos os posts</button>
@@ -543,6 +547,15 @@
     <section class="card">
       <div class="semana-titulo" style="margin:0 0 10px">Anotações do dia</div>
       <textarea id="relatorio-notas" rows="4" placeholder="Como foi o dia? O que funcionou, ideias, observações..." oninput="salvarRelatorioAtual()"></textarea>
+    </section>
+    <section class="card">
+      <button type="button" class="acordeon-titulo" onclick="toggleSecao('relatorio-levantamento')">
+        <span>📈 Levantamento geral</span>
+        <span id="relatorio-levantamento-seta">▸</span>
+      </button>
+      <div id="relatorio-levantamento-corpo" style="display:none">
+        <div id="relatorio-levantamento-conteudo"></div>
+      </div>
     </section>
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Histórico de relatórios</div>
     <div id="relatorio-historico"></div>
@@ -1500,10 +1513,18 @@ function atualizarDiaSemanaRelatorio(){
 
 function mudarDataRelatorio(){atualizarDiaSemanaRelatorio();renderizarRelatorio()}
 
+const FORMATOS_RELATORIO=["Foto","Reels","Carrossel","Outro"];
+
+function popularSelectsFormatoRelatorio(){
+  const opcoes=FORMATOS_RELATORIO.map(f=>`<option value="${f}">${f}</option>`).join("");
+  document.getElementById("relatorio-formato-novo").innerHTML=`<option value="">—</option>${opcoes}`;
+  document.getElementById("relatorio-lote-formato").innerHTML=`<option value="">—</option>${opcoes}`;
+}
+
 function rotuloPostRelatorio(post){
   return typeof post==="string"
-    ?{texto:post,canal:"",horario:"",visualizacoes:undefined}
-    :{texto:post.texto||"",canal:post.canal||"",horario:post.horario||"",visualizacoes:post.visualizacoes};
+    ?{texto:post,canal:"",horario:"",visualizacoes:undefined,formato:""}
+    :{texto:post.texto||"",canal:post.canal||"",horario:post.horario||"",visualizacoes:post.visualizacoes,formato:post.formato||""};
 }
 
 function popularDatalistCanais(){
@@ -1607,12 +1628,66 @@ function renderizarRelatorio(){
     ?'<div class="relatorio-vazio">Nenhum post registrado ainda hoje.</div>'
     :r.posts.map((post,i)=>{
       const p=rotuloPostRelatorio(post);
-      const meta=[p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:""].filter(Boolean).join(" · ");
+      const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:""].filter(Boolean).join(" · ");
       return `<div class="relatorio-post-item"><div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}</div><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`;
     }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
+  renderizarLevantamentoGeral();
   atualizarVinculoSemana();
+}
+
+function renderizarLevantamentoGeral(){
+  const todos=carregarRelatorios();
+  const todosPosts=[];
+  Object.entries(todos).forEach(([data,r])=>{
+    (r.posts||[]).forEach(post=>{
+      const p=rotuloPostRelatorio(post);
+      todosPosts.push({...p,data});
+    });
+  });
+  const cont=document.getElementById("relatorio-levantamento-conteudo");
+  if(todosPosts.length===0){
+    cont.innerHTML='<div class="relatorio-vazio">Registre posts com visualizações pra ver o levantamento aqui.</div>';
+    return;
+  }
+  const porFormato={};
+  todosPosts.forEach(p=>{
+    const chave=p.formato||"Sem formato definido";
+    if(!porFormato[chave])porFormato[chave]={posts:0,visualizacoes:0,temViews:0};
+    porFormato[chave].posts++;
+    if(p.visualizacoes!==undefined){porFormato[chave].visualizacoes+=p.visualizacoes;porFormato[chave].temViews++;}
+  });
+  const linhasFormato=Object.entries(porFormato)
+    .sort((a,b)=>b[1].visualizacoes-a[1].visualizacoes)
+    .map(([formato,d])=>{
+      const media=d.temViews?Math.round(d.visualizacoes/d.temViews):null;
+      return `<div class="relatorio-contador-linha"><span>${escaparBanco(formato)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views${media!==null?` · méd. ${media}`:""}</strong></div>`;
+    }).join("");
+
+  const porCanal={};
+  todosPosts.forEach(p=>{
+    if(!p.canal)return;
+    if(!porCanal[p.canal])porCanal[p.canal]={posts:0,visualizacoes:0};
+    porCanal[p.canal].posts++;
+    if(p.visualizacoes!==undefined)porCanal[p.canal].visualizacoes+=p.visualizacoes;
+  });
+  const linhasCanal=Object.entries(porCanal)
+    .sort((a,b)=>b[1].visualizacoes-a[1].visualizacoes)
+    .map(([canal,d])=>`<div class="relatorio-contador-linha"><span>${escaparBanco(canal)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views</strong></div>`).join("");
+
+  const topPosts=[...todosPosts].filter(p=>p.visualizacoes!==undefined)
+    .sort((a,b)=>b.visualizacoes-a.visualizacoes)
+    .slice(0,5)
+    .map(p=>`<div class="relatorio-contador-linha"><span>${escaparBanco(p.texto)} — ${isoParaBR(p.data)}${p.formato?` · ${p.formato}`:""}</span><strong>👁️ ${p.visualizacoes}</strong></div>`).join("");
+
+  cont.innerHTML=`
+    <p class="slot-meta"><strong>Visualizações por formato</strong></p>
+    ${linhasFormato}
+    <p class="slot-meta" style="margin-top:12px"><strong>Visualizações por canal</strong></p>
+    ${linhasCanal}
+    ${topPosts?`<p class="slot-meta" style="margin-top:12px"><strong>Top 5 posts com mais visualizações</strong></p>${topPosts}`:""}
+  `;
 }
 
 let vinculoSemanaCandidatos=[];
@@ -1660,18 +1735,20 @@ function atualizarVinculoSemana(){
 function adicionarPostRelatorio(){
   const input=document.getElementById("relatorio-post-novo");
   const canalInput=document.getElementById("relatorio-canal-novo");
+  const formatoInput=document.getElementById("relatorio-formato-novo");
   const horarioInput=document.getElementById("relatorio-horario-novo");
   const visualizacoesInput=document.getElementById("relatorio-visualizacoes-novo");
   const texto=input.value.trim();
   if(!texto)return;
   const canalDigitado=canalInput.value.trim();
   const canal=resolverChaveConta(canalDigitado)||canalDigitado;
+  const formato=formatoInput.value||"";
   const horario=horarioInput.value||"";
   const visualizacoes=visualizacoesInput.value===""?undefined:parseInt(visualizacoesInput.value);
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
-  const post={texto,canal,horario,visualizacoes};
+  const post={texto,canal,formato,horario,visualizacoes};
   if(vinculoSemanaSelecionado){
     post._origem=`${vinculoSemanaSelecionado.slotId}-${vinculoSemanaSelecionado.destId}`;
     marcarPublicadoNaSemana(vinculoSemanaSelecionado.monday,vinculoSemanaSelecionado.slotId,vinculoSemanaSelecionado.destId);
@@ -1680,6 +1757,7 @@ function adicionarPostRelatorio(){
   salvarRelatorios(todos);
   input.value="";
   canalInput.value="";
+  formatoInput.value="";
   horarioInput.value="";
   visualizacoesInput.value="";
   vinculoSemanaSelecionado=null;
@@ -1712,6 +1790,7 @@ function adicionarLinhaLote(){
 function salvarLoteRelatorio(){
   const canalDigitado=document.getElementById("relatorio-lote-canal").value.trim();
   const canal=resolverChaveConta(canalDigitado)||canalDigitado;
+  const formato=document.getElementById("relatorio-lote-formato").value||"";
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
@@ -1721,12 +1800,13 @@ function salvarLoteRelatorio(){
     if(!texto)continue;
     const visTexto=document.getElementById("relatorio-lote-vis-"+i).value;
     const visualizacoes=visTexto===""?undefined:parseInt(visTexto);
-    todos[data].posts.push({texto,canal,horario:"",visualizacoes});
+    todos[data].posts.push({texto,canal,formato,horario:"",visualizacoes});
     adicionados++;
   }
   if(adicionados===0){alert("Preencha pelo menos 1 linha com o nome do post.");return}
   salvarRelatorios(todos);
   document.getElementById("relatorio-lote-canal").value="";
+  document.getElementById("relatorio-lote-formato").value="";
   loteRelatorioLinhas=3;
   renderizarLinhasLote();
   document.getElementById("relatorio-lote-corpo").style.display="none";
@@ -2223,6 +2303,7 @@ abrirApenasDia(CHAVE_DIA_POR_INDICE[new Date().getDay()]);
 document.getElementById("banco-data").max=hojeIsoBanco();
 document.getElementById("banco-data").value=hojeIsoBanco();
 renderizarLinhasLote();
+popularSelectsFormatoRelatorio();
 </script>
 </body>
 </html>
