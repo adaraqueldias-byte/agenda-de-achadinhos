@@ -536,12 +536,12 @@
       </button>
       <div id="relatorio-lote-corpo" style="display:none">
         <div class="field">
-          <label>📋 Colar lista (1 post por linha): Nome | Canal | Data | Horário | Visualizações</label>
-          <textarea id="relatorio-colar-lista" rows="6" placeholder="Perfume Importado | COMPRA E VENDA BRASIL | 17/07/2026 | 10:06 | 5
-Perfume Importado | GrupoGarimpododia | 17/07/2026 | 10:05 | 16"></textarea>
-          <p class="tip" style="margin:4px 0 0">Data, horário e visualizações podem ficar em branco (ex.: "Nome | Canal | | | 5"). Formato usa o campo abaixo pra todas as linhas.</p>
+          <label>📋 Colar lista (1 post por linha): Nome | Canal | Data | Horário | Visualizações | Formato</label>
+          <textarea id="relatorio-colar-lista" rows="6" placeholder="Perfume Importado | COMPRA E VENDA BRASIL | 17/07/2026 | 10:06 | 5 | Foto
+Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></textarea>
+          <p class="tip" style="margin:4px 0 0">Data, horário, visualizações e formato podem ficar em branco (ex.: "Nome | Canal | | | 5 |"). Se deixar o formato em branco na linha, usa o campo abaixo.</p>
         </div>
-        <div class="field"><label>Formato (usado em toda a lista colada)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
+        <div class="field"><label>Formato padrão (só pras linhas sem formato próprio)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
         <button type="button" class="primary" style="width:100%" onclick="importarListaRelatorio()">📋 Importar lista colada</button>
 
         <button type="button" class="acordeon-titulo" style="margin-top:14px" onclick="toggleSecao('relatorio-lote-manual')">
@@ -1818,8 +1818,9 @@ function importarListaRelatorio(){
     const horario=partes[3]||"";
     const visTexto=partes[4];
     const visualizacoes=visTexto===undefined||visTexto===""?undefined:parseInt(visTexto);
+    const formato=partes[5]||formatoPadrao;
     if(!todos[data])todos[data]={posts:[],notas:""};
-    todos[data].posts.push({texto:nome,canal,formato:formatoPadrao,horario,visualizacoes});
+    todos[data].posts.push({texto:nome,canal,formato,horario,visualizacoes});
     adicionados++;
   });
   if(!adicionados){alert("Não consegui identificar nenhuma linha válida.");return}
