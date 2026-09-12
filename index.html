@@ -151,6 +151,9 @@
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
     .relatorio-post-meta{font-size:11px;color:var(--muted);font-weight:600}
+    .relatorio-lote-linha{display:flex;gap:8px;margin-bottom:8px}
+    .relatorio-lote-linha input:first-child{flex:1;min-width:0}
+    .relatorio-lote-linha input:last-child{width:88px;flex:none}
     .relatorio-vinculo{background:#eff6ff;border:1px solid #93c5fd;border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:12px;color:#1d4ed8}
     .relatorio-vinculo select{margin-top:6px;font-size:13px;padding:8px}
     .relatorio-vinculo-aviso{background:#fff7ed;border:1px solid #fdba74;color:#9a5b1f}
@@ -525,6 +528,17 @@
       </div>
       <div id="relatorio-vinculo-semana" style="display:none"></div>
       <button type="button" class="secondary" style="width:100%" onclick="adicionarPostRelatorio()">+ Adicionar post</button>
+
+      <button type="button" class="acordeon-titulo lote-titulo" style="margin-top:10px" onclick="toggleSecao('relatorio-lote')">
+        <span>📦 Adicionar vários posts de uma vez</span>
+        <span id="relatorio-lote-seta">▸</span>
+      </button>
+      <div id="relatorio-lote-corpo" style="display:none">
+        <div class="field"><label>Canal (usado em todos os posts abaixo)</label><input id="relatorio-lote-canal" type="text" list="datalist-relatorio-canal" placeholder="Canal: grupo, página ou Instagram" autocomplete="off"></div>
+        <div id="relatorio-lote-linhas"></div>
+        <button type="button" class="secondary" style="width:100%;margin:6px 0" onclick="adicionarLinhaLote()">+ Adicionar linha</button>
+        <button type="button" class="primary" style="width:100%" onclick="salvarLoteRelatorio()">✓ Salvar todos os posts</button>
+      </div>
     </section>
     <section class="card">
       <div class="semana-titulo" style="margin:0 0 10px">Anotações do dia</div>
@@ -1675,6 +1689,51 @@ function adicionarPostRelatorio(){
   renderizarRelatorio();
 }
 
+let loteRelatorioLinhas=3;
+
+function renderizarLinhasLote(){
+  const cont=document.getElementById("relatorio-lote-linhas");
+  let html="";
+  for(let i=0;i<loteRelatorioLinhas;i++){
+    html+=`<div class="relatorio-lote-linha">
+      <input id="relatorio-lote-texto-${i}" type="text" placeholder="Ex.: Kit de lavabo — v${i+1}">
+      <input id="relatorio-lote-vis-${i}" type="number" min="0" placeholder="👁️ views">
+    </div>`;
+  }
+  cont.innerHTML=html;
+}
+
+function adicionarLinhaLote(){
+  if(loteRelatorioLinhas>=15)return;
+  loteRelatorioLinhas++;
+  renderizarLinhasLote();
+}
+
+function salvarLoteRelatorio(){
+  const canalDigitado=document.getElementById("relatorio-lote-canal").value.trim();
+  const canal=resolverChaveConta(canalDigitado)||canalDigitado;
+  const data=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  if(!todos[data])todos[data]={posts:[],notas:""};
+  let adicionados=0;
+  for(let i=0;i<loteRelatorioLinhas;i++){
+    const texto=document.getElementById("relatorio-lote-texto-"+i).value.trim();
+    if(!texto)continue;
+    const visTexto=document.getElementById("relatorio-lote-vis-"+i).value;
+    const visualizacoes=visTexto===""?undefined:parseInt(visTexto);
+    todos[data].posts.push({texto,canal,horario:"",visualizacoes});
+    adicionados++;
+  }
+  if(adicionados===0){alert("Preencha pelo menos 1 linha com o nome do post.");return}
+  salvarRelatorios(todos);
+  document.getElementById("relatorio-lote-canal").value="";
+  loteRelatorioLinhas=3;
+  renderizarLinhasLote();
+  document.getElementById("relatorio-lote-corpo").style.display="none";
+  document.getElementById("relatorio-lote-seta").textContent="▸";
+  renderizarRelatorio();
+}
+
 function removerPostRelatorio(indice){
   const data=relatorioDataAtual();
   const todos=carregarRelatorios();
@@ -2163,6 +2222,7 @@ carregarSemana();
 abrirApenasDia(CHAVE_DIA_POR_INDICE[new Date().getDay()]);
 document.getElementById("banco-data").max=hojeIsoBanco();
 document.getElementById("banco-data").value=hojeIsoBanco();
+renderizarLinhasLote();
 </script>
 </body>
 </html>
