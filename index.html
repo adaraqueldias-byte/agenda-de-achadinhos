@@ -681,7 +681,7 @@ const LINHAS_CONTEUDO=[
   {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
   {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds"]}
 ];
-const POOL_MAX=6; // 1 post sempre visível + até 5 extras revelados com o "+"
+const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
 const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
 
 // ===== Slots de conteúdo da semana (livres: sem horário, formato ou canal fixos — só onde postou) =====
@@ -862,6 +862,25 @@ function salvarItemSlot(key){
   document.getElementById("item-edit-"+key).style.display="none";
   document.getElementById("item-display-"+key).style.display="flex";
   salvarSemana();
+  verificarProdutoDuplicadoNoDia(slotIdFromKey(key));
+}
+
+function verificarProdutoDuplicadoNoDia(slotId){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  const statusEl=document.getElementById("status-"+slotId);
+  if(!slot||!statusEl)return;
+  const nome=nomeProdutoDoSlot(slot);
+  if(!nome){statusEl.textContent="";return}
+  const nomeNorm=normalizarTexto(nome);
+  const dia=SLOT_ID_PARA_DIA[slotId];
+  const duplicado=(SLOTS_POR_GRUPO[dia]||[]).some(id=>{
+    if(id===slotId)return false;
+    const outro=SLOTS.find(s=>s.id===id);
+    if(!outro)return false;
+    const outroNome=nomeProdutoDoSlot(outro);
+    return outroNome&&normalizarTexto(outroNome)===nomeNorm;
+  });
+  statusEl.textContent=duplicado?"⚠️ Esse produto já está cadastrado em outro post hoje.":"";
 }
 
 function limparItemSlot(key){
@@ -1023,6 +1042,13 @@ function ciclarStatusDestino(slotId,destId){
   const dataInput=document.getElementById(`data-destino-${slotId}-${destId}`);
   const horarioInput=document.getElementById(`horario-destino-${slotId}-${destId}`);
   const novoStatus=PROXIMO_STATUS_DESTINO[input.value||"nada"];
+  if(novoStatus!=="nada"){
+    const slot=SLOTS.find(s=>s.id===slotId);
+    if(slot&&!nomeProdutoDoSlot(slot)){
+      alert("Preenche o nome do produto antes de marcar esse status.");
+      return;
+    }
+  }
   if(novoStatus==="agendado"&&!dataInput.value){
     const hoje=new Date();
     dataInput.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
