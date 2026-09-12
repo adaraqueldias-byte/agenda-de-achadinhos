@@ -467,10 +467,10 @@
         <datalist id="datalist-banco-categoria"></datalist>
       </div>
       <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
-      <div class="field"><label id="banco-preco-label">🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 (sem ponto de milhar)"></div>
+      <div class="field"><label id="banco-preco-label">🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 ou 58,00 - 219,00 (faixa por quantidade)" oninput="calcularComissaoAutomatica()"></div>
       <div class="grid">
-        <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12"></div>
-        <div class="field"><label id="banco-valor-comissao-label">Valor da comissão (R$)</label><input id="banco-valor-comissao" type="number" min="0" step="0.01" placeholder="Ex.: 11.63"></div>
+        <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12" oninput="calcularComissaoAutomatica()"></div>
+        <div class="field"><label id="banco-valor-comissao-label">Valor da comissão (R$)</label><input id="banco-valor-comissao" type="text" inputmode="decimal" placeholder="Calculado sozinho, mas pode editar"></div>
       </div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
@@ -1740,7 +1740,7 @@ function adicionarProdutoBanco(){
   const comissaoValor=document.getElementById("banco-comissao").value;
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
-  const valorComissao=valorComissaoTexto===""?undefined:parseFloat(valorComissaoTexto);
+  const valorComissao=valorComissaoTexto===""?undefined:parsePrecoBanco(valorComissaoTexto,loja);
   if(!nome){alert("Escreve o nome do produto.");return}
   const lista=carregarBanco();
   if(bancoEditandoId!==null){
@@ -1768,7 +1768,7 @@ function editarProdutoBanco(id){
   document.getElementById("banco-categoria").value=rotuloCategoriaBanco(item);
   document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBanco(item.preco,item.loja):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
-  document.getElementById("banco-valor-comissao").value=item.valorComissao??"";
+  document.getElementById("banco-valor-comissao").value=item.valorComissao!==undefined&&item.valorComissao!==null?formatarPrecoBanco(item.valorComissao,item.loja):"";
   bancoFotoAtual=item.foto||"";
   const prev=document.getElementById("banco-foto-preview");
   if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
@@ -1823,8 +1823,44 @@ function formatarPrecoUS(n){
   return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
 }
 function moedaBanco(loja){return loja==="amazon_eua"?"US$":"R$"}
-function parsePrecoBanco(texto,loja){return loja==="amazon_eua"?parsePrecoUS(texto):parsePrecoBR(texto)}
-function formatarPrecoBanco(n,loja){return loja==="amazon_eua"?formatarPrecoUS(n):formatarPrecoBR(n)}
+function dividirFaixa(texto){
+  const partes=(texto||"").split(/\s*[-–—]\s*/).filter(Boolean);
+  return partes.length===2?partes:null;
+}
+function parsePrecoBanco(texto,loja){
+  const parseFn=loja==="amazon_eua"?parsePrecoUS:parsePrecoBR;
+  const partes=dividirFaixa(texto);
+  if(partes){
+    const a=parseFn(partes[0]),b=parseFn(partes[1]);
+    if(a!==undefined&&b!==undefined)return{min:Math.min(a,b),max:Math.max(a,b)};
+  }
+  return parseFn(texto);
+}
+function formatarPrecoBanco(preco,loja){
+  const formatFn=loja==="amazon_eua"?formatarPrecoUS:formatarPrecoBR;
+  if(preco&&typeof preco==="object")return`${formatFn(preco.min)} – ${formatFn(preco.max)}`;
+  return formatFn(preco);
+}
+function precoNumerico(preco){
+  if(preco===undefined||preco===null)return undefined;
+  return typeof preco==="object"?preco.min:preco;
+}
+function formatarPrecoBancoComMoeda(preco,loja){
+  const moeda=moedaBanco(loja);
+  if(preco&&typeof preco==="object"){
+    const formatFn=loja==="amazon_eua"?formatarPrecoUS:formatarPrecoBR;
+    return`${moeda} ${formatFn(preco.min)} – ${moeda} ${formatFn(preco.max)}`;
+  }
+  return`${moeda} ${formatarPrecoBanco(preco,loja)}`;
+}
+function calcularComissaoAutomatica(){
+  const loja=document.getElementById("banco-loja").value;
+  const preco=parsePrecoBanco(document.getElementById("banco-preco").value,loja);
+  const pct=parseFloat(document.getElementById("banco-comissao").value);
+  if(preco===undefined||isNaN(pct))return;
+  const valor=typeof preco==="object"?{min:preco.min*pct/100,max:preco.max*pct/100}:preco*pct/100;
+  document.getElementById("banco-valor-comissao").value=formatarPrecoBanco(valor,loja);
+}
 function atualizarLabelPreco(){
   const loja=document.getElementById("banco-loja").value;
   const label=document.getElementById("banco-preco-label");
@@ -1832,13 +1868,14 @@ function atualizarLabelPreco(){
   const labelComissao=document.getElementById("banco-valor-comissao-label");
   if(loja==="amazon_eua"){
     label.textContent="🏷️ Preço do produto (US$)";
-    input.placeholder="Ex.: 29.99 (ponto decimal, sem vírgula)";
+    input.placeholder="Ex.: 29.99 ou 20.00 - 45.00 (faixa por quantidade)";
     labelComissao.textContent="Valor da comissão (US$)";
   }else{
     label.textContent="🏷️ Preço do produto (R$)";
-    input.placeholder="Ex.: 3228,61 (sem ponto de milhar)";
+    input.placeholder="Ex.: 3228,61 ou 58,00 - 219,00 (faixa por quantidade)";
     labelComissao.textContent="Valor da comissão (R$)";
   }
+  calcularComissaoAutomatica();
 }
 
 function rotuloCategoriaBanco(p){
@@ -1850,10 +1887,11 @@ function rotuloCategoriaBanco(p){
 
 function produtoPassaFiltroPreco(p){
   if(!filtroPrecoAtual)return true;
-  if(p.preco===undefined||p.preco===null)return false;
-  if(filtroPrecoAtual==="ate20")return p.preco<20;
-  if(filtroPrecoAtual==="20-50")return p.preco>=20&&p.preco<=50;
-  if(filtroPrecoAtual==="acima50")return p.preco>50;
+  const preco=precoNumerico(p.preco);
+  if(preco===undefined)return false;
+  if(filtroPrecoAtual==="ate20")return preco<20;
+  if(filtroPrecoAtual==="20-50")return preco>=20&&preco<=50;
+  if(filtroPrecoAtual==="acima50")return preco>50;
   return true;
 }
 
@@ -1944,12 +1982,12 @@ function aplicarOrdenacao(lista){
   }
   if(ordenacaoAtual==="preco"){
     const sorted=[...lista].sort((a,b)=>{
-      const ha=a.preco!==undefined&&a.preco!==null;
-      const hb=b.preco!==undefined&&b.preco!==null;
+      const pa=precoNumerico(a.preco),pb=precoNumerico(b.preco);
+      const ha=pa!==undefined,hb=pb!==undefined;
       if(!ha&&!hb)return 0;
       if(!ha)return 1;
       if(!hb)return -1;
-      return precoOrdemAsc?a.preco-b.preco:b.preco-a.preco;
+      return precoOrdemAsc?pa-pb:pb-pa;
     });
     return{itens:sorted,grupos:null};
   }
@@ -1989,9 +2027,9 @@ function cardProdutoBanco(p){
         ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
         ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
         ${rotuloCategoriaBanco(p)?`<span class="item-produto-categoria">${CATEGORIAS_EM_ALTA.has(rotuloCategoriaBanco(p))?"🔥 ":""}${escaparBanco(rotuloCategoriaBanco(p))}</span>`:""}
-        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${moedaBanco(p.loja)} ${formatarPrecoBanco(p.preco,p.loja)}</span>`:""}
+        ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${formatarPrecoBancoComMoeda(p.preco,p.loja)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
-        ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">${moedaBanco(p.loja)} ${p.valorComissao.toFixed(2)}</span>`:""}
+        ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}</span>`:""}
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
         <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
       </div>
