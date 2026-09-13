@@ -1645,6 +1645,12 @@ function linhaDoCanal(canal){
   return null;
 }
 
+const MESES_PT=["Janeiro","Fevereiro","Março","Abril","Maio","Junho","Julho","Agosto","Setembro","Outubro","Novembro","Dezembro"];
+function rotuloMes(chaveMes){
+  const[ano,mes]=chaveMes.split("-");
+  return `${MESES_PT[parseInt(mes,10)-1]}/${ano}`;
+}
+
 function renderizarLevantamentoGeral(){
   const todos=carregarRelatorios();
   const todosPosts=[];
@@ -1672,6 +1678,20 @@ function renderizarLevantamentoGeral(){
       const d=porLinha[nome];
       const media=d.temViews?Math.round(d.visualizacoes/d.temViews):null;
       return `<div class="relatorio-contador-linha"><span>${escaparBanco(nome)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views${media!==null?` · méd. ${media}`:""}</strong></div>`;
+    }).join("");
+  const porMes={};
+  todosPosts.forEach(p=>{
+    if(!p.data)return;
+    const mes=p.data.slice(0,7);
+    if(!porMes[mes])porMes[mes]={posts:0,visualizacoes:0,temViews:0};
+    porMes[mes].posts++;
+    if(p.visualizacoes!==undefined){porMes[mes].visualizacoes+=p.visualizacoes;porMes[mes].temViews++;}
+  });
+  const linhasMes=Object.keys(porMes).sort((a,b)=>b.localeCompare(a))
+    .map(mes=>{
+      const d=porMes[mes];
+      const media=d.temViews?Math.round(d.visualizacoes/d.temViews):null;
+      return `<div class="relatorio-contador-linha"><span>${rotuloMes(mes)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views${media!==null?` · méd. ${media}`:""}</strong></div>`;
     }).join("");
   const porFormato={};
   todosPosts.forEach(p=>{
@@ -1705,6 +1725,7 @@ function renderizarLevantamentoGeral(){
 
   cont.innerHTML=`
     ${linhasResumo?`<p class="slot-meta"><strong>Visualizações por linha de conteúdo</strong></p>${linhasResumo}`:""}
+    ${linhasMes?`<p class="slot-meta" style="margin-top:12px"><strong>Visualizações por mês</strong></p>${linhasMes}`:""}
     <p class="slot-meta" style="margin-top:12px"><strong>Visualizações por formato</strong></p>
     ${linhasFormato}
     <p class="slot-meta" style="margin-top:12px"><strong>Visualizações por canal</strong></p>
