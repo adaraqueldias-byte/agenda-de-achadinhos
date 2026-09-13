@@ -455,6 +455,7 @@
     <ul class="banco-em-alta-lista" id="banco-comissao-ml-lista"></ul>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
+    <div class="banco-filtros" id="banco-filtros-loja"></div>
     <div class="banco-filtros" id="banco-filtros-categoria"></div>
     <div class="banco-filtros" id="banco-filtros-preco"></div>
     <div class="banco-ordenacao" id="banco-ordenacao"></div>
@@ -1433,6 +1434,7 @@ let bancoFotoAtual="";
 let bancoEditandoId=null;
 let filtroCategoriaAtual=null;
 let filtroPrecoAtual=null;
+let filtroLojaAtual=null;
 let ordenacaoAtual="recentes";
 let precoOrdemAsc=true;
 
@@ -1630,6 +1632,19 @@ function renderizarRelatorio(){
   atualizarVinculoSemana();
 }
 
+const LINHAS_RESUMO_RELATORIO=[
+  {nome:"Garimpo do Dia",destinos:["face_garimpo","grupo_garimpo","insta_garimpo","shopee_video","tiktok_garimpo"]},
+  {nome:"Dashein (Shein)",destinos:["insta_dashein","face_dashein","grupo_shein"]},
+  {nome:"Clever Finds (Amazon EUA)",destinos:["face_cleverfinds","grupo_cleverfinds"]}
+];
+
+function linhaDoCanal(canal){
+  for(const linha of LINHAS_RESUMO_RELATORIO){
+    if(linha.destinos.some(id=>CONTAS[id]&&chaveConta(CONTAS[id])===canal))return linha.nome;
+  }
+  return null;
+}
+
 function renderizarLevantamentoGeral(){
   const todos=carregarRelatorios();
   const todosPosts=[];
@@ -1644,6 +1659,20 @@ function renderizarLevantamentoGeral(){
     cont.innerHTML='<div class="relatorio-vazio">Registre posts com visualizações pra ver o levantamento aqui.</div>';
     return;
   }
+  const porLinha={};
+  todosPosts.forEach(p=>{
+    const linha=linhaDoCanal(p.canal);
+    if(!linha)return;
+    if(!porLinha[linha])porLinha[linha]={posts:0,visualizacoes:0,temViews:0};
+    porLinha[linha].posts++;
+    if(p.visualizacoes!==undefined){porLinha[linha].visualizacoes+=p.visualizacoes;porLinha[linha].temViews++;}
+  });
+  const linhasResumo=LINHAS_RESUMO_RELATORIO.map(l=>l.nome).filter(nome=>porLinha[nome])
+    .map(nome=>{
+      const d=porLinha[nome];
+      const media=d.temViews?Math.round(d.visualizacoes/d.temViews):null;
+      return `<div class="relatorio-contador-linha"><span>${escaparBanco(nome)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views${media!==null?` · méd. ${media}`:""}</strong></div>`;
+    }).join("");
   const porFormato={};
   todosPosts.forEach(p=>{
     const chave=p.formato||"Sem formato definido";
@@ -1675,7 +1704,8 @@ function renderizarLevantamentoGeral(){
     .map(p=>`<div class="relatorio-contador-linha"><span>${escaparBanco(p.texto)} — ${isoParaBR(p.data)}${p.formato?` · ${p.formato}`:""}</span><strong>👁️ ${p.visualizacoes}</strong></div>`).join("");
 
   cont.innerHTML=`
-    <p class="slot-meta"><strong>Visualizações por formato</strong></p>
+    ${linhasResumo?`<p class="slot-meta"><strong>Visualizações por linha de conteúdo</strong></p>${linhasResumo}`:""}
+    <p class="slot-meta" style="margin-top:12px"><strong>Visualizações por formato</strong></p>
     ${linhasFormato}
     <p class="slot-meta" style="margin-top:12px"><strong>Visualizações por canal</strong></p>
     ${linhasCanal}
@@ -2111,6 +2141,11 @@ function filtrarPrecoBanco(chave){
   renderizarBanco();
 }
 
+function filtrarLojaBanco(chave){
+  filtroLojaAtual=chave;
+  renderizarBanco();
+}
+
 let _catsFiltroBanco=[];
 function renderizarFiltrosBanco(){
   const produtos=carregarBanco();
@@ -2123,6 +2158,10 @@ function renderizarFiltrosBanco(){
   const precoHtml=`<button type="button" class="destino-chip${filtroPrecoAtual===null?' destino-chip-ativo':''}" onclick="filtrarPrecoBanco(null)">Todos</button>`
     +Object.keys(FAIXAS_PRECO_BANCO).map(chave=>`<button type="button" class="destino-chip${filtroPrecoAtual===chave?' destino-chip-ativo':''}" onclick="filtrarPrecoBanco('${chave}')">${FAIXAS_PRECO_BANCO[chave]}</button>`).join("");
   document.getElementById("banco-filtros-preco").innerHTML=precoHtml;
+  const lojasUsadas=Object.keys(LOJAS_BANCO).filter(chave=>produtos.some(p=>p.loja===chave));
+  const lojaHtml=`<button type="button" class="destino-chip${filtroLojaAtual===null?' destino-chip-ativo':''}" onclick="filtrarLojaBanco(null)">Todas as lojas</button>`
+    +lojasUsadas.map(chave=>`<button type="button" class="destino-chip${filtroLojaAtual===chave?' destino-chip-ativo':''}" onclick="filtrarLojaBanco('${chave}')">${escaparBanco(LOJAS_BANCO[chave])}</button>`).join("");
+  document.getElementById("banco-filtros-loja").innerHTML=lojaHtml;
 }
 
 function renderizarOrdenacaoBanco(){
@@ -2272,7 +2311,7 @@ function renderizarBanco(){
   renderizarEmAlta();
   renderizarComissoesML();
   popularDatalistCategorias();
-  const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&produtoPassaFiltroPreco(p));
+  const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&(!filtroLojaAtual||p.loja===filtroLojaAtual)&&produtoPassaFiltroPreco(p));
   if(listaCompleta.length===0){
     cont.innerHTML='<div class="banco-vazio">Nenhum produto guardado ainda.</div>';
     return;
