@@ -532,8 +532,15 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
         <div id="relatorio-levantamento-conteudo"></div>
       </div>
     </section>
-    <div class="semana-titulo" style="margin:4px 0 8px 4px">Histórico de relatórios</div>
-    <div id="relatorio-historico"></div>
+    <section class="card">
+      <button type="button" class="acordeon-titulo" onclick="toggleSecao('relatorio-historico-secao')">
+        <span>🗂️ Histórico de relatórios</span>
+        <span id="relatorio-historico-secao-seta">▸</span>
+      </button>
+      <div id="relatorio-historico-secao-corpo" style="display:none">
+        <div id="relatorio-historico"></div>
+      </div>
+    </section>
     <div style="text-align:center;margin-top:14px">
       <button type="button" class="backup-link" onclick="zerarRelatorio()">🗑️ Zerar histórico do Relatório</button>
     </div>
