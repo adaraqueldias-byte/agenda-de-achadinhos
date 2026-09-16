@@ -1651,6 +1651,23 @@ function rotuloMes(chaveMes){
   return `${MESES_PT[parseInt(mes,10)-1]}/${ano}`;
 }
 
+let _canaisLevantamento=[];
+function excluirPostsDoCanal(canal){
+  if(!canal)return;
+  if(!confirm(`Apagar todos os posts registrados no canal "${canal}"? Essa ação não pode ser desfeita.`))return;
+  const todos=carregarRelatorios();
+  let mudou=false;
+  Object.keys(todos).forEach(data=>{
+    const antes=todos[data].posts.length;
+    todos[data].posts=todos[data].posts.filter(p=>rotuloPostRelatorio(p).canal!==canal);
+    if(todos[data].posts.length!==antes)mudou=true;
+  });
+  if(mudou){
+    salvarRelatorios(todos);
+    renderizarRelatorio();
+  }
+}
+
 function renderizarLevantamentoGeral(){
   const todos=carregarRelatorios();
   const todosPosts=[];
@@ -1714,9 +1731,10 @@ function renderizarLevantamentoGeral(){
     porCanal[p.canal].posts++;
     if(p.visualizacoes!==undefined)porCanal[p.canal].visualizacoes+=p.visualizacoes;
   });
-  const linhasCanal=Object.entries(porCanal)
-    .sort((a,b)=>b[1].visualizacoes-a[1].visualizacoes)
-    .map(([canal,d])=>`<div class="relatorio-contador-linha"><span>${escaparBanco(canal)} (${d.posts} post${d.posts>1?"s":""})</span><strong>${d.visualizacoes} views</strong></div>`).join("");
+  const entradasCanal=Object.entries(porCanal).sort((a,b)=>b[1].visualizacoes-a[1].visualizacoes);
+  _canaisLevantamento=entradasCanal.map(([canal])=>canal);
+  const linhasCanal=entradasCanal
+    .map(([canal,d],i)=>`<div class="relatorio-contador-linha"><span>${escaparBanco(canal)} (${d.posts} post${d.posts>1?"s":""})</span><span style="display:flex;align-items:center;gap:2px;flex:none"><strong>${d.visualizacoes} views</strong><button type="button" class="relatorio-post-remover" title="Apagar todos os posts desse canal" onclick="excluirPostsDoCanal(_canaisLevantamento[${i}])">✕</button></span></div>`).join("");
 
   const topPosts=[...todosPosts].filter(p=>p.visualizacoes!==undefined)
     .sort((a,b)=>b.visualizacoes-a.visualizacoes)
