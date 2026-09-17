@@ -454,6 +454,14 @@
     </button>
     <ul class="banco-em-alta-lista" id="banco-comissao-ml-lista"></ul>
 
+    <div id="banco-comissao-amazon-bloco" style="display:none">
+      <button type="button" class="banco-em-alta-toggle" id="banco-comissao-amazon-toggle" onclick="toggleComissaoAmazon()">
+        <span>💰 Comissões da Amazon</span>
+        <span class="seta">▼</span>
+      </button>
+      <ul class="banco-em-alta-lista" id="banco-comissao-amazon-lista"></ul>
+    </div>
+
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div class="banco-filtros" id="banco-filtros-loja"></div>
     <div class="banco-filtros" id="banco-filtros-categoria"></div>
@@ -2157,6 +2165,7 @@ function atualizarLabelPreco(){
     input.placeholder="Ex.: 3228,61 ou 58,00 - 219,00 (faixa por quantidade)";
     labelComissao.textContent="Valor da comissão (R$)";
   }
+  atualizarVisibilidadeComissaoAmazon();
   calcularComissaoAutomatica();
 }
 
@@ -2259,6 +2268,53 @@ function renderizarComissoesML(){
   ul.innerHTML=linhas+rodape;
 }
 
+const COMISSOES_AMAZON_EUA=[
+  {cat:"Amazon Games",comissao:"20%",obs:"Maior taxa do programa"},
+  {cat:"Luxury Beauty, Premium Beauty",comissao:"10%"},
+  {cat:"Música digital/física, Handmade, Vídeos digitais",comissao:"5%"},
+  {cat:"Livros físicos, Cozinha, Automotivo",comissao:"4,5%"},
+  {cat:"Kindle/Fire devices, Moda Amazon, joias, malas, relógios",comissao:"4%"},
+  {cat:"Brinquedos, móveis, casa, jardim, pets, fones, beleza, esportes, bebês",comissao:"3%"},
+  {cat:"PC/componentes, DVD/Blu-ray",comissao:"2,5%"},
+  {cat:"TVs, jogos digitais",comissao:"2%"},
+  {cat:"Amazon Fresh, games físicos e consoles, mercado, saúde",comissao:"1%"},
+  {cat:"Gift cards, planos de celular, bebidas alcoólicas",comissao:"0%",obs:"Sem comissão"}
+];
+const COMISSOES_AMAZON_BR=[
+  {cat:"Beleza, saúde, cuidados pessoais, audiolivros, alimentos e bebidas",comissao:"13%",obs:"Maior taxa padrão"},
+  {cat:"Roupas e Pet Shop",comissao:"11%"},
+  {cat:"Livros e livros digitais",comissao:"10%"},
+  {cat:"Dispositivos Amazon (Kindle, Echo, Fire TV)",comissao:"9,5%"},
+  {cat:"Esportes, brinquedos, móveis, construção/reforma, eletrodomésticos, cozinha, jardim/piscina",comissao:"8%"},
+  {cat:"Eletrônicos, informática, câmeras, games e consoles",comissao:"8%"},
+  {cat:"Bolsas, malas, mochilas, calçados, joias, relógios",comissao:"7%"},
+  {cat:"CD, vinil, DVD",comissao:"7%"},
+  {cat:"Outros",comissao:"7%",obs:"Categoria residual"}
+];
+let comissaoAmazonAberto=false;
+function toggleComissaoAmazon(){
+  comissaoAmazonAberto=!comissaoAmazonAberto;
+  document.getElementById("banco-comissao-amazon-toggle").classList.toggle("aberto",comissaoAmazonAberto);
+  document.getElementById("banco-comissao-amazon-lista").classList.toggle("visivel",comissaoAmazonAberto);
+}
+function renderizarComissoesAmazon(){
+  const ul=document.getElementById("banco-comissao-amazon-lista");
+  const linha=c=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(c.cat)}${c.obs?` — ${escaparBanco(c.obs)}`:""}</span><span class="banco-em-alta-badge info">${c.comissao}</span></li>`;
+  const tituloSecao=texto=>`<li class="banco-em-alta-item" style="display:block;background:none;font-size:11px;font-weight:800;color:var(--accent-dark);padding-bottom:2px">${texto}</li>`;
+  ul.innerHTML=
+    tituloSecao("🇺🇸 Amazon EUA (Amazon Associates)")
+    +COMISSOES_AMAZON_EUA.map(linha).join("")
+    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Em 2026 a Amazon cortou comissões em várias categorias sem aviso formal — confirme sempre no painel do Amazon Associates.</li>`
+    +tituloSecao("🇧🇷 Amazon Brasil (Programa de Associados)")
+    +COMISSOES_AMAZON_BR.map(linha).join("")
+    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">+ Bônus: R$5 a R$15 por assinatura de serviço Amazon (Prime, Music Unlimited etc.) gerada via seu link.</li>`;
+}
+function atualizarVisibilidadeComissaoAmazon(){
+  const loja=document.getElementById("banco-loja").value;
+  const ehAmazon=loja==="amazon_eua"||loja==="amazon_br"||loja==="amazon";
+  document.getElementById("banco-comissao-amazon-bloco").style.display=ehAmazon?"block":"none";
+}
+
 function ordenarBanco(chave){
   if(chave==="preco"&&ordenacaoAtual==="preco"){precoOrdemAsc=!precoOrdemAsc;}
   else{ordenacaoAtual=chave;precoOrdemAsc=true;}
@@ -2356,6 +2412,8 @@ function renderizarBanco(){
   renderizarOrdenacaoBanco();
   renderizarEmAlta();
   renderizarComissoesML();
+  renderizarComissoesAmazon();
+  atualizarVisibilidadeComissaoAmazon();
   popularDatalistCategorias();
   const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&(!filtroLojaAtual||p.loja===filtroLojaAtual)&&produtoPassaFiltroPreco(p));
   if(listaCompleta.length===0){
