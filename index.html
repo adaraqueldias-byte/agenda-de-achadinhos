@@ -487,6 +487,9 @@
       <div class="field"><label>💰 Quanto pretende investir em anúncio (R$)</label>
         <input id="simulador-investimento" type="text" inputmode="decimal" placeholder="Ex.: 50,00" oninput="calcularSimuladorTrafego()">
       </div>
+      <div class="field"><label>🖱️ Custo por clique (R$) — opcional</label>
+        <input id="simulador-cpc" type="text" inputmode="decimal" placeholder="Ex.: 0,80" oninput="calcularSimuladorTrafego()">
+      </div>
       <div class="field" style="margin-bottom:0"><label>🛒 Quantas vendas espera com esse investimento (opcional)</label>
         <input id="simulador-vendas-esperadas" type="number" min="0" step="1" placeholder="Ex.: 5" oninput="calcularSimuladorTrafego()">
       </div>
@@ -2444,6 +2447,7 @@ function calcularSimuladorTrafego(){
   const investimento=parsePrecoBR(document.getElementById("simulador-investimento").value);
   if(!investimento||investimento<=0){resultadoEl.innerHTML="";return;}
   const vendasEsperadas=parseFloat(document.getElementById("simulador-vendas-esperadas").value);
+  const cpc=parsePrecoBR(document.getElementById("simulador-cpc").value);
   const moeda=moedaBanco(produto.loja);
   const vendasParaEmpatar=Math.ceil(investimento/comissaoUnit);
   const metaMin=investimento*2,metaMax=investimento*3;
@@ -2451,6 +2455,17 @@ function calcularSimuladorTrafego(){
   let html=`<p>💰 Comissão por venda: <strong>${formatarPrecoBancoComMoeda(comissaoUnit,produto.loja)}</strong></p>`;
   html+=`<p>📊 Investindo ${moeda} ${formatarPrecoBanco(investimento,produto.loja)}, você precisa vender pelo menos <strong>${vendasParaEmpatar} unidade(s)</strong> pra não ficar no prejuízo.</p>`;
   html+=`<p>🎯 Meta recomendada (não só empatar): receber <strong>${moeda} ${formatarPrecoBanco(metaMin,produto.loja)} a ${moeda} ${formatarPrecoBanco(metaMax,produto.loja)}</strong> em comissão (2x a 3x o investimento) — ou seja, vender de <strong>${vendasMetaMin} a ${vendasMetaMax} unidade(s)</strong>.</p>`;
+  let cliques;
+  if(cpc>0){
+    cliques=Math.floor(investimento/cpc);
+    html+=`<p>🖱️ Com custo por clique de ${moeda} ${formatarPrecoBanco(cpc,produto.loja)}, esse investimento deve gerar aproximadamente <strong>${cliques} clique(s)</strong>.</p>`;
+    if(cliques>0){
+      const taxaEmpate=vendasParaEmpatar/cliques*100;
+      const taxaMetaMin=vendasMetaMin/cliques*100;
+      const taxaMetaMax=vendasMetaMax/cliques*100;
+      html+=`<p>📈 Taxa de conversão necessária sobre os cliques: pelo menos <strong>${taxaEmpate.toFixed(1).replace(".",",")}%</strong> pra empatar, e entre <strong>${taxaMetaMin.toFixed(1).replace(".",",")}%</strong> e <strong>${taxaMetaMax.toFixed(1).replace(".",",")}%</strong> pra bater a meta de 2x a 3x.</p>`;
+    }
+  }
   if(vendasEsperadas>0){
     const receita=comissaoUnit*vendasEsperadas;
     const resultado=receita-investimento;
@@ -2463,6 +2478,10 @@ function calcularSimuladorTrafego(){
     else if(roas>=1)statusMeta="🟠 Deu lucro, mas abaixo da meta segura de 2x a 3x.";
     else statusMeta="🔴 Abaixo do ponto de empate.";
     html+=`<p style="font-size:12px;color:var(--muted)">${statusMeta}</p>`;
+    if(cliques>0){
+      const taxaImplicita=vendasEsperadas/cliques*100;
+      html+=`<p style="font-size:12px;color:var(--muted)">Isso equivale a uma taxa de conversão de ${taxaImplicita.toFixed(1).replace(".",",")}% sobre os cliques estimados.</p>`;
+    }
   }
   resultadoEl.innerHTML=html;
 }
