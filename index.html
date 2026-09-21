@@ -147,6 +147,13 @@
     .banco-em-alta-badge.zero{background:#fee2e2;color:#991b1b}
     .banco-em-alta-badge.tem{background:#dcfce7;color:#166534}
     .banco-em-alta-badge.info{background:#dbeafe;color:#1d4ed8}
+    .simulador-painel{display:none;background:#fdf5fa;border:1px solid var(--line);border-radius:14px;padding:12px;margin:0 0 14px}
+    .simulador-painel.visivel{display:block}
+    .simulador-resultado{margin-top:8px;font-size:13px;line-height:1.5}
+    .simulador-resultado p{margin:0 0 6px}
+    .simulador-resultado strong{font-weight:800}
+    .simulador-lucro{color:#166534;font-weight:700}
+    .simulador-prejuizo{color:#991b1b;font-weight:700}
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
@@ -460,6 +467,23 @@
         <span class="seta">▼</span>
       </button>
       <ul class="banco-em-alta-lista" id="banco-comissao-amazon-lista"></ul>
+    </div>
+
+    <button type="button" class="banco-em-alta-toggle" id="simulador-toggle" onclick="toggleSimuladorTrafego()">
+      <span>📊 Simulador de Tráfego Pago</span>
+      <span class="seta">▼</span>
+    </button>
+    <div class="simulador-painel" id="simulador-painel">
+      <div class="field"><label>Produto (precisa ter comissão calculada no banco)</label>
+        <select id="simulador-produto" onchange="calcularSimuladorTrafego()"><option value="">Selecione um produto do banco</option></select>
+      </div>
+      <div class="field"><label>💰 Quanto pretende investir em anúncio (R$)</label>
+        <input id="simulador-investimento" type="text" inputmode="decimal" placeholder="Ex.: 50,00" oninput="calcularSimuladorTrafego()">
+      </div>
+      <div class="field" style="margin-bottom:0"><label>🛒 Quantas vendas espera com esse investimento (opcional)</label>
+        <input id="simulador-vendas-esperadas" type="number" min="0" step="1" placeholder="Ex.: 5" oninput="calcularSimuladorTrafego()">
+      </div>
+      <div class="simulador-resultado" id="simulador-resultado"></div>
     </div>
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
@@ -2309,6 +2333,47 @@ function renderizarComissoesAmazon(){
     +COMISSOES_AMAZON_BR.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">+ Bônus: R$5 a R$15 por assinatura de serviço Amazon (Prime, Music Unlimited etc.) gerada via seu link.</li>`;
 }
+
+let simuladorAberto=false;
+function toggleSimuladorTrafego(){
+  simuladorAberto=!simuladorAberto;
+  document.getElementById("simulador-toggle").classList.toggle("aberto",simuladorAberto);
+  document.getElementById("simulador-painel").classList.toggle("visivel",simuladorAberto);
+  if(simuladorAberto)popularSelectSimuladorProduto();
+}
+function popularSelectSimuladorProduto(){
+  const sel=document.getElementById("simulador-produto");
+  if(!sel)return;
+  const atual=sel.value;
+  const lista=carregarBanco().filter(p=>precoNumerico(p.valorComissao)>0);
+  sel.innerHTML='<option value="">Selecione um produto do banco</option>'
+    +lista.map(p=>`<option value="${p.id}">${escaparBanco(p.nome||"(sem nome)")} — ${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}/venda</option>`).join("");
+  if(lista.some(p=>String(p.id)===atual))sel.value=atual;
+  calcularSimuladorTrafego();
+}
+function calcularSimuladorTrafego(){
+  const resultadoEl=document.getElementById("simulador-resultado");
+  if(!resultadoEl)return;
+  const produtoId=document.getElementById("simulador-produto").value;
+  if(!produtoId){resultadoEl.innerHTML="";return;}
+  const produto=carregarBanco().find(p=>String(p.id)===produtoId);
+  const comissaoUnit=produto?precoNumerico(produto.valorComissao):undefined;
+  if(!produto||!comissaoUnit||comissaoUnit<=0){resultadoEl.innerHTML="<p>Esse produto não tem valor de comissão calculado. Volte no cadastro e preencha preço + %.</p>";return;}
+  const investimento=parsePrecoBR(document.getElementById("simulador-investimento").value);
+  if(!investimento||investimento<=0){resultadoEl.innerHTML="";return;}
+  const vendasEsperadas=parseFloat(document.getElementById("simulador-vendas-esperadas").value);
+  const moeda=moedaBanco(produto.loja);
+  const vendasParaEmpatar=Math.ceil(investimento/comissaoUnit);
+  let html=`<p>💰 Comissão por venda: <strong>${formatarPrecoBancoComMoeda(comissaoUnit,produto.loja)}</strong></p>`;
+  html+=`<p>📊 Investindo ${moeda} ${formatarPrecoBanco(investimento,produto.loja)}, você precisa vender pelo menos <strong>${vendasParaEmpatar} unidade(s)</strong> pra não ficar no prejuízo.</p>`;
+  if(vendasEsperadas>0){
+    const receita=comissaoUnit*vendasEsperadas;
+    const resultado=receita-investimento;
+    const positivo=resultado>=0;
+    html+=`<p class="${positivo?'simulador-lucro':'simulador-prejuizo'}">${positivo?"✅ Lucro estimado":"⚠️ Prejuízo estimado"} com ${vendasEsperadas} venda(s): ${moeda} ${formatarPrecoBanco(Math.abs(resultado),produto.loja)}</p>`;
+  }
+  resultadoEl.innerHTML=html;
+}
 function atualizarVisibilidadeComissaoAmazon(){
   const loja=document.getElementById("banco-loja").value;
   const ehAmazon=loja==="amazon_eua"||loja==="amazon_br"||loja==="amazon";
@@ -2414,6 +2479,7 @@ function renderizarBanco(){
   renderizarComissoesML();
   renderizarComissoesAmazon();
   atualizarVisibilidadeComissaoAmazon();
+  popularSelectSimuladorProduto();
   popularDatalistCategorias();
   const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&(!filtroLojaAtual||p.loja===filtroLojaAtual)&&produtoPassaFiltroPreco(p));
   if(listaCompleta.length===0){
