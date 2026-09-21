@@ -461,27 +461,7 @@
       </div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
-
-      <button type="button" class="acordeon-titulo" style="margin:14px 0 6px" onclick="toggleSecao('banco-lote')">
-        <span>📋 Colar lista de produtos</span>
-        <span id="banco-lote-seta">▸</span>
-      </button>
-      <div id="banco-lote-corpo" style="display:none">
-        <div class="field">
-          <label>Cole 1 produto por linha: Nome | Loja | Link | Preço | Comissão%</label>
-          <textarea id="banco-colar-lista" rows="6" placeholder="Roku Streaming Stick 4K | Amazon EUA | https://amazon.com/... | 29.99 | 4
-Câmera FEIT Outdoor | Amazon EUA | | | 3"></textarea>
-        </div>
-        <p class="tip" style="margin:4px 0 10px">Loja, link, preço e comissão podem ficar em branco (ex.: "Nome | | | | "). Dá pra completar depois editando cada produto.</p>
-        <button type="button" class="primary" style="width:100%" onclick="importarListaBanco()">+ Importar lista</button>
-      </div>
     </section>
-
-    <button type="button" class="banco-em-alta-toggle" id="banco-em-alta-toggle" onclick="toggleEmAlta()">
-      <span>🔥 Categorias em Alta — O que cadastrar</span>
-      <span class="seta">▼</span>
-    </button>
-    <ul class="banco-em-alta-lista" id="banco-em-alta-lista"></ul>
 
     <button type="button" class="banco-em-alta-toggle" id="banco-comissao-ml-toggle" onclick="toggleComissaoML()">
       <span>💰 Comissões do Mercado Livre</span>
@@ -2075,46 +2055,6 @@ function limparFormBanco(){
   document.getElementById("banco-btn-cancelar").style.display="none";
 }
 
-function resolverLojaTexto(texto){
-  const t=(texto||"").trim().toLowerCase();
-  if(!t)return "";
-  if(/shopee/.test(t))return "shopee";
-  if(/mercado ?livre|mercadolivre|meli\b/.test(t))return "mercadolivre";
-  if(/amazon/.test(t))return /eua|usa|us\b|estados unidos/.test(t)?"amazon_eua":"amazon_br";
-  if(/magalu|magazine ?luiza/.test(t))return "magalu";
-  if(/shein/.test(t))return "shein";
-  return "";
-}
-
-function importarListaBanco(){
-  const texto=document.getElementById("banco-colar-lista").value;
-  const linhas=texto.split("\n").map(l=>l.trim()).filter(Boolean);
-  if(!linhas.length){alert("Cole ao menos uma linha.");return}
-  const lista=carregarBanco();
-  let adicionados=0;
-  linhas.forEach((linha,i)=>{
-    const partes=linha.split("|").map(p=>p.trim());
-    const nome=partes[0];
-    if(!nome)return;
-    const link=partes[2]||"";
-    const loja=resolverLojaTexto(partes[1])||detectarLojaPeloLink(link)||"";
-    const preco=parsePrecoBanco(partes[3]||"",loja);
-    const comissaoTexto=(partes[4]||"").replace(",",".");
-    const comissao=comissaoTexto===""?undefined:parseFloat(comissaoTexto);
-    let valorComissao;
-    if(preco!==undefined&&comissao!==undefined&&!isNaN(comissao)){
-      valorComissao=typeof preco==="object"?{min:preco.min*comissao/100,max:preco.max*comissao/100}:preco*comissao/100;
-    }
-    lista.unshift({id:Date.now()+i,nome,link:link||undefined,loja:loja||undefined,preco,comissao:comissao===undefined||isNaN(comissao)?undefined:comissao,valorComissao,dataAdicionado:hojeIsoBanco()});
-    adicionados++;
-  });
-  if(!adicionados){alert("Não consegui identificar nenhuma linha válida.");return}
-  salvarBanco(lista);
-  document.getElementById("banco-colar-lista").value="";
-  renderizarBanco();
-  alert(`${adicionados} produto(s) importado(s) com sucesso!`);
-}
-
 function adicionarProdutoBanco(){
   const nome=document.getElementById("banco-nome").value.trim();
   const link=document.getElementById("banco-link").value.trim();
@@ -2390,24 +2330,6 @@ function renderizarOrdenacaoBanco(){
   document.getElementById("banco-ordenacao").innerHTML=html;
 }
 
-let emAltaAberto=false;
-function toggleEmAlta(){
-  emAltaAberto=!emAltaAberto;
-  document.getElementById("banco-em-alta-toggle").classList.toggle("aberto",emAltaAberto);
-  document.getElementById("banco-em-alta-lista").classList.toggle("visivel",emAltaAberto);
-}
-function renderizarEmAlta(){
-  const produtos=carregarBanco();
-  const contagem={};
-  produtos.forEach(p=>{const r=rotuloCategoriaBanco(p);if(r&&CATEGORIAS_EM_ALTA.has(r)){contagem[r]=(contagem[r]||0)+1;}});
-  const cats=[...CATEGORIAS_EM_ALTA].sort((a,b)=>a.toLowerCase().localeCompare(b.toLowerCase(),"pt-BR"));
-  const ul=document.getElementById("banco-em-alta-lista");
-  ul.innerHTML=cats.map(c=>{
-    const n=contagem[c]||0;
-    return `<li class="banco-em-alta-item"><span class="banco-em-alta-nome">🔥 ${escaparBanco(c)}</span><span class="banco-em-alta-badge ${n>0?"tem":"zero"}">${n>0?n+" ✔":"0"}</span></li>`;
-  }).join("");
-}
-
 const COMISSOES_MERCADO_LIVRE=[
   {grupo:"Beleza, Calçados, Roupas e Esportes",direta:"16%",indireta:"8%"},
   {grupo:"Casa, Brinquedos, Ferramentas e outras",direta:"12%",indireta:"6%"},
@@ -2642,7 +2564,6 @@ function renderizarBanco(){
   document.getElementById("banco-contador").textContent="("+listaCompleta.length+")";
   atualizarContadorLojasBanco();
   renderizarOrdenacaoBanco();
-  renderizarEmAlta();
   renderizarComissoesML();
   renderizarComissoesAmazon();
   atualizarVisibilidadeComissaoAmazon();
