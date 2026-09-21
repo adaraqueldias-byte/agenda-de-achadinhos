@@ -476,6 +476,12 @@
       <ul class="banco-em-alta-lista" id="banco-comissao-amazon-lista"></ul>
     </div>
 
+    <button type="button" class="banco-em-alta-toggle" id="valores-minimos-toggle" onclick="toggleValoresMinimos()">
+      <span>💵 Valores Mínimos de Tráfego Pago</span>
+      <span class="seta">▼</span>
+    </button>
+    <ul class="banco-em-alta-lista" id="valores-minimos-lista"></ul>
+
     <button type="button" class="banco-em-alta-toggle" id="simulador-toggle" onclick="toggleSimuladorTrafego()">
       <span>📊 Simulador de Tráfego Pago</span>
       <span class="seta">▼</span>
@@ -484,8 +490,15 @@
       <div class="field"><label>Produto (precisa ter comissão calculada no banco)</label>
         <select id="simulador-produto" onchange="calcularSimuladorTrafego()"><option value="">Selecione um produto do banco</option></select>
       </div>
-      <div class="field"><label>💰 Quanto pretende investir em anúncio (R$)</label>
+      <div class="field">
+        <label>💰 Quanto pretende investir em anúncio (R$)</label>
         <input id="simulador-investimento" type="text" inputmode="decimal" placeholder="Ex.: 50,00" oninput="calcularSimuladorTrafego()">
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
+          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Meta Ads R$10/dia</button>
+          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Google Ads R$10/dia</button>
+          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Shopee Ads R$10/dia</button>
+          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(50)">Google Ads na Shopee R$50/dia</button>
+        </div>
       </div>
       <div class="field"><label>🖱️ Custo por clique (R$) — opcional</label>
         <input id="simulador-cpc" type="text" inputmode="decimal" placeholder="Ex.: 0,80" oninput="calcularSimuladorTrafego()">
@@ -2419,6 +2432,33 @@ function renderizarComissoesAmazon(){
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">+ Bônus: R$5 a R$15 por assinatura de serviço Amazon (Prime, Music Unlimited etc.) gerada via seu link.</li>`;
 }
 
+const VALORES_MINIMOS_TRAFEGO=[
+  {plataforma:"Meta Ads (Facebook e Instagram)",minimo:"Cerca de R$3/dia, conforme o objetivo",teste:"R$10 a R$20/dia"},
+  {plataforma:"Google Ads direto",minimo:"Sem gasto mínimo obrigatório",teste:"R$10 a R$20/dia (~R$304/mês)"},
+  {plataforma:"Shopee Ads",minimo:"Recarga mínima de R$15",teste:"Exemplo de R$10/dia"},
+  {plataforma:"Google Ads dentro da Shopee",minimo:"R$50/dia",teste:"R$50/dia ou mais"}
+];
+let valoresMinimosAberto=false;
+function toggleValoresMinimos(){
+  valoresMinimosAberto=!valoresMinimosAberto;
+  document.getElementById("valores-minimos-toggle").classList.toggle("aberto",valoresMinimosAberto);
+  document.getElementById("valores-minimos-lista").classList.toggle("visivel",valoresMinimosAberto);
+}
+function renderizarValoresMinimos(){
+  const ul=document.getElementById("valores-minimos-lista");
+  if(!ul)return;
+  const linha=v=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(v.plataforma)} — mínimo: ${escaparBanco(v.minimo)}</span><span class="banco-em-alta-badge info">${escaparBanco(v.teste)}</span></li>`;
+  const nota=texto=>`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">${texto}</li>`;
+  ul.innerHTML=VALORES_MINIMOS_TRAFEGO.map(linha).join("")
+    +nota("✅ Recomendação: comece com Meta Ads de R$10/dia por 7 dias (R$70 no total). Depois compare alcance, cliques e vendas antes de aumentar o orçamento.")
+    +nota("⚠️ Shopee Ads, Google Ads dentro da Shopee e impulsionamento de vídeo no Shopee Vídeo não são necessariamente a mesma ferramenta — confirme o valor específico na conta de afiliada.")
+    +nota("Valores de referência para o Brasil. As plataformas podem mudar mínimos e condições conforme a conta e o tipo de campanha.");
+}
+function preencherInvestimentoSugerido(valor){
+  document.getElementById("simulador-investimento").value=formatarPrecoBR(valor);
+  calcularSimuladorTrafego();
+}
+
 let simuladorAberto=false;
 function toggleSimuladorTrafego(){
   simuladorAberto=!simuladorAberto;
@@ -2590,6 +2630,7 @@ function renderizarBanco(){
   renderizarComissoesML();
   renderizarComissoesAmazon();
   atualizarVisibilidadeComissaoAmazon();
+  renderizarValoresMinimos();
   popularSelectSimuladorProduto();
   popularDatalistCategorias();
   const lista=listaCompleta.filter(p=>(!filtroCategoriaAtual||rotuloCategoriaBanco(p)===filtroCategoriaAtual)&&(!filtroLojaAtual||p.loja===filtroLojaAtual)&&produtoPassaFiltroPreco(p));
