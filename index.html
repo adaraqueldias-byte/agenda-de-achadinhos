@@ -452,6 +452,11 @@
         <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12" oninput="calcularComissaoAutomatica()"></div>
         <div class="field"><label id="banco-valor-comissao-label">Valor da comissão (R$)</label><input id="banco-valor-comissao" type="text" inputmode="decimal" placeholder="Calculado sozinho, mas pode editar"></div>
       </div>
+      <div class="field" id="banco-concorrencia-bloco" style="display:none">
+        <label>🎥 Vídeos ativos desse produto (concorrência)</label>
+        <input id="banco-concorrencia" type="number" min="0" step="1" placeholder="Ex.: 5">
+        <p class="tip" style="margin-top:4px">Quantos vídeos ativos já existem pra esse produto — não o número de afiliados. Poucos vídeos = menos concorrência real, mesmo com muito afiliado cadastrado.</p>
+      </div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
 
@@ -2071,6 +2076,7 @@ function limparFormBanco(){
   document.getElementById("banco-preco").value="";
   document.getElementById("banco-comissao").value="";
   document.getElementById("banco-valor-comissao").value="";
+  document.getElementById("banco-concorrencia").value="";
   bancoFotoAtual="";
   document.getElementById("banco-foto-preview").style.display="none";
   document.getElementById("banco-foto-placeholder").style.display="flex";
@@ -2130,17 +2136,19 @@ function adicionarProdutoBanco(){
   const comissao=comissaoValor===""?undefined:parseFloat(comissaoValor);
   const valorComissaoTexto=document.getElementById("banco-valor-comissao").value;
   const valorComissao=valorComissaoTexto===""?undefined:parsePrecoBanco(valorComissaoTexto,loja);
+  const concorrenciaValor=document.getElementById("banco-concorrencia").value;
+  const concorrencia=concorrenciaValor===""?undefined:parseInt(concorrenciaValor,10);
   const dataAdicionado=document.getElementById("banco-data").value||hojeIsoBanco();
   if(!nome){alert("Escreve o nome do produto.");return}
   const lista=carregarBanco();
   if(bancoEditandoId!==null){
     const item=lista.find(p=>p.id===bancoEditandoId);
     if(item){
-      item.nome=nome;item.link=link;item.loja=loja;item.categoria=categoria;delete item.categoriaOutra;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;item.dataAdicionado=dataAdicionado;
+      item.nome=nome;item.link=link;item.loja=loja;item.categoria=categoria;delete item.categoriaOutra;item.preco=preco;item.comissao=comissao;item.valorComissao=valorComissao;item.concorrencia=concorrencia;item.dataAdicionado=dataAdicionado;
       if(bancoFotoAtual)item.foto=bancoFotoAtual;
     }
   }else{
-    lista.unshift({id:Date.now(),nome,link,loja,categoria,preco,comissao,valorComissao,dataAdicionado,foto:bancoFotoAtual||undefined});
+    lista.unshift({id:Date.now(),nome,link,loja,categoria,preco,comissao,valorComissao,concorrencia,dataAdicionado,foto:bancoFotoAtual||undefined});
   }
   salvarBanco(lista);
   limparFormBanco();
@@ -2164,6 +2172,8 @@ function editarProdutoBanco(id){
   document.getElementById("banco-preco").value=item.preco!==undefined&&item.preco!==null?formatarPrecoBanco(item.preco,item.loja):"";
   document.getElementById("banco-comissao").value=item.comissao??"";
   document.getElementById("banco-valor-comissao").value=item.valorComissao!==undefined&&item.valorComissao!==null?formatarPrecoBanco(item.valorComissao,item.loja):"";
+  document.getElementById("banco-concorrencia").value=item.concorrencia??"";
+  atualizarVisibilidadeConcorrencia();
   bancoFotoAtual=item.foto||"";
   const prev=document.getElementById("banco-foto-preview");
   if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
@@ -2271,7 +2281,20 @@ function atualizarLabelPreco(){
     labelComissao.textContent="Valor da comissão (R$)";
   }
   atualizarVisibilidadeComissaoAmazon();
+  atualizarVisibilidadeConcorrencia();
   calcularComissaoAutomatica();
+}
+
+function atualizarVisibilidadeConcorrencia(){
+  const loja=document.getElementById("banco-loja").value;
+  document.getElementById("banco-concorrencia-bloco").style.display=loja==="shopee"?"block":"none";
+}
+
+function pillConcorrencia(n){
+  if(n===undefined||n===null||isNaN(n))return null;
+  if(n<=5)return{classe:"ok",texto:`${n} vídeo${n===1?"":"s"} ativo${n===1?"":"s"} · baixa concorrência`};
+  if(n<=20)return{classe:"warn",texto:`${n} vídeos ativos · concorrência média`};
+  return{classe:"danger",texto:`${n} vídeos ativos · concorrência alta`};
 }
 
 function detectarLojaPeloLink(url){
@@ -2660,6 +2683,7 @@ function cardProdutoBanco(p){
         ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${formatarPrecoBancoComMoeda(p.preco,p.loja)}</span>`:""}
         ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<10?'baixa':''}">${p.comissao}% comissão</span>`:""}
         ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao">${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}</span>`:""}
+        ${pillConcorrencia(p.concorrencia)?`<span class="pill-dias ${pillConcorrencia(p.concorrencia).classe}" style="display:inline-block;white-space:normal;margin-top:3px">🎥 ${pillConcorrencia(p.concorrencia).texto}</span>`:""}
         <span class="item-produto-link">📅 Cadastrado em ${dataAdicionadoBanco(p)}</span>
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
         <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
