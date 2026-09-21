@@ -420,10 +420,18 @@
         </div>
         <input type="file" id="banco-foto-input" accept="image/*" style="display:none" onchange="onFotoBanco(this)">
       </div>
-      <div class="field"><label>Nome do produto</label><input id="banco-nome" placeholder="Ex.: Jaqueta masculina"></div>
+      <div class="field">
+        <label>Link do produto</label>
+        <div style="display:flex;gap:8px">
+          <input id="banco-link" type="url" placeholder="Cole o link aqui" style="flex:1;min-width:0" oninput="detectarProdutoPeloLink()">
+          <button type="button" class="secondary" style="flex:none" onclick="colarLinkBanco()">📋 Colar</button>
+        </div>
+        <p class="tip" style="margin:4px 0 0;font-size:11px">Colando o link, a loja e o nome costumam preencher sozinhos — sempre confira antes de salvar.</p>
+      </div>
+      <div class="field"><label>Nome do produto</label><input id="banco-nome" placeholder="Ex.: Jaqueta masculina" oninput="bancoNomeAutoPreenchido=false"></div>
       <div class="field">
         <label>Loja / plataforma</label>
-        <select id="banco-loja" onchange="atualizarLabelPreco()">
+        <select id="banco-loja" onchange="bancoLojaAutoPreenchida=false;atualizarLabelPreco()">
           <option value="">Selecione a loja</option>
           <option value="shopee">Shopee</option>
           <option value="mercadolivre">Mercado Livre</option>
@@ -438,7 +446,6 @@
         <input id="banco-categoria" type="text" list="datalist-banco-categoria" placeholder="Digite para buscar..." autocomplete="off">
         <datalist id="datalist-banco-categoria"></datalist>
       </div>
-      <div class="field"><label>Link</label><input id="banco-link" type="url" placeholder="Cole o link aqui"></div>
       <div class="field"><label>📅 Data que encontrou o produto</label><input id="banco-data" type="date"></div>
       <div class="field"><label id="banco-preco-label">🏷️ Preço do produto (R$)</label><input id="banco-preco" type="text" inputmode="decimal" placeholder="Ex.: 3228,61 ou 58,00 - 219,00 (faixa por quantidade)" oninput="calcularComissaoAutomatica()"></div>
       <div class="grid">
@@ -2024,6 +2031,8 @@ function limparFormBanco(){
   document.getElementById("banco-nome").value="";
   document.getElementById("banco-link").value="";
   document.getElementById("banco-loja").value="";
+  bancoLojaAutoPreenchida=false;
+  bancoNomeAutoPreenchido=false;
   atualizarLabelPreco();
   const dataInput=document.getElementById("banco-data");
   dataInput.max=hojeIsoBanco();
@@ -2072,6 +2081,8 @@ function editarProdutoBanco(id){
   const item=carregarBanco().find(p=>p.id===id);
   if(!item)return;
   bancoEditandoId=id;
+  bancoLojaAutoPreenchida=false;
+  bancoNomeAutoPreenchido=false;
   document.getElementById("banco-nome").value=item.nome||"";
   document.getElementById("banco-link").value=item.link||"";
   document.getElementById("banco-loja").value=item.loja||"";
@@ -2191,6 +2202,77 @@ function atualizarLabelPreco(){
   }
   atualizarVisibilidadeComissaoAmazon();
   calcularComissaoAutomatica();
+}
+
+function detectarLojaPeloLink(url){
+  try{
+    const host=new URL(url).hostname.replace(/^www\./,"");
+    if(/shopee\./.test(host))return "shopee";
+    if(/mercadolivre\.|mercadolibre\./.test(host))return "mercadolivre";
+    if(/amazon\.com\.br/.test(host))return "amazon_br";
+    if(/amazon\./.test(host))return "amazon_eua";
+    if(/magazineluiza\.|magalu\./.test(host))return "magalu";
+    if(/shein\./.test(host))return "shein";
+  }catch{}
+  return "";
+}
+
+function extrairNomePeloLink(url,loja){
+  try{
+    const path=decodeURIComponent(new URL(url).pathname);
+    let slug="";
+    if(loja==="shopee"){
+      const m=path.match(/\/([^\/]+)-i\.\d+\.\d+/);
+      if(m)slug=m[1];
+    }else if(loja==="mercadolivre"){
+      let m=path.match(/\/([^\/]+)\/p\//)||path.match(/MLB-?\d+-([^\/?]+)/i);
+      if(m)slug=m[1];
+    }else if(loja==="amazon_br"||loja==="amazon_eua"){
+      const m=path.match(/\/([^\/]+)\/dp\//i);
+      if(m)slug=m[1];
+    }else if(loja==="magalu"){
+      const m=path.match(/^\/([^\/]+)\/p\//);
+      if(m)slug=m[1];
+    }else if(loja==="shein"){
+      const m=path.match(/\/([^\/]+)-p-\d+/);
+      if(m)slug=m[1];
+    }
+    if(!slug)return "";
+    const texto=slug.replace(/[-_]+/g," ").replace(/\s+/g," ").trim();
+    if(texto.length<3||/^\d+$/.test(texto.replace(/\s/g,"")))return "";
+    return texto.split(" ").map(w=>w?w[0].toUpperCase()+w.slice(1).toLowerCase():w).join(" ").slice(0,80);
+  }catch{return ""}
+}
+
+let bancoLojaAutoPreenchida=false;
+let bancoNomeAutoPreenchido=false;
+function detectarProdutoPeloLink(){
+  const link=document.getElementById("banco-link").value.trim();
+  if(!link)return;
+  const lojaSel=document.getElementById("banco-loja");
+  const lojaDetectada=detectarLojaPeloLink(link);
+  if(lojaDetectada&&(!lojaSel.value||bancoLojaAutoPreenchida)){
+    lojaSel.value=lojaDetectada;
+    bancoLojaAutoPreenchida=true;
+    atualizarLabelPreco();
+  }
+  const lojaParaNome=lojaSel.value||lojaDetectada;
+  const nomeInput=document.getElementById("banco-nome");
+  if(lojaParaNome&&(!nomeInput.value.trim()||bancoNomeAutoPreenchido)){
+    const nome=extrairNomePeloLink(link,lojaParaNome);
+    if(nome){nomeInput.value=nome;bancoNomeAutoPreenchido=true;}
+  }
+}
+
+async function colarLinkBanco(){
+  try{
+    const texto=(await navigator.clipboard.readText()).trim();
+    if(!texto){alert("Área de transferência vazia.");return}
+    document.getElementById("banco-link").value=texto;
+    detectarProdutoPeloLink();
+  }catch{
+    alert("Não foi possível colar automaticamente. Toque e segure o campo de link e escolha Colar.");
+  }
 }
 
 function rotuloCategoriaBanco(p){
