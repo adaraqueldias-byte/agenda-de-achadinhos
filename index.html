@@ -892,6 +892,8 @@ function itemProdutoSlotTemplate(slot,i,total){
         <input type="file" id="foto-input-${key}" accept="image/*" style="display:none" onchange="onFotoChange('${key}',this)">
         <input type="hidden" id="foto-valor-${key}">
       </div>
+      <div class="field"><label>🛍️ Usar produto do Banco (opcional)</label><select id="produto-banco-${key}" onchange="aplicarProdutoDoBanco('${key}')"></select></div>
+      <input type="hidden" id="bancoId-${key}">
       <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
       ${slot.semLink?"":`<div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>`}
       <button type="button" class="success" style="width:100%;margin-top:4px" onclick="salvarItemSlot('${key}')">✓ Salvar produto</button>
@@ -900,6 +902,35 @@ function itemProdutoSlotTemplate(slot,i,total){
 }
 
 function slotIdFromKey(key){return key.replace(/-\d+$/,"")}
+
+function popularSelectProdutoBanco(key,bancoIdAtual){
+  const sel=document.getElementById("produto-banco-"+key);
+  if(!sel)return;
+  const produtos=carregarBanco();
+  sel.innerHTML='<option value="">— escolher do Banco —</option>'
+    +produtos.map(p=>`<option value="${p.id}">${escaparBanco(p.nome||"(sem nome)")}${p.loja&&LOJAS_BANCO[p.loja]?` — ${escaparBanco(LOJAS_BANCO[p.loja])}`:""}</option>`).join("");
+  if(bancoIdAtual&&produtos.some(p=>String(p.id)===String(bancoIdAtual)))sel.value=bancoIdAtual;
+}
+
+function aplicarProdutoDoBanco(key){
+  const sel=document.getElementById("produto-banco-"+key);
+  const bancoIdInput=document.getElementById("bancoId-"+key);
+  const id=sel.value;
+  if(!id){bancoIdInput.value="";return}
+  const produto=carregarBanco().find(p=>String(p.id)===id);
+  if(!produto)return;
+  document.getElementById("produto-"+key).value=produto.nome||"";
+  const linkEl=document.getElementById("link-"+key);
+  if(linkEl&&produto.link)linkEl.value=produto.link;
+  if(produto.foto){
+    document.getElementById("foto-valor-"+key).value=produto.foto;
+    const prev=document.getElementById("foto-preview-"+key);
+    prev.src=produto.foto;prev.style.display="block";
+    const btnRemover=document.getElementById("foto-remover-"+key);
+    if(btnRemover)btnRemover.style.display="block";
+  }
+  bancoIdInput.value=String(produto.id);
+}
 
 function itemDisplayHTML(key){
   const nome=document.getElementById("produto-"+key).value;
@@ -1378,7 +1409,8 @@ function coletarDados(){
         itens.push({
           produto:document.getElementById("produto-"+key).value,
           link:slot.semLink?"":document.getElementById("link-"+key).value,
-          foto:document.getElementById("foto-valor-"+key).value||undefined
+          foto:document.getElementById("foto-valor-"+key).value||undefined,
+          bancoId:document.getElementById("bancoId-"+key).value||undefined
         });
       }
     }
@@ -1463,6 +1495,8 @@ function carregarSemana(){
         const key=chaveItemSlot(slot,i);
         const it=itensSalvos[i]||{};
         document.getElementById("produto-"+key).value=it.produto||"";
+        document.getElementById("bancoId-"+key).value=it.bancoId||"";
+        popularSelectProdutoBanco(key,it.bancoId);
         if(!slot.semLink){
           document.getElementById("link-"+key).value=it.link||"";
         }
@@ -2698,7 +2732,37 @@ function dataAdicionadoBanco(p){
   return `${dia}/${mes}/${ano}`;
 }
 
+function publicacoesDoProdutoBanco(bancoId){
+  const resultados=[];
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(!key||!key.startsWith("agenda-achadinhos-semana-"))continue;
+    let dados;
+    try{dados=JSON.parse(localStorage.getItem(key)||"{}");}catch{continue}
+    if(!dados||!dados.slots)continue;
+    Object.values(dados.slots).forEach(s=>{
+      const itens=s.itens||[];
+      const temProduto=itens.some(it=>it&&it.bancoId!==undefined&&String(it.bancoId)===String(bancoId));
+      if(!temProduto)return;
+      const destinosStatus=s.destinosStatus||{};
+      Object.entries(destinosStatus).forEach(([destId,status])=>{
+        if(status==="nada")return;
+        const conta=CONTAS[destId];
+        if(!conta)return;
+        const data=(s.destinosData&&s.destinosData[destId])||"";
+        resultados.push({status,canal:`${conta.rede} - ${conta.nome}`,data});
+      });
+    });
+  }
+  resultados.sort((a,b)=>(b.data||"").localeCompare(a.data||""));
+  return resultados;
+}
+
 function cardProdutoBanco(p){
+  const publicacoes=publicacoesDoProdutoBanco(p.id);
+  const publicacoesHtml=publicacoes.length
+    ?`<div class="item-produto-link" style="display:block"><strong>📍 Onde foi publicado:</strong><br>${publicacoes.slice(0,4).map(pub=>`${pub.status==="publicado"?"✅":"🕐"} ${escaparBanco(pub.canal)}${pub.data?` — ${isoParaBR(pub.data)}`:""}`).join("<br>")}${publicacoes.length>4?`<br>+${publicacoes.length-4} outra(s)`:""}</div>`
+    :"";
   return `<div class="item-produto${p.publicado?' publicado':''}">
       ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
       <div class="item-produto-info">
@@ -2712,6 +2776,7 @@ function cardProdutoBanco(p){
         ${p.afiliados!==undefined&&p.afiliados!==null&&(p.concorrencia===undefined||p.concorrencia===null)?`<span class="item-produto-link">👥 ${p.afiliados} afiliados promovendo</span>`:""}
         <span class="item-produto-link">📅 Cadastrado em ${dataAdicionadoBanco(p)}</span>
         <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
+        ${publicacoesHtml}
         <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
       </div>
       <div class="item-produto-acoes">
