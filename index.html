@@ -154,7 +154,9 @@
     .simulador-resultado strong{font-weight:800}
     .simulador-lucro{color:#166534;font-weight:700}
     .simulador-prejuizo{color:#991b1b;font-weight:700}
-    .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:7px;font-size:13px;background:#fffafb}
+    .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:0;font-size:13px;background:#fffafb}
+    .relatorio-post-item-wrap{margin-bottom:7px}
+    .relatorio-post-metricas{background:#fdf2f4;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:10px 12px;margin-top:-1px}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
     .relatorio-post-canal{font-size:11px;font-weight:700;color:#7d214f;background:var(--accent-soft);border-radius:999px;padding:2px 9px;align-self:flex-start}
     .relatorio-post-meta{font-size:11px;color:var(--muted);font-weight:600}
@@ -1653,8 +1655,8 @@ function popularSelectsFormatoRelatorio(){
 
 function rotuloPostRelatorio(post){
   return typeof post==="string"
-    ?{texto:post,canal:"",horario:"",visualizacoes:undefined,formato:""}
-    :{texto:post.texto||"",canal:post.canal||"",horario:post.horario||"",visualizacoes:post.visualizacoes,formato:post.formato||""};
+    ?{texto:post,canal:"",horario:"",visualizacoes:undefined,formato:"",link:"",cliques:undefined,vendas:undefined,comissaoRecebida:undefined,gastoAnuncio:undefined,dataAtualizacaoMetricas:""}
+    :{texto:post.texto||"",canal:post.canal||"",horario:post.horario||"",visualizacoes:post.visualizacoes,formato:post.formato||"",link:post.link||"",cliques:post.cliques,vendas:post.vendas,comissaoRecebida:post.comissaoRecebida,gastoAnuncio:post.gastoAnuncio,dataAtualizacaoMetricas:post.dataAtualizacaoMetricas||""};
 }
 
 function popularDatalistCanais(){
@@ -1749,13 +1751,65 @@ function renderizarRelatorio(){
     ?'<div class="relatorio-vazio">Nenhum post registrado ainda hoje.</div>'
     :r.posts.map((post,i)=>{
       const p=rotuloPostRelatorio(post);
-      const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:""].filter(Boolean).join(" · ");
-      return `<div class="relatorio-post-item"><div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}</div><button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button></div>`;
+      const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:"",p.cliques!==undefined?`🖱️ ${p.cliques} cliques`:"",p.vendas!==undefined?`🛒 ${p.vendas} vendas`:"",p.comissaoRecebida!==undefined?`💰 ${formatarPrecoBR(p.comissaoRecebida)} recebido`:"",p.gastoAnuncio!==undefined?`📣 ${formatarPrecoBR(p.gastoAnuncio)} em anúncio`:""].filter(Boolean).join(" · ");
+      const atualizacao=p.dataAtualizacaoMetricas?`<span class="relatorio-post-meta" style="display:block;margin-top:2px">🔄 atualizado em ${isoParaBR(p.dataAtualizacaoMetricas)}</span>`:"";
+      const linkHtml=p.link?`<a class="relatorio-post-meta" href="${escaparBanco(p.link)}" target="_blank" rel="noopener" style="display:block">🔗 ${escaparBanco(p.link)}</a>`:"";
+      return `<div class="relatorio-post-item-wrap">
+        <div class="relatorio-post-item">
+          <div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${linkHtml}${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}${atualizacao}</div>
+          <div style="display:flex;gap:4px;flex:none">
+            <button type="button" class="relatorio-post-remover" onclick="toggleMetricasPostRelatorio(${i})" title="Editar métricas">✏️</button>
+            <button type="button" class="relatorio-post-remover" onclick="removerPostRelatorio(${i})">✕</button>
+          </div>
+        </div>
+        <div id="relatorio-post-metricas-${i}" class="relatorio-post-metricas" style="display:none">
+          <div class="field"><label>🔗 Link da publicação (opcional)</label><input id="metrica-link-${i}" type="text" value="${escaparBanco(p.link)}" placeholder="Cole o link do post"></div>
+          <div class="grid">
+            <div class="field"><label>🖱️ Cliques</label><input id="metrica-cliques-${i}" type="number" min="0" value="${p.cliques??""}"></div>
+            <div class="field"><label>🛒 Vendas</label><input id="metrica-vendas-${i}" type="number" min="0" value="${p.vendas??""}"></div>
+          </div>
+          <div class="grid">
+            <div class="field"><label>💰 Comissão recebida (R$)</label><input id="metrica-comissao-${i}" type="text" inputmode="decimal" value="${p.comissaoRecebida!==undefined?formatarPrecoBR(p.comissaoRecebida):""}"></div>
+            <div class="field"><label>📣 Gasto com anúncio (R$)</label><input id="metrica-gasto-${i}" type="text" inputmode="decimal" value="${p.gastoAnuncio!==undefined?formatarPrecoBR(p.gastoAnuncio):""}"></div>
+          </div>
+          <div class="field"><label>🔄 Data da atualização dessas métricas</label><input id="metrica-data-${i}" type="date" value="${p.dataAtualizacaoMetricas||""}"></div>
+          <button type="button" class="secondary" style="width:100%" onclick="salvarMetricasPostRelatorio(${i})">💾 Salvar métricas</button>
+        </div>
+      </div>`;
     }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
   renderizarLevantamentoGeral();
   atualizarVinculoSemana();
+}
+
+function toggleMetricasPostRelatorio(indice){
+  const el=document.getElementById(`relatorio-post-metricas-${indice}`);
+  if(!el)return;
+  el.style.display=el.style.display==="none"?"block":"none";
+}
+
+function salvarMetricasPostRelatorio(indice){
+  const data=relatorioDataAtual();
+  const todos=carregarRelatorios();
+  const r=todos[data];
+  if(!r||!r.posts[indice])return;
+  if(typeof r.posts[indice]==="string")r.posts[indice]={texto:r.posts[indice]};
+  const alvo=r.posts[indice];
+  const link=document.getElementById(`metrica-link-${indice}`).value.trim();
+  const cliquesTexto=document.getElementById(`metrica-cliques-${indice}`).value;
+  const vendasTexto=document.getElementById(`metrica-vendas-${indice}`).value;
+  const comissaoTexto=document.getElementById(`metrica-comissao-${indice}`).value;
+  const gastoTexto=document.getElementById(`metrica-gasto-${indice}`).value;
+  const dataMetricas=document.getElementById(`metrica-data-${indice}`).value;
+  alvo.link=link||undefined;
+  alvo.cliques=cliquesTexto===""?undefined:parseInt(cliquesTexto,10);
+  alvo.vendas=vendasTexto===""?undefined:parseInt(vendasTexto,10);
+  alvo.comissaoRecebida=comissaoTexto===""?undefined:parsePrecoBR(comissaoTexto);
+  alvo.gastoAnuncio=gastoTexto===""?undefined:parsePrecoBR(gastoTexto);
+  alvo.dataAtualizacaoMetricas=dataMetricas||undefined;
+  salvarRelatorios(todos);
+  renderizarRelatorio();
 }
 
 const LINHAS_RESUMO_RELATORIO=[
