@@ -486,7 +486,7 @@
         <select id="simulador-produto" onchange="calcularSimuladorTrafego()"><option value="">Selecione um produto do banco</option></select>
       </div>
       <div class="field">
-        <label>💰 Quanto pretende investir em anúncio (R$)</label>
+        <label id="simulador-investimento-label">💰 Quanto pretende investir em anúncio (R$)</label>
         <input id="simulador-investimento" type="text" inputmode="decimal" placeholder="Ex.: 50,00" oninput="calcularSimuladorTrafego()">
         <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
           <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Meta Ads R$10/dia</button>
@@ -494,12 +494,24 @@
           <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Shopee Ads R$10/dia</button>
           <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(50)">Google Ads na Shopee R$50/dia</button>
         </div>
+        <p class="tip" style="margin-top:4px">💡 Sugestões de valor, verificadas em 21/09/2026 — as plataformas mudam mínimos com frequência, confirme na conta antes de investir.</p>
+      </div>
+      <div class="field" id="simulador-conversao-bloco" style="display:none">
+        <label><input id="simulador-investimento-reais" type="checkbox" onchange="calcularSimuladorTrafego()" style="width:auto;margin-right:6px">Prefiro digitar o investimento em R$ (produto é em US$)</label>
+        <div id="simulador-cotacao-campo" style="display:none;margin-top:8px">
+          <label>🔁 Cotação do dólar hoje (R$ por US$)</label>
+          <input id="simulador-cotacao" type="text" inputmode="decimal" placeholder="Ex.: 5,30" oninput="calcularSimuladorTrafego()">
+        </div>
       </div>
       <div class="field"><label>🖱️ Custo por clique (R$) — opcional</label>
         <input id="simulador-cpc" type="text" inputmode="decimal" placeholder="Ex.: 0,80" oninput="calcularSimuladorTrafego()">
       </div>
       <div class="field" style="margin-bottom:0"><label>🛒 Quantas vendas espera com esse investimento (opcional)</label>
         <input id="simulador-vendas-esperadas" type="number" min="0" step="1" placeholder="Ex.: 5" oninput="calcularSimuladorTrafego()">
+      </div>
+      <div class="grid">
+        <div class="field"><label>🎯 Meta mínima (x vezes o investimento)</label><input id="simulador-meta-min" type="number" min="1" step="0.5" value="2" oninput="calcularSimuladorTrafego()"></div>
+        <div class="field"><label>🎯 Meta máxima (x vezes o investimento)</label><input id="simulador-meta-max" type="number" min="1" step="0.5" value="3" oninput="calcularSimuladorTrafego()"></div>
       </div>
       <div class="simulador-resultado" id="simulador-resultado"></div>
     </div>
@@ -620,6 +632,27 @@ function exportarBackup(){
   alert("Backup gerado! Salve esse arquivo no Google Drive, no WhatsApp (pra você mesma) ou onde preferir, pra poder restaurar depois se precisar.");
 }
 
+function resumirBackup(dados,chaves){
+  const linhas=[];
+  const bancoRaw=dados["agenda-achadinhos-banco-produtos"];
+  if(bancoRaw){
+    try{const banco=JSON.parse(bancoRaw);linhas.push(`🛍️ ${Array.isArray(banco)?banco.length:0} produto(s) no Banco de Produtos`);}catch{}
+  }
+  const semanas=chaves.filter(k=>k.startsWith("agenda-achadinhos-semana-"));
+  if(semanas.length)linhas.push(`📅 ${semanas.length} semana(s) salva(s)`);
+  const relatorioRaw=dados["agenda-achadinhos-relatorios"];
+  if(relatorioRaw){
+    try{
+      const rel=JSON.parse(relatorioRaw);
+      const dias=Object.keys(rel).length;
+      const posts=Object.values(rel).reduce((s,r)=>s+((r.posts||[]).length),0);
+      linhas.push(`📊 ${dias} dia(s) de relatório, ${posts} post(s) registrados`);
+    }catch{}
+  }
+  if(!linhas.length)linhas.push(`${chaves.length} item(ns) de dado salvo(s)`);
+  return linhas;
+}
+
 function importarBackupArquivo(input){
   const file=input.files[0];
   if(!file)return;
@@ -629,7 +662,12 @@ function importarBackupArquivo(input){
     try{
       dados=JSON.parse(e.target.result);
     }catch(err){
-      alert("Esse arquivo não parece ser um backup válido.");
+      alert("Esse arquivo não parece ser um backup válido (não consegui ler como JSON).");
+      input.value="";
+      return;
+    }
+    if(!dados||typeof dados!=="object"||Array.isArray(dados)){
+      alert("Esse arquivo não tem o formato esperado de um backup do Painel do Afiliado.");
       input.value="";
       return;
     }
@@ -639,9 +677,26 @@ function importarBackupArquivo(input){
       input.value="";
       return;
     }
-    if(!confirm(`Restaurar esse backup vai substituir os dados atuais (Banco de Produtos e semanas salvas) pelos do arquivo. Continuar?`))return;
-    chaves.forEach(key=>localStorage.setItem(key,dados[key]));
-    alert("Backup restaurado! O app vai recarregar agora.");
+    const linhasResumo=resumirBackup(dados,chaves);
+    const mensagem=`Esse arquivo contém:\n${linhasResumo.join("\n")}\n\nRestaurar vai SUBSTITUIR (não mesclar) os dados atuais desses mesmos itens pelos do arquivo. O que não estiver no arquivo continua como está agora.\n\nQuer continuar?`;
+    if(!confirm(mensagem))return;
+    try{
+      const testeEspaco=JSON.stringify(dados);
+      localStorage.setItem("agenda-achadinhos-teste-espaco",testeEspaco);
+      localStorage.removeItem("agenda-achadinhos-teste-espaco");
+    }catch(err){
+      alert("⚠️ Não foi possível restaurar: o armazenamento do navegador está cheio (ou outro erro de gravação). Seus dados atuais NÃO foram alterados. Tente liberar espaço (apagar fotos antigas do banco, limpar dados de outros sites) e tente de novo.");
+      input.value="";
+      return;
+    }
+    try{
+      chaves.forEach(key=>localStorage.setItem(key,dados[key]));
+    }catch(err){
+      alert("⚠️ Deu erro no meio da gravação — alguns itens podem ter sido restaurados e outros não. Recomendo fechar o app, abrir de novo e conferir seus dados com calma antes de continuar usando.");
+      input.value="";
+      return;
+    }
+    alert(`Backup restaurado com sucesso!\n${linhasResumo.join("\n")}\n\nO app vai recarregar agora.`);
     location.reload();
   };
   reader.readAsText(file);
@@ -1109,6 +1164,11 @@ function dataDoSlotNaSemana(slotId){
   return dataParaIso(d);
 }
 
+function chaveOrigemRelatorio(slotId,destId){
+  const monday=(typeof date!=="undefined"&&date&&date.value)||"";
+  return `${monday}|${slotId}-${destId}`;
+}
+
 function registrarPostNoRelatorio(slotId,destId){
   const slot=SLOTS.find(s=>s.id===slotId);
   const conta=CONTAS[destId];
@@ -1118,7 +1178,7 @@ function registrarPostNoRelatorio(slotId,destId){
   const texto=nomeProdutoDoSlot(slot)||"Post sem nome do produto";
   const horarioEl=document.getElementById(`horario-destino-${slotId}-${destId}`);
   const horario=horarioEl?horarioEl.value||"":"";
-  const origem=`${slotId}-${destId}`;
+  const origem=chaveOrigemRelatorio(slotId,destId);
   const todos=carregarRelatorios();
   if(!todos[dataPost])todos[dataPost]={posts:[],notas:""};
   const jaExiste=todos[dataPost].posts.some(p=>typeof p==="object"&&p._origem===origem);
@@ -1128,7 +1188,7 @@ function registrarPostNoRelatorio(slotId,destId){
 }
 
 function removerPostAutoRelatorio(slotId,destId){
-  const origem=`${slotId}-${destId}`;
+  const origem=chaveOrigemRelatorio(slotId,destId);
   const todos=carregarRelatorios();
   let mudou=false;
   Object.keys(todos).forEach(data=>{
@@ -1138,6 +1198,22 @@ function removerPostAutoRelatorio(slotId,destId){
   });
   if(mudou)salvarRelatorios(todos);
 }
+
+function migrarOrigensAntigasRelatorio(){
+  const todos=carregarRelatorios();
+  let mudou=false;
+  Object.entries(todos).forEach(([data,r])=>{
+    (r.posts||[]).forEach(p=>{
+      if(p&&typeof p==="object"&&p._origem&&!p._origem.includes("|")){
+        const monday=dataParaIso(segundaDaData(isoParaData(data)));
+        p._origem=`${monday}|${p._origem}`;
+        mudou=true;
+      }
+    });
+  });
+  if(mudou)salvarRelatorios(todos);
+}
+
 
 function nomeProdutoDoSlotSalvo(slot,s){
   if(!s)return "";
@@ -1862,7 +1938,7 @@ function adicionarPostRelatorio(){
   if(!todos[data])todos[data]={posts:[],notas:""};
   const post={texto,canal,formato,horario,visualizacoes};
   if(vinculoSemanaSelecionado){
-    post._origem=`${vinculoSemanaSelecionado.slotId}-${vinculoSemanaSelecionado.destId}`;
+    post._origem=`${vinculoSemanaSelecionado.monday}|${vinculoSemanaSelecionado.slotId}-${vinculoSemanaSelecionado.destId}`;
     marcarPublicadoNaSemana(vinculoSemanaSelecionado.monday,vinculoSemanaSelecionado.slotId,vinculoSemanaSelecionado.destId);
   }
   todos[data].posts.push(post);
@@ -2010,8 +2086,12 @@ function onFotoBanco(input){
 
 function carregarBanco(){return JSON.parse(localStorage.getItem("agenda-achadinhos-banco-produtos")||"[]")}
 function salvarBanco(lista){
-  try{localStorage.setItem("agenda-achadinhos-banco-produtos",JSON.stringify(lista))}
-  catch(e){alert("⚠️ Memória cheia! Remova fotos de produtos antigos do banco e tente de novo.")}
+  try{
+    localStorage.setItem("agenda-achadinhos-banco-produtos",JSON.stringify(lista));
+    return true;
+  }catch(e){
+    return false;
+  }
 }
 
 function popularDatalistCategorias(){
@@ -2082,7 +2162,11 @@ function adicionarProdutoBanco(){
   }else{
     lista.unshift({id:Date.now(),nome,link,loja,categoria,preco,comissao,valorComissao,concorrencia,afiliados,dataAdicionado,foto:bancoFotoAtual||undefined});
   }
-  salvarBanco(lista);
+  const salvou=salvarBanco(lista);
+  if(!salvou){
+    alert("⚠️ Não deu pra salvar: a memória do navegador está cheia. Nada foi perdido — o que você preencheu continua na tela, mas ainda não foi salvo. Apague fotos de produtos antigos do banco (elas ocupam mais espaço) e tente salvar de novo.");
+    return;
+  }
   limparFormBanco();
   renderizarBanco();
 }
@@ -2122,7 +2206,8 @@ function cancelarEdicaoBanco(){
 
 function removerProdutoBanco(id){
   if(!confirm("Remover esse produto do banco?"))return;
-  salvarBanco(carregarBanco().filter(p=>p.id!==id));
+  const salvou=salvarBanco(carregarBanco().filter(p=>p.id!==id));
+  if(!salvou){alert("⚠️ Não deu pra remover: a memória do navegador está cheia.");return}
   if(bancoEditandoId===id)limparFormBanco();
   renderizarBanco();
 }
@@ -2132,7 +2217,8 @@ function togglePublicadoBanco(id){
   const item=lista.find(p=>p.id===id);
   if(!item)return;
   item.publicado=!item.publicado;
-  salvarBanco(lista);
+  const salvou=salvarBanco(lista);
+  if(!salvou){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
   renderizarBanco();
 }
 
@@ -2344,9 +2430,10 @@ function toggleComissaoML(){
 }
 function renderizarComissoesML(){
   const ul=document.getElementById("banco-comissao-ml-lista");
+  const aviso=`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">📅 Valores de referência, verificados em 21/09/2026 — comissões mudam com frequência, confirme sempre no painel oficial do Mercado Livre.</li>`;
   const linhas=COMISSOES_MERCADO_LIVRE.map(c=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(c.grupo)}</span><span class="banco-em-alta-badge info">${c.direta} / ${c.indireta}</span></li>`).join("");
   const rodape=`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Direta / indireta acima. Cupom personalizado: Roupas/Calçados/Esportes 5% · Demais categorias 3%. Pagamento liberado após confirmação de Transação Válida.</li>`;
-  ul.innerHTML=linhas+rodape;
+  ul.innerHTML=aviso+linhas+rodape;
 }
 
 const COMISSOES_AMAZON_EUA=[
@@ -2383,7 +2470,8 @@ function renderizarComissoesAmazon(){
   const linha=c=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(c.cat)}${c.obs?` — ${escaparBanco(c.obs)}`:""}</span><span class="banco-em-alta-badge info">${c.comissao}</span></li>`;
   const tituloSecao=texto=>`<li class="banco-em-alta-item" style="display:block;background:none;font-size:11px;font-weight:800;color:var(--accent-dark);padding-bottom:2px">${texto}</li>`;
   ul.innerHTML=
-    tituloSecao("🇺🇸 Amazon EUA (Amazon Associates)")
+    `<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">📅 Valores de referência, verificados em 21/09/2026 — comissões mudam com frequência, confirme sempre no painel oficial.</li>`
+    +tituloSecao("🇺🇸 Amazon EUA (Amazon Associates)")
     +COMISSOES_AMAZON_EUA.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Em 2026 a Amazon cortou comissões em várias categorias sem aviso formal — confirme sempre no painel do Amazon Associates.</li>`
     +tituloSecao("🇧🇷 Amazon Brasil (Programa de Associados)")
@@ -2392,6 +2480,10 @@ function renderizarComissoesAmazon(){
 }
 
 function preencherInvestimentoSugerido(valor){
+  const blocoConversao=document.getElementById("simulador-conversao-bloco");
+  if(blocoConversao&&blocoConversao.style.display!=="none"){
+    document.getElementById("simulador-investimento-reais").checked=true;
+  }
   document.getElementById("simulador-investimento").value=formatarPrecoBR(valor);
   calcularSimuladorTrafego();
 }
@@ -2417,21 +2509,40 @@ function calcularSimuladorTrafego(){
   const resultadoEl=document.getElementById("simulador-resultado");
   if(!resultadoEl)return;
   const produtoId=document.getElementById("simulador-produto").value;
-  if(!produtoId){resultadoEl.innerHTML="";return;}
+  if(!produtoId){resultadoEl.innerHTML="";document.getElementById("simulador-conversao-bloco").style.display="none";return;}
   const produto=carregarBanco().find(p=>String(p.id)===produtoId);
   const comissaoUnit=produto?precoNumerico(produto.valorComissao):undefined;
-  if(!produto||!comissaoUnit||comissaoUnit<=0){resultadoEl.innerHTML="<p>Esse produto não tem valor de comissão calculado. Volte no cadastro e preencha preço + %.</p>";return;}
-  const investimento=parsePrecoBR(document.getElementById("simulador-investimento").value);
-  if(!investimento||investimento<=0){resultadoEl.innerHTML="";return;}
+  if(!produto||!comissaoUnit||comissaoUnit<=0){resultadoEl.innerHTML="<p>Esse produto não tem valor de comissão calculado. Volte no cadastro e preencha preço + %.</p>";document.getElementById("simulador-conversao-bloco").style.display="none";return;}
+  const moeda=moedaBanco(produto.loja);
+  const ehDolar=moeda==="US$";
+  const blocoConversao=document.getElementById("simulador-conversao-bloco");
+  blocoConversao.style.display=ehDolar?"block":"none";
+  const digitarEmReais=ehDolar&&document.getElementById("simulador-investimento-reais").checked;
+  document.getElementById("simulador-cotacao-campo").style.display=digitarEmReais?"block":"none";
+  const labelInvestimento=document.getElementById("simulador-investimento-label");
+  labelInvestimento.textContent=digitarEmReais?"💰 Quanto pretende investir em anúncio (R$)":`💰 Quanto pretende investir em anúncio (${moeda})`;
+
+  const investimentoDigitado=parsePrecoBR(document.getElementById("simulador-investimento").value);
+  let investimento;
+  if(digitarEmReais){
+    const cotacao=parsePrecoBR(document.getElementById("simulador-cotacao").value);
+    if(!investimentoDigitado||investimentoDigitado<=0){resultadoEl.innerHTML="";return;}
+    if(!cotacao||cotacao<=0){resultadoEl.innerHTML="<p>Preenche a cotação do dólar de hoje pra converter o valor em reais.</p>";return;}
+    investimento=investimentoDigitado/cotacao;
+  }else{
+    investimento=ehDolar?parsePrecoUS(document.getElementById("simulador-investimento").value):investimentoDigitado;
+    if(!investimento||investimento<=0){resultadoEl.innerHTML="";return;}
+  }
   const vendasEsperadas=parseFloat(document.getElementById("simulador-vendas-esperadas").value);
   const cpc=parsePrecoBR(document.getElementById("simulador-cpc").value);
-  const moeda=moedaBanco(produto.loja);
+  const metaMultMin=parseFloat(document.getElementById("simulador-meta-min").value)||2;
+  const metaMultMax=parseFloat(document.getElementById("simulador-meta-max").value)||3;
   const vendasParaEmpatar=Math.ceil(investimento/comissaoUnit);
-  const metaMin=investimento*2,metaMax=investimento*3;
+  const metaMin=investimento*metaMultMin,metaMax=investimento*metaMultMax;
   const vendasMetaMin=Math.ceil(metaMin/comissaoUnit),vendasMetaMax=Math.ceil(metaMax/comissaoUnit);
   let html=`<p>💰 Comissão por venda: <strong>${formatarPrecoBancoComMoeda(comissaoUnit,produto.loja)}</strong></p>`;
-  html+=`<p>📊 Investindo ${moeda} ${formatarPrecoBanco(investimento,produto.loja)}, você precisa vender pelo menos <strong>${vendasParaEmpatar} unidade(s)</strong> pra não ficar no prejuízo.</p>`;
-  html+=`<p>🎯 Meta recomendada (não só empatar): receber <strong>${moeda} ${formatarPrecoBanco(metaMin,produto.loja)} a ${moeda} ${formatarPrecoBanco(metaMax,produto.loja)}</strong> em comissão (2x a 3x o investimento) — ou seja, vender de <strong>${vendasMetaMin} a ${vendasMetaMax} unidade(s)</strong>.</p>`;
+  html+=`<p>📊 Investindo ${moeda} ${formatarPrecoBanco(investimento,produto.loja)}${digitarEmReais?` (equivalente a ${formatarPrecoBR(investimentoDigitado)} reais)`:""}, você precisa vender pelo menos <strong>${vendasParaEmpatar} unidade(s)</strong> pra não ficar no prejuízo.</p>`;
+  html+=`<p>🎯 Meta recomendada (não só empatar): receber <strong>${moeda} ${formatarPrecoBanco(metaMin,produto.loja)} a ${moeda} ${formatarPrecoBanco(metaMax,produto.loja)}</strong> em comissão (${metaMultMin}x a ${metaMultMax}x o investimento) — ou seja, vender de <strong>${vendasMetaMin} a ${vendasMetaMax} unidade(s)</strong>.</p>`;
   let cliques;
   if(cpc>0){
     cliques=Math.floor(investimento/cpc);
@@ -2440,7 +2551,7 @@ function calcularSimuladorTrafego(){
       const taxaEmpate=vendasParaEmpatar/cliques*100;
       const taxaMetaMin=vendasMetaMin/cliques*100;
       const taxaMetaMax=vendasMetaMax/cliques*100;
-      html+=`<p>📈 Taxa de conversão necessária sobre os cliques: pelo menos <strong>${taxaEmpate.toFixed(1).replace(".",",")}%</strong> pra empatar, e entre <strong>${taxaMetaMin.toFixed(1).replace(".",",")}%</strong> e <strong>${taxaMetaMax.toFixed(1).replace(".",",")}%</strong> pra bater a meta de 2x a 3x.</p>`;
+      html+=`<p>📈 Taxa de conversão necessária sobre os cliques: pelo menos <strong>${taxaEmpate.toFixed(1).replace(".",",")}%</strong> pra empatar, e entre <strong>${taxaMetaMin.toFixed(1).replace(".",",")}%</strong> e <strong>${taxaMetaMax.toFixed(1).replace(".",",")}%</strong> pra bater a meta de ${metaMultMin}x a ${metaMultMax}x.</p>`;
     }
   }
   if(vendasEsperadas>0){
@@ -2450,9 +2561,9 @@ function calcularSimuladorTrafego(){
     const roas=receita/investimento;
     html+=`<p class="${positivo?'simulador-lucro':'simulador-prejuizo'}">${positivo?"✅ Lucro estimado":"⚠️ Prejuízo estimado"} com ${vendasEsperadas} venda(s): ${moeda} ${formatarPrecoBanco(Math.abs(resultado),produto.loja)}</p>`;
     let statusMeta;
-    if(roas>=3)statusMeta="🟢 Bateu a meta (3x ou mais) — investimento bem aproveitado.";
-    else if(roas>=2)statusMeta="🟡 Dentro da meta mínima (2x a 3x).";
-    else if(roas>=1)statusMeta="🟠 Deu lucro, mas abaixo da meta segura de 2x a 3x.";
+    if(roas>=metaMultMax)statusMeta=`🟢 Bateu a meta (${metaMultMax}x ou mais) — investimento bem aproveitado.`;
+    else if(roas>=metaMultMin)statusMeta=`🟡 Dentro da meta mínima (${metaMultMin}x a ${metaMultMax}x).`;
+    else if(roas>=1)statusMeta=`🟠 Deu lucro, mas abaixo da meta segura de ${metaMultMin}x a ${metaMultMax}x.`;
     else statusMeta="🔴 Abaixo do ponto de empate.";
     html+=`<p style="font-size:12px;color:var(--muted)">${statusMeta}</p>`;
     if(cliques>0){
@@ -2621,6 +2732,7 @@ document.getElementById("banco-data").max=hojeIsoBanco();
 document.getElementById("banco-data").value=hojeIsoBanco();
 renderizarLinhasLote();
 popularSelectsFormatoRelatorio();
+migrarOrigensAntigasRelatorio();
 </script>
 </body>
 </html>
