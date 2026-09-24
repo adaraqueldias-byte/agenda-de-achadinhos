@@ -727,6 +727,7 @@ const CONTAS={
   face_garimpo:  {rede:"Facebook",  icone:"📘", nome:"Página Garimpo do Dia"},
   face_dashein:  {rede:"Facebook",  icone:"📘", nome:"Página Dashein"},
   face_cleverfinds: {rede:"Facebook", icone:"📘", nome:"CleverFinds"},
+  face_casamix:  {rede:"Facebook",  icone:"📘", nome:"CasaMix"},
   insta_garimpo: {rede:"Instagram", icone:"📸", nome:"garimpodia"},
   insta_dashein: {rede:"Instagram", icone:"📸", nome:"DaShein"},
   grupo_garimpo: {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Garimpo"},
@@ -734,6 +735,8 @@ const CONTAS={
   grupo_shop:    {rede:"Grupo Facebook", icone:"👥", nome:"Grupo ShopOnline"},
   grupo_shein:   {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Shein"},
   grupo_cleverfinds: {rede:"Grupo Facebook", icone:"👥", nome:"Clever Finds USA"},
+  grupo_achadinhos_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos pra Casa"},
+  grupo_ofertas_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Ofertas pra Casa"},
   shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
   tiktok_garimpo:{rede:"TikTok", icone:"🎵", nome:"garimpodia"},
 };
@@ -753,7 +756,8 @@ const LINHAS_CONTEUDO=[
   {prefixo:"garimpo_shopee",tipo:"Garimpo do Dia — Shopee Video",destinos:["shopee_video"]},
   {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"]},
   {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
-  {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds"]}
+  {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds"]},
+  {prefixo:"casamix",tipo:"CasaMix",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"]}
 ];
 const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
 const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
@@ -1749,7 +1753,7 @@ function pillDiasSemPostar(dataIso){
   return{classe:"danger",texto:`${dias} dias sem postar`};
 }
 
-const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","grupo_garimpo","grupo_shein","grupo_cleverfinds","insta_garimpo","shopee_video","tiktok_garimpo"];
+const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","face_casamix","grupo_garimpo","grupo_shein","grupo_cleverfinds","grupo_achadinhos_casa","grupo_ofertas_casa","insta_garimpo","shopee_video","tiktok_garimpo"];
 
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
@@ -1849,7 +1853,8 @@ function salvarMetricasPostRelatorio(indice){
 const LINHAS_RESUMO_RELATORIO=[
   {nome:"Garimpo do Dia",destinos:["face_garimpo","grupo_garimpo","insta_garimpo","shopee_video","tiktok_garimpo"]},
   {nome:"Dashein (Shein)",destinos:["insta_dashein","face_dashein","grupo_shein"]},
-  {nome:"Clever Finds (Amazon EUA)",destinos:["face_cleverfinds","grupo_cleverfinds"]}
+  {nome:"Clever Finds (Amazon EUA)",destinos:["face_cleverfinds","grupo_cleverfinds"]},
+  {nome:"CasaMix",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"]}
 ];
 
 function linhaDoCanal(canal){
