@@ -93,6 +93,7 @@
     .grupo-label{font-size:13px;font-weight:700;margin:4px 0 6px}
     .opcoes{display:flex;gap:8px;margin-bottom:12px}
     .opcoes:last-child{margin-bottom:0}
+    .opcoes.grade{display:grid;grid-template-columns:repeat(3,1fr)}
     .opcoes button{
       flex:1;border:2px solid var(--line);background:#fff;border-radius:12px;
       padding:11px 4px;font-size:14px;font-weight:700;color:var(--text);line-height:1.2
@@ -184,12 +185,17 @@
   <!-- 4. Movimento -->
   <section class="card">
     <h2><span class="num">4</span> Movimento das fotos</h2>
-    <div class="opcoes" id="op-movimento">
+    <div class="opcoes grade" id="op-movimento">
       <button type="button" data-v="in">Aproximar<small>zoom para perto</small></button>
       <button type="button" data-v="out">Afastar<small>zoom para longe</small></button>
-      <button type="button" data-v="alt">Alternado<small>uma de cada</small></button>
+      <button type="button" data-v="alt">Alternado<small>aproxima e afasta</small></button>
+      <button type="button" data-v="deslizar">Deslizar<small>entra pelo lado</small></button>
+      <button type="button" data-v="subir">Subir<small>entra por baixo</small></button>
+      <button type="button" data-v="girar">Girar leve<small>inclina de leve</small></button>
+      <button type="button" data-v="pulsar">Pulsar<small>batida suave</small></button>
+      <button type="button" data-v="variado">Variado<small>um por foto</small></button>
     </div>
-    <p class="dica">É um zoom suave aplicado às suas fotos, com transição discreta entre elas. Não é animação feita por IA.</p>
+    <p class="dica">São movimentos suaves (zoom, deslize, inclinação) aplicados às suas fotos, com transição discreta entre elas. A foto aparece sempre inteira. Não é animação feita por IA.</p>
   </section>
 
   <!-- 5. Prévia -->
@@ -260,7 +266,7 @@ function carregarPreferencias(){
     const p = JSON.parse(localStorage.getItem("criadorVideosPrefs") || "{}");
     if (PLATAFORMAS[p.plataforma]) estado.plataforma = p.plataforma;
     if ([5,8,10].includes(p.duracao)) estado.duracao = p.duracao;
-    if (["in","out","alt"].includes(p.movimento)) estado.movimento = p.movimento;
+    if (MOVIMENTOS.includes(p.movimento)) estado.movimento = p.movimento;
     if (typeof p.texto === "string") estado.texto = p.texto.slice(0,60);
   }catch(e){}
 }
@@ -476,30 +482,53 @@ function calcularLayout(ctx, cfg){
   return { area, texto };
 }
 
-function desenharFoto(ctx, foto, area, zoom, alpha){
+function desenharFoto(ctx, foto, area, mov, alpha){
   ctx.globalAlpha = alpha;
   ctx.drawImage(foto.fundo, 0, 0, W, H);
   const w = foto.img.naturalWidth || foto.img.width, h = foto.img.naturalHeight || foto.img.height;
-  // "contain": a foto inteira cabe na área segura; o zoom máximo (1,07)
-  // continua dentro do quadro, então nada da foto é cortado.
+  // "contain": a foto inteira cabe na área segura. Os movimentos são
+  // pequenos (zoom até 1,07, deslocamento até 70 px, inclinação até 2,5°)
+  // e ficam dentro do quadro, então nada da foto é cortado.
   const base = Math.min(area.w / w, area.h / h);
-  const s = base * zoom;
+  const s = base * mov.zoom;
   const dw = w * s, dh = h * s;
-  const cx = area.x + area.w / 2, cy = area.y + area.h / 2;
+  const cx = area.x + area.w / 2 + mov.dx;
+  let cy = area.y + area.h / 2 + mov.dy;
+  // Se o zoom levar a foto para perto da chamada, ela cresce para baixo em vez de cobrir o texto.
+  const meiaAltura = (Math.abs(dw * Math.sin(mov.rot)) + Math.abs(dh * Math.cos(mov.rot))) / 2;
+  const topoMin = area.y - 15;
+  if (cy - meiaAltura < topoMin) cy = topoMin + meiaAltura;
   ctx.save();
+  ctx.translate(cx, cy);
+  if (mov.rot) ctx.rotate(mov.rot);
   ctx.shadowColor = "rgba(0,0,0,.35)";
   ctx.shadowBlur = 40;
   ctx.shadowOffsetY = 12;
-  ctx.drawImage(foto.img, cx - dw / 2, cy - dh / 2, dw, dh);
+  ctx.drawImage(foto.img, -dw / 2, -dh / 2, dw, dh);
   ctx.restore();
   ctx.globalAlpha = 1;
 }
 
-function zoomDe(movimento, indice, p){
-  const Z = 0.07;
-  const dir = movimento === "alt" ? (indice % 2 === 0 ? "in" : "out") : movimento;
+const MOVIMENTOS = ["in", "out", "alt", "deslizar", "subir", "girar", "pulsar", "variado"];
+const SEQUENCIA_VARIADO = ["in", "deslizar", "out", "subir", "girar", "pulsar"];
+
+// Posição da foto (zoom, deslocamento e inclinação) no ponto p (0 a 1) do seu trecho.
+function movimentoDe(movimento, indice, p){
+  let tipo = movimento;
+  if (tipo === "alt") tipo = indice % 2 === 0 ? "in" : "out";
+  if (tipo === "variado") tipo = SEQUENCIA_VARIADO[indice % SEQUENCIA_VARIADO.length];
   const e = suave(p);
-  return dir === "in" ? 1 + Z * e : 1 + Z * (1 - e);
+  const lado = indice % 2 === 0 ? 1 : -1;   // alterna a direção entre as fotos
+  const m = { zoom: 1, dx: 0, dy: 0, rot: 0 };
+  switch (tipo){
+    case "in":       m.zoom = 1 + 0.07 * e; break;
+    case "out":      m.zoom = 1.07 - 0.07 * e; break;
+    case "deslizar": m.zoom = 0.96; m.dx = lado * 70 * (1 - e); break;       // entra pelo lado e para no centro
+    case "subir":    m.zoom = 0.96; m.dy = 70 * (1 - e); break;              // sobe de baixo até o centro
+    case "girar":    m.zoom = 0.94; m.rot = lado * (2.5 - 5 * e) * Math.PI / 180; break;
+    case "pulsar":   m.zoom = 1 + 0.045 * Math.pow(Math.sin(Math.PI * 2 * Math.min(1, Math.max(0, p))), 2); break;
+  }
+  return m;
 }
 
 function desenharQuadro(ctx, escala, t, cfg, layout){
@@ -518,11 +547,11 @@ function desenharQuadro(ctx, escala, t, cfg, layout){
 
   // Cada foto se move do início do seu trecho até o fim da transição seguinte.
   const prog = (k, tt) => (tt - k * seg) / (seg + trans);
-  desenharFoto(ctx, fotos[i], lay.area, zoomDe(cfg.movimento, i, prog(i, t)), 1);
+  desenharFoto(ctx, fotos[i], lay.area, movimentoDe(cfg.movimento, i, prog(i, t)), 1);
   const fimTrecho = inicio + seg;
   if (i < n - 1 && t > fimTrecho - trans){
     const a = suave((t - (fimTrecho - trans)) / trans);
-    desenharFoto(ctx, fotos[i + 1], lay.area, zoomDe(cfg.movimento, i + 1, prog(i + 1, t)), a);
+    desenharFoto(ctx, fotos[i + 1], lay.area, movimentoDe(cfg.movimento, i + 1, prog(i + 1, t)), a);
   }
 
   // Texto
