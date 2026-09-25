@@ -274,9 +274,7 @@
     .banco-contador-lojas span{color:var(--muted);font-weight:600}
     .banco-contador-lojas strong{color:var(--accent-dark);font-weight:800}
 
-    .link-criador{display:flex;align-items:center;gap:8px;flex-wrap:wrap;text-decoration:none;color:var(--text);padding:12px 15px}
-    .link-criador strong{color:var(--accent-dark)}
-    .link-criador span{font-size:12px;color:var(--muted)}
+    .aba-videos{text-decoration:none;color:var(--accent-dark)}
 
     @media(max-width:620px){.buttons{grid-template-columns:1fr}.hero{align-items:flex-start}.slot-cabecalho{flex-direction:column}}
   </style>
@@ -301,6 +299,7 @@
     <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">Semana</div>
     <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
     <div class="aba" id="aba-relatorio" onclick="mostrarView('relatorio')">📋 Relatório</div>
+    <a class="aba aba-videos" href="criador-de-videos/">🎬 Vídeos</a>
   </div>
 
   <div class="backup-linha">
@@ -308,8 +307,6 @@
     <button type="button" class="backup-link" onclick="document.getElementById('backup-input').click()">📂 Restaurar backup</button>
     <input type="file" id="backup-input" accept="application/json" style="display:none" onchange="importarBackupArquivo(this)">
   </div>
-
-  <a class="card link-criador" href="criador-de-videos/">🎬 <strong>Meu Criador de Vídeos</strong><span>Fotos do produto → vídeo vertical pronto</span></a>
 
   <div id="view-semana">
     <section class="card">
