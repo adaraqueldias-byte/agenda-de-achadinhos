@@ -992,7 +992,6 @@ $("btn-baixar").addEventListener("click", e => { if (!urlResultado) e.preventDef
 atualizarFotos();
 garantirFonte().then(desenharPrevia);
 
-if ("serviceWorker" in navigator){ navigator.serviceWorker.register("../service-worker.js").catch(() => {}); }
 </script>
 </body>
 </html>
