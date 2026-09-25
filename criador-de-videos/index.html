@@ -666,25 +666,33 @@ function nomeArquivo(plat, ext){
 // Caminho preferido: WebCodecs + H.264 → MP4. Gera mais rápido que o tempo real
 // e com 30 quadros por segundo exatos. Com familia "vp9" procura a alternativa
 // (MP4 com VP9), usada só quando o navegador não tem H.264.
-async function escolherCodificador(familia){
-  if (params.get("forcar") === "gravador") return null;
-  if (typeof VideoEncoder === "undefined" || typeof VideoFrame === "undefined" || typeof Mp4Muxer === "undefined") return null;
-  const candidatos = [];
+// Devolve uma lista de configurações para tentar em ordem: muitos celulares Android
+// dizem aceitar 1080×1920 no codificador do aparelho e depois falham ou travam,
+// por isso também há a versão por software e a versão 720×1280.
+async function listarCodificadores(familia){
+  if (params.get("forcar") === "gravador") return [];
+  if (typeof VideoEncoder === "undefined" || typeof VideoFrame === "undefined" || typeof Mp4Muxer === "undefined") return [];
   const codecs = familia === "vp9"
     ? ["vp09.00.40.08", "vp09.00.41.08", "vp09.00.31.08"]
     : ["avc1.640028", "avc1.4d0028", "avc1.420028", "avc1.640032", "avc1.42001f"];
+  const lista = [];
   for (const [w, h] of [[1080, 1920], [720, 1280]]){
-    for (const codec of codecs) candidatos.push({ codec, muxer: familia === "vp9" ? "vp9" : "avc", w, h });
+    for (const acel of ["no-preference", "prefer-software"]){
+      for (const codec of codecs){
+        try{
+          const cfg = { codec, width: w, height: h, bitrate: w >= 1080 ? 8_000_000 : 5_000_000, framerate: FPS };
+          if (acel !== "no-preference") cfg.hardwareAcceleration = acel;
+          if (familia !== "vp9") cfg.avc = { format: "avc" };
+          const r = await VideoEncoder.isConfigSupported(cfg);
+          if (r && r.supported){
+            lista.push({ codec, muxer: familia === "vp9" ? "vp9" : "avc", w, h, acel, config: r.config || cfg });
+            break;  // um codec por combinação de tamanho e modo basta
+          }
+        }catch(e){ /* tenta o próximo */ }
+      }
+    }
   }
-  for (const c of candidatos){
-    try{
-      const cfg = { codec: c.codec, width: c.w, height: c.h, bitrate: c.w >= 1080 ? 8_000_000 : 5_000_000, framerate: FPS };
-      if (c.muxer === "avc") cfg.avc = { format: "avc" };
-      const r = await VideoEncoder.isConfigSupported(cfg);
-      if (r && r.supported) return { ...c, config: r.config || cfg };
-    }catch(e){ /* tenta o próximo */ }
-  }
-  return null;
+  return lista;
 }
 
 async function gerarComWebCodecs(cfgVideo, esc){
@@ -701,38 +709,47 @@ async function gerarComWebCodecs(cfgVideo, esc){
     fastStart: "in-memory"
   });
   let erroCod = null;
+  let ultimaSaida = performance.now();
   const encoder = new VideoEncoder({
-    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    output: (chunk, meta) => { ultimaSaida = performance.now(); muxer.addVideoChunk(chunk, meta); },
     error: e => { erroCod = e; }
   });
-  encoder.configure(esc.config);
+  const fechar = () => { try{ if (encoder.state !== "closed") encoder.close(); }catch(e){} };
+  const travou = () => new Error("o codificador do aparelho parou de responder");
+  try{
+    encoder.configure(esc.config);
 
-  const total = Math.round(cfgVideo.duracao * FPS);
-  const dur = Math.round(1e6 / FPS);
-  for (let q = 0; q < total; q++){
-    if (cancelado) { try{ encoder.close(); }catch(e){} throw new Cancelado(); }
-    if (erroCod) throw erroCod;
-    desenharQuadro(ctx, escala, q / FPS, cfgVideo, layout);
-    const frame = new VideoFrame(canvas, { timestamp: q * dur, duration: dur });
-    encoder.encode(frame, { keyFrame: q % FPS === 0 });
-    frame.close();
-    while (encoder.encodeQueueSize > 4 && !erroCod) await new Promise(r => setTimeout(r, 4));
-    if (q % 3 === 0){
-      progresso(0.05 + 0.9 * (q + 1) / total, "Gerando vídeo…");
-      await new Promise(r => setTimeout(r, 0));
+    const total = Math.round(cfgVideo.duracao * FPS);
+    const dur = Math.round(1e6 / FPS);
+    for (let q = 0; q < total; q++){
+      if (cancelado) throw new Cancelado();
+      if (erroCod) throw erroCod;
+      desenharQuadro(ctx, escala, q / FPS, cfgVideo, layout);
+      const frame = new VideoFrame(canvas, { timestamp: q * dur, duration: dur });
+      encoder.encode(frame, { keyFrame: q % FPS === 0 });
+      frame.close();
+      while (encoder.encodeQueueSize > 4 && !erroCod){
+        if (cancelado) throw new Cancelado();
+        if (performance.now() - ultimaSaida > 8000) throw travou();
+        await new Promise(r => setTimeout(r, 4));
+      }
+      if (q % 3 === 0){
+        progresso(0.05 + 0.9 * (q + 1) / total, "Gerando vídeo…");
+        await new Promise(r => setTimeout(r, 0));
+      }
     }
+    progresso(0.96, "Finalizando…");
+    await Promise.race([encoder.flush(), new Promise((_, rej) => setTimeout(() => rej(travou()), 15000))]);
+    if (erroCod) throw erroCod;
+  }finally{
+    fechar();
   }
-  progresso(0.96, "Finalizando…");
-  await encoder.flush();
-  if (erroCod) throw erroCod;
-  encoder.close();
   muxer.finalize();
   const buf = muxer.target.buffer;
   if (!buf || buf.byteLength < 1000) throw new Error("vídeo vazio");
   return { blob: new Blob([buf], { type: "video/mp4" }), ext: "mp4", codec: esc.muxer === "avc" ? "h264" : "vp9", resolucao: `${esc.w}×${esc.h}` };
 }
 
-// Caminho 2 (alternativa): grava o desenho em tempo real com MediaRecorder.
 // Alternativa: grava o desenho em tempo real com MediaRecorder.
 // soH264 = true procura só MP4 com H.264; false aceita qualquer formato.
 function escolherFormatoGravador(soH264){
@@ -752,16 +769,19 @@ function escolherFormatoGravador(soH264){
   return null;
 }
 
-async function gerarComGravador(cfgVideo, formato){
+async function gerarComGravador(cfgVideo, formato, largura = 1080){
   const canvas = $("canvas-gerar");
-  canvas.width = 1080; canvas.height = 1920;
+  const altura = Math.round(largura * 16 / 9);
+  canvas.width = largura; canvas.height = altura;
+  const escala = largura / W;
   const ctx = canvas.getContext("2d");
+  ctx.setTransform(escala, 0, 0, escala, 0, 0);
   const layout = calcularLayout(ctx, cfgVideo);
-  desenharQuadro(ctx, 1, 0, cfgVideo, layout);
+  desenharQuadro(ctx, escala, 0, cfgVideo, layout);
 
   $("aviso-telaaberta").textContent = "Neste navegador o vídeo é gravado em tempo real: deixe esta tela aberta até terminar.";
   const stream = canvas.captureStream(FPS);
-  const rec = new MediaRecorder(stream, { mimeType: formato.mime, videoBitsPerSecond: 8_000_000 });
+  const rec = new MediaRecorder(stream, { mimeType: formato.mime, videoBitsPerSecond: largura >= 1080 ? 8_000_000 : 5_000_000 });
   const partes = [];
   rec.ondataavailable = e => { if (e.data && e.data.size) partes.push(e.data); };
   const fim = new Promise((resolve, reject) => {
@@ -774,7 +794,7 @@ async function gerarComGravador(cfgVideo, formato){
     const loop = () => {
       if (cancelado){ resolve(); return; }
       const t = (performance.now() - t0) / 1000;
-      desenharQuadro(ctx, 1, Math.min(t, cfgVideo.duracao - 0.001), cfgVideo, layout);
+      desenharQuadro(ctx, escala, Math.min(t, cfgVideo.duracao - 0.001), cfgVideo, layout);
       progresso(0.05 + 0.9 * Math.min(1, t / cfgVideo.duracao), "Gravando vídeo…");
       if (t >= cfgVideo.duracao + 0.1) resolve();
       else requestAnimationFrame(loop);
@@ -789,13 +809,14 @@ async function gerarComGravador(cfgVideo, formato){
   const blob = new Blob(partes, { type: tipo.split(";")[0] });
   if (blob.size < 1000) throw new Error("vídeo vazio");
   const codec = formato.codec === "?" && /avc1|h264/i.test(tipo) ? "h264" : formato.codec;
-  return { blob, ext: formato.ext, codec, resolucao: "1080×1920" };
+  return { blob, ext: formato.ext, codec, resolucao: `${largura}×${altura}` };
 }
 
 function traduzirErro(e){
   const m = String((e && (e.message || e.name)) || e || "");
   if (/memory|memória|allocation/i.test(m)) return "O celular ficou sem memória para gerar o vídeo. Feche outros aplicativos ou use fotos menores e tente de novo.";
   if (/vazio/i.test(m)) return "O vídeo saiu vazio. Tente de novo; se continuar, abra o app no Chrome (Android/computador) ou no Safari (iPhone) atualizado.";
+  if (e && e.tentativas) return `Não foi possível gerar o vídeo neste aparelho: tentei ${e.tentativas} ${e.tentativas === 1 ? "modo" : "modos"} diferentes e nenhum funcionou. Feche outros aplicativos e tente de novo; se continuar, tire uma captura desta mensagem. (Detalhe técnico: ${m})`;
   return "Não foi possível gerar o vídeo neste navegador. Tente de novo; se continuar, abra o app no Chrome (Android/computador) ou no Safari (iPhone) atualizado. (Detalhe técnico: " + (m || "desconhecido") + ")";
 }
 
@@ -819,25 +840,38 @@ async function gerarVideo(){
   let res = null;
   try{
     await garantirFonte();
-    // Ordem: MP4 H.264 rápido → MP4 H.264 gravado → MP4 VP9 rápido → outro formato gravado.
-    const tentativas = [
-      async () => { const esc = await escolherCodificador("avc"); return esc && gerarComWebCodecs(cfgVideo, esc); },
-      async () => { const f = escolherFormatoGravador(true); return f && gerarComGravador(cfgVideo, f); },
-      async () => { const esc = await escolherCodificador("vp9"); return esc && gerarComWebCodecs(cfgVideo, esc); },
-      async () => { const f = escolherFormatoGravador(false); return f && gerarComGravador(cfgVideo, f); }
-    ];
-    let ultimoErro = null;
-    for (const tentar of tentativas){
+    // Ordem: MP4 H.264 rápido (1080 → 720, aparelho → software) → MP4 H.264 gravado
+    // → MP4 VP9 rápido → outro formato gravado. Se um modo falhar ou travar, passa ao próximo.
+    const registro = [];
+    const tentar = async (rotulo, fn) => {
+      if (res) return;
       try{
-        res = await tentar();
-        if (res) break;
+        if (registro.length) progresso(0.03, "Tentando outro modo…");
+        res = await fn();
       }catch(e){
         if (e instanceof Cancelado) throw e;
-        console.warn("Tentativa de geração falhou, indo para a próxima:", e);
-        ultimoErro = e;
+        console.warn("Falhou:", rotulo, e);
+        registro.push(`${rotulo}: ${(e && (e.message || e.name)) || e}`);
       }
+    };
+    for (const esc of await listarCodificadores("avc")){
+      await tentar(`H.264 ${esc.w}×${esc.h}${esc.acel === "prefer-software" ? " (software)" : ""}`, () => gerarComWebCodecs(cfgVideo, esc));
     }
-    if (!res) throw ultimoErro || new Error("Este navegador não consegue criar vídeos (sem WebCodecs e sem MediaRecorder).");
+    const h264Gravado = escolherFormatoGravador(true);
+    if (h264Gravado){
+      await tentar("gravador H.264 1080×1920", () => gerarComGravador(cfgVideo, h264Gravado, 1080));
+      await tentar("gravador H.264 720×1280", () => gerarComGravador(cfgVideo, h264Gravado, 720));
+    }
+    if (!res) for (const esc of (await listarCodificadores("vp9")).slice(0, 2)){
+      await tentar(`VP9 ${esc.w}×${esc.h}${esc.acel === "prefer-software" ? " (software)" : ""}`, () => gerarComWebCodecs(cfgVideo, esc));
+    }
+    const qualquer = escolherFormatoGravador(false);
+    if (qualquer) await tentar("gravador " + qualquer.mime, () => gerarComGravador(cfgVideo, qualquer, 720));
+    if (!res){
+      const e = new Error(registro.length ? registro.join(" | ") : "Este navegador não consegue criar vídeos (sem WebCodecs e sem MediaRecorder).");
+      e.tentativas = registro.length;
+      throw e;
+    }
     progresso(1, "Pronto!");
     mostrarResultado(res, cfgVideo);
   }catch(e){
@@ -878,11 +912,11 @@ function mostrarResultado(res, cfgVideo){
   $("resultado").classList.add("ativo");
 
   const plat = PLATAFORMAS[cfgVideo.plataforma].nome;
-  const comoTrocar = "Para ter MP4 com H.264 (aceito por todas), abra este app no Chrome (Android/computador) ou no Safari (iPhone) atualizado.";
+  const comoTrocar = "Se a plataforma recusar, gere de novo; se continuar, tente no Chrome (Android/computador) ou no Safari (iPhone) atualizado.";
   if (res.ext === "mp4" && res.codec === "h264"){
     mostrarMsg("ok", `Vídeo pronto: MP4 vertical ${res.resolucao}, ${cfgVideo.duracao} s, sem áudio (adicione a música no ${plat}).`);
   } else if (res.ext === "mp4"){
-    mostrarMsg("aviso", `Vídeo pronto em MP4 ${res.resolucao}, ${cfgVideo.duracao} s, sem áudio. Atenção: este navegador não tem o codec H.264, então o MP4 foi gerado com ${res.codec === "vp9" ? "VP9" : "outro codec"}, que algumas plataformas podem recusar. ${comoTrocar}`);
+    mostrarMsg("aviso", `Vídeo pronto em MP4 ${res.resolucao}, ${cfgVideo.duracao} s, sem áudio. Atenção: não foi possível usar o codec H.264 neste aparelho, então o MP4 foi gerado com ${res.codec === "vp9" ? "VP9" : "outro codec"}, que algumas plataformas podem recusar. ${comoTrocar}`);
   } else {
     mostrarMsg("aviso", `Este navegador não consegue gerar MP4, então o vídeo foi gerado em WebM (${res.resolucao}, ${cfgVideo.duracao} s, sem áudio). O TikTok aceita WebM, mas a Shopee e o Facebook podem recusar. ${comoTrocar}`);
   }
