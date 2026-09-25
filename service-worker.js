@@ -1,5 +1,5 @@
-const CACHE='agenda-achadinhos-v3';
-const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
+const CACHE='agenda-achadinhos-v4';
+const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png','./criador-de-videos/','./criador-de-videos/index.html','./criador-de-videos/mp4-muxer.js','./criador-de-videos/manifest.json'];
 
 self.addEventListener('install',e=>{
   self.skipWaiting();
