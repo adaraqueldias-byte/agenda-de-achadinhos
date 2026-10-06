@@ -916,6 +916,15 @@ function popularSelectProdutoBanco(key,bancoIdAtual){
   if(bancoIdAtual&&produtos.some(p=>String(p.id)===String(bancoIdAtual)))sel.value=bancoIdAtual;
 }
 
+function atualizarTodosSelectsProdutoBanco(){
+  document.querySelectorAll('select[id^="produto-banco-"]').forEach(sel=>{
+    const key=sel.id.replace(/^produto-banco-/,"");
+    const bancoIdInput=document.getElementById("bancoId-"+key);
+    const bancoIdAtual=bancoIdInput?bancoIdInput.value:sel.value;
+    popularSelectProdutoBanco(key,bancoIdAtual);
+  });
+}
+
 function aplicarProdutoDoBanco(key){
   const sel=document.getElementById("produto-banco-"+key);
   const bancoIdInput=document.getElementById("bancoId-"+key);
@@ -1629,7 +1638,10 @@ function mostrarView(nome){
   document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
   if(nome==="banco")renderizarBanco();
   if(nome==="relatorio")renderizarRelatorio();
-  if(nome==="semana"&&diaAtualISO)abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
+  if(nome==="semana"&&diaAtualISO){
+    abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
+    atualizarTodosSelectsProdutoBanco();
+  }
 }
 
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
