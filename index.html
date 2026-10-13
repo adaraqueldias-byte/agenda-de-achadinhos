@@ -565,7 +565,8 @@
           <label>📋 Colar lista (1 post por linha): Nome | Canal | Data | Horário | Visualizações | Formato</label>
           <textarea id="relatorio-colar-lista" rows="6" placeholder="Perfume Importado | COMPRA E VENDA BRASIL | 17/07/2026 | 10:06 | 5 | Foto
 Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></textarea>
-          <p class="tip" style="margin:4px 0 0">Data, horário, visualizações e formato podem ficar em branco (ex.: "Nome | Canal | | | 5 |"). Se deixar o formato em branco na linha, usa o campo abaixo.</p>
+          <p class="tip" style="margin:4px 0 0">Data, horário, visualizações e formato podem ficar em branco (ex.: "Nome | Canal | | | 5 |"). Se deixar o formato em branco na linha, usa o campo abaixo. A data precisa ter o ano (17/07/2026), senão usa a data do relatório selecionada acima.</p>
+          <p class="tip" style="margin:4px 0 0">💡 Se o canal digitado não bater com nenhuma conta cadastrada (ex.: um dos grupos externos do Clever Finds, tipo "USA Business Group" ou "Amazon Finds"), o app junta automaticamente todas as linhas desse produto/data num post só no canal "Outros grupos: Compartilhado (~10 grupos EUA)", somando as visualizações.</p>
         </div>
         <div class="field"><label>Formato padrão (só pras linhas sem formato próprio)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
         <button type="button" class="primary" style="width:100%" onclick="importarListaRelatorio()">📋 Importar lista colada</button>
@@ -2138,35 +2139,65 @@ function adicionarLinhaLote(){
   renderizarLinhasLote();
 }
 
+const CANAL_OUTROS_GRUPOS=chaveConta(CONTAS.cleverfinds_extras);
+
 function importarListaRelatorio(){
   const texto=document.getElementById("relatorio-colar-lista").value;
   const linhas=texto.split("\n").map(l=>l.trim()).filter(Boolean);
   if(!linhas.length){alert("Cole ao menos uma linha.");return}
   const formatoPadrao=document.getElementById("relatorio-lote-formato").value||"";
   const dataPadrao=relatorioDataAtual();
-  const todos=carregarRelatorios();
-  let adicionados=0;
+  const diretos=[];
+  const externosPorGrupo={};
+  let reconhecidos=0,linhasExternas=0;
   linhas.forEach(linha=>{
     const partes=linha.split("|").map(p=>p.trim());
     const nome=partes[0];
     if(!nome)return;
     const canalDigitado=partes[1]||"";
-    const canal=canalDigitado?(resolverChaveConta(canalDigitado)||canalDigitado):"";
+    const canalResolvido=canalDigitado?resolverChaveConta(canalDigitado):null;
     const dataDigitada=partes[2]?brParaIso(partes[2]):null;
     const data=dataDigitada||dataPadrao;
     const horario=partes[3]||"";
     const visTexto=partes[4];
     const visualizacoes=visTexto===undefined||visTexto===""?undefined:parseInt(visTexto);
     const formato=partes[5]||formatoPadrao;
-    if(!todos[data])todos[data]={posts:[],notas:""};
-    todos[data].posts.push({texto:nome,canal,formato,horario,visualizacoes});
-    adicionados++;
+    if(canalDigitado&&!canalResolvido){
+      // canal digitado mas não bate com nenhuma conta cadastrada (ex.: um dos ~10 grupos externos do Clever Finds) — soma no "Outros grupos: Compartilhado"
+      const chave=`${data}|${normalizarTexto(nome)}`;
+      if(!externosPorGrupo[chave])externosPorGrupo[chave]={texto:nome,data,formato,horario,visualizacoes:undefined,canaisOriginais:new Set()};
+      const g=externosPorGrupo[chave];
+      if(visualizacoes!==undefined)g.visualizacoes=(g.visualizacoes||0)+visualizacoes;
+      g.canaisOriginais.add(canalDigitado);
+      linhasExternas++;
+    }else{
+      const canal=canalResolvido||canalDigitado||"";
+      diretos.push({data,post:{texto:nome,canal,formato,horario,visualizacoes}});
+      reconhecidos++;
+    }
   });
-  if(!adicionados){alert("Não consegui identificar nenhuma linha válida.");return}
+  const gruposExternos=Object.values(externosPorGrupo);
+  const totalLinhas=reconhecidos+linhasExternas;
+  if(!totalLinhas){alert("Não consegui identificar nenhuma linha válida.");return}
+  let mensagem=`Vou importar ${totalLinhas} linha(s):\n• ${reconhecidos} post(s) com canal reconhecido\n`;
+  if(gruposExternos.length){
+    mensagem+=`• ${linhasExternas} linha(s) de grupos externos (não cadastrados) somadas em ${gruposExternos.length} post(s) no canal "${CANAL_OUTROS_GRUPOS}"\n`;
+  }
+  mensagem+=`\nQuer continuar?`;
+  if(!confirm(mensagem))return;
+  const todos=carregarRelatorios();
+  diretos.forEach(({data,post})=>{
+    if(!todos[data])todos[data]={posts:[],notas:""};
+    todos[data].posts.push(post);
+  });
+  gruposExternos.forEach(g=>{
+    if(!todos[g.data])todos[g.data]={posts:[],notas:""};
+    todos[g.data].posts.push({texto:g.texto,canal:CANAL_OUTROS_GRUPOS,formato:g.formato,horario:g.horario,visualizacoes:g.visualizacoes});
+  });
   salvarRelatorios(todos);
   document.getElementById("relatorio-colar-lista").value="";
   renderizarRelatorio();
-  alert(`${adicionados} post(s) importado(s) com sucesso!`);
+  alert(`Importado! ${reconhecidos} post(s) direto(s) + ${gruposExternos.length} post(s) somados de grupos externos.`);
 }
 
 function salvarLoteRelatorio(){
