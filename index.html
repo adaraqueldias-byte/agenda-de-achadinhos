@@ -763,7 +763,7 @@ const LINHAS_CONTEUDO=[
   {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"]},
   {prefixo:"garimpo_pinterest",tipo:"Garimpo do Dia — Pinterest",destinos:["pinterest_garimpo"]},
   {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
-  {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds","cleverfinds_extras"]},
+  {prefixo:"cleverfinds",tipo:"Clever Finds USA",destinos:["face_cleverfinds","grupo_cleverfinds","cleverfinds_extras"],poolMax:8},
   {prefixo:"casamix",tipo:"CasaMix",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"]}
 ];
 const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
@@ -777,7 +777,8 @@ DIAS_SEMANA.forEach(([diaChave,diaLabel])=>{
   LINHAS_CONTEUDO.forEach(linha=>{
     const baseId=`${linha.prefixo}_${diaChave}`;
     const base={id:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos};
-    const extras=Array.from({length:POOL_MAX-1},(_,i)=>({id:`${baseId}_extra${i+1}`,extraDe:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos}));
+    const poolMax=linha.poolMax||POOL_MAX;
+    const extras=Array.from({length:poolMax-1},(_,i)=>({id:`${baseId}_extra${i+1}`,extraDe:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos}));
     SLOTS.push(base,...extras);
     SLOTS_POR_GRUPO[diaChave].push(base.id,...extras.map(e=>e.id));
   });
@@ -1047,8 +1048,14 @@ function extraPostTemplate(slot){
   </div>`;
 }
 
+function poolMaxDoSlot(parentId){
+  const prefixo=parentId.replace(/_(segunda|terca|quarta|quinta|sexta|sabado|domingo)$/,"");
+  const linha=LINHAS_CONTEUDO.find(l=>l.prefixo===prefixo);
+  return (linha&&linha.poolMax)||POOL_MAX;
+}
+
 function poolWrapperHtml(parentId){
-  const max=POOL_MAX-1;
+  const max=poolMaxDoSlot(parentId)-1;
   const blocos=Array.from({length:max},(_,i)=>{
     const n=i+1;
     const s=SLOTS.find(x=>x.id===`${parentId}_extra${n}`);
@@ -1058,7 +1065,7 @@ function poolWrapperHtml(parentId){
 }
 
 function adicionarExtraPool(parentId){
-  const max=POOL_MAX-1;
+  const max=poolMaxDoSlot(parentId)-1;
   const contInput=document.getElementById("extra-count-"+parentId);
   let count=parseInt(contInput.value)||0;
   if(count>=max)return;
@@ -1589,7 +1596,7 @@ function carregarSemana(){
       const parentId=`${linha.prefixo}_${diaChave}`;
       const contInput=document.getElementById("extra-count-"+parentId);
       if(!contInput)return;
-      const max=POOL_MAX-1;
+      const max=(linha.poolMax||POOL_MAX)-1;
       let maxComDados=0;
       for(let n=1;n<=max;n++){
         const extraId=`${parentId}_extra${n}`;
