@@ -181,9 +181,13 @@
     .pill-dias.danger{background:var(--danger-soft);color:var(--danger)}
     .relatorio-pagina-bloco{border-bottom:1px solid var(--line)}
     .relatorio-pagina-bloco:last-child{border-bottom:none}
-    .relatorio-pagina-header{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;background:none;border:none;padding:7px 0;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:left}
+    .relatorio-pagina-header-row{display:flex;align-items:center;gap:4px}
+    .relatorio-pagina-header{flex:1;min-width:0;display:flex;justify-content:space-between;align-items:center;gap:6px;background:none;border:none;padding:7px 0;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:left}
+    .relatorio-ir-semana{flex:none;width:28px;height:28px;border-radius:8px;border:none;background:var(--accent-soft);font-size:13px;cursor:pointer}
     .relatorio-pagina-grupos{padding-left:12px}
     .relatorio-pagina-grupos .relatorio-contador-linha:last-child{border-bottom:none}
+    .pill-agendado{flex:none;font-size:11px;font-weight:700;padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e40af;white-space:nowrap}
+    .relatorio-contador-resumo{font-size:12px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);border-radius:10px;padding:7px 10px;margin-bottom:8px;text-align:center}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
     .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
@@ -1844,6 +1848,51 @@ function pillDiasSemPostar(dataIso){
   return{classe:"danger",texto:`${dias} dias sem postar`};
 }
 
+function diasSemPostarNumero(dataIso){
+  if(!dataIso)return Infinity;
+  const hoje=new Date();
+  const hojeIso=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
+  return Math.round((isoParaData(hojeIso)-isoParaData(dataIso))/86400000);
+}
+
+function contarAgendadosPorConta(){
+  const contagem={};
+  const hoje=dataParaIso(new Date());
+  for(let i=0;i<localStorage.length;i++){
+    const key=localStorage.key(i);
+    if(!key||!key.startsWith("agenda-achadinhos-semana-"))continue;
+    let dados;
+    try{dados=JSON.parse(localStorage.getItem(key)||"{}");}catch{continue}
+    if(!dados||!dados.slots)continue;
+    Object.values(dados.slots).forEach(s=>{
+      const destinosStatus=s.destinosStatus||{};
+      const destinosData=s.destinosData||{};
+      Object.entries(destinosStatus).forEach(([destId,status])=>{
+        if(status!=="agendado")return;
+        const data=destinosData[destId]||"";
+        if(data&&data<hoje)return;
+        contagem[destId]=(contagem[destId]||0)+1;
+      });
+    });
+  }
+  return contagem;
+}
+
+const PAGINA_PREFIXO_LINHA={face_garimpo:"garimpo",face_dashein:"dashein",face_cleverfinds:"cleverfinds",face_casamix:"casamix"};
+
+function irParaSemanaDoBloco(paginaId){
+  mostrarView("semana");
+  irParaHojeDia();
+  const prefixo=PAGINA_PREFIXO_LINHA[paginaId];
+  const chaveDia=CHAVE_DIA_POR_INDICE[new Date().getDay()];
+  const slotId=`${prefixo}_${chaveDia}`;
+  const corpo=document.getElementById("slot-corpo-"+slotId);
+  if(corpo){
+    if(corpo.style.display==="none")toggleSlotCorpo(slotId);
+    corpo.closest("section").scrollIntoView({behavior:"smooth",block:"start"});
+  }
+}
+
 const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","face_casamix","grupo_garimpo","grupo_garimpo_kids","grupo_achadinhos_beleza","grupo_ofertas_boas","grupo_lucrando_shopee","grupo_shein","grupo_cleverfinds","grupo_achadinhos_casa","grupo_ofertas_casa","insta_garimpo","shopee_video","tiktok_garimpo","pinterest_garimpo"];
 
 const PAGINA_GRUPOS_RELATORIO={
@@ -1863,33 +1912,57 @@ function toggleContadorPagina(paginaId){
 
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
-  const linha=(nome,chave)=>{
-    const{classe,texto}=pillDiasSemPostar(ultimas[chave]);
-    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
+  const agendados=contarAgendadosPorConta();
+  const linha=(id,nomeOverride)=>{
+    const c=CONTAS[id];
+    const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
+    const n=agendados[id]||0;
+    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nomeOverride||c.nome)}</span><span style="display:flex;align-items:center;gap:5px;flex:none">${n?`<span class="pill-agendado">🕐 ${n}</span>`:""}<span class="pill-dias ${classe}">${texto}</span></span></div>`;
   };
-  const contasFoco=CANAIS_FOCO_RELATORIO.map(id=>CONTAS[id]);
   const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
-  const paginas=paginasIds.map(paginaId=>{
+
+  const paginasOrdenadas=[...paginasIds].sort((a,b)=>
+    diasSemPostarNumero(ultimas[chaveConta(CONTAS[b])])-diasSemPostarNumero(ultimas[chaveConta(CONTAS[a])]));
+
+  let emDia=0,atrasado=0,semPostar=0;
+  paginasIds.forEach(id=>{
+    const dataUltima=ultimas[chaveConta(CONTAS[id])];
+    if(!dataUltima){semPostar++;return}
+    if(diasSemPostarNumero(dataUltima)<=1)emDia++;else atrasado++;
+  });
+  const resumoPartes=[];
+  if(emDia)resumoPartes.push(`${emDia} em dia`);
+  if(atrasado)resumoPartes.push(`${atrasado} atrasado${atrasado>1?"s":""}`);
+  if(semPostar)resumoPartes.push(`${semPostar} sem postar`);
+  const resumoHtml=resumoPartes.length?`<div class="relatorio-contador-resumo">${resumoPartes.join(" · ")}</div>`:"";
+
+  const paginas=paginasOrdenadas.map(paginaId=>{
     const c=CONTAS[paginaId];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
-    const gruposHtml=PAGINA_GRUPOS_RELATORIO[paginaId].map(grupoId=>{
-      const g=CONTAS[grupoId];
-      return linha(g.nome,chaveConta(g));
-    }).join("");
+    const grupoIds=PAGINA_GRUPOS_RELATORIO[paginaId];
+    const nAgendadosBloco=[paginaId,...grupoIds].reduce((soma,id)=>soma+(agendados[id]||0),0);
+    const gruposHtml=grupoIds.map(id=>linha(id)).join("");
     return `<div class="relatorio-pagina-bloco">
-      <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
-        <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
-        <span style="display:flex;align-items:center;gap:6px;flex:none">
-          <span class="pill-dias ${classe}">${texto}</span>
-          <span id="contador-seta-${paginaId}">▸</span>
-        </span>
-      </button>
+      <div class="relatorio-pagina-header-row">
+        <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
+          <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
+          <span style="display:flex;align-items:center;gap:6px;flex:none">
+            ${nAgendadosBloco?`<span class="pill-agendado">🕐 ${nAgendadosBloco}</span>`:""}
+            <span class="pill-dias ${classe}">${texto}</span>
+            <span id="contador-seta-${paginaId}">▸</span>
+          </span>
+        </button>
+        <button type="button" class="relatorio-ir-semana" title="Ir pra Semana" onclick="irParaSemanaDoBloco('${paginaId}')">📅</button>
+      </div>
       <div class="relatorio-pagina-grupos" id="contador-grupos-${paginaId}" style="display:none">${gruposHtml}</div>
     </div>`;
   }).join("");
-  const outras=contasFoco.filter(c=>c.rede!=="Facebook"&&c.rede!=="Grupo Facebook")
-    .map(c=>linha(`${c.rede}: ${c.nome}`,chaveConta(c))).join("");
+  const outras=CANAIS_FOCO_RELATORIO.filter(id=>{
+    const c=CONTAS[id];
+    return c.rede!=="Facebook"&&c.rede!=="Grupo Facebook";
+  }).map(id=>linha(id,`${CONTAS[id].rede}: ${CONTAS[id].nome}`)).join("");
   document.getElementById("relatorio-contador-canais").innerHTML=`
+    ${resumoHtml}
     <div class="relatorio-canal-grupo-titulo">Páginas e grupos</div>
     ${paginas}
     <div class="relatorio-canal-grupo-titulo">Outras redes</div>
