@@ -600,6 +600,11 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
     <section class="card">
       <div class="semana-titulo" style="margin:0 0 10px">Anotações do dia</div>
       <textarea id="relatorio-notas" rows="4" placeholder="Como foi o dia? O que funcionou, ideias, observações..." oninput="salvarRelatorioAtual()"></textarea>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button type="button" class="secondary" style="flex:1" onclick="salvarNotasRelatorio()">💾 Salvar</button>
+        <button type="button" class="secondary" style="flex:1" onclick="limparNotasRelatorio()">🗑️ Limpar</button>
+      </div>
+      <div id="relatorio-notas-status" class="status"></div>
     </section>
     <section class="card">
       <button type="button" class="acordeon-titulo" onclick="toggleSecao('relatorio-levantamento')">
@@ -2334,6 +2339,26 @@ function salvarRelatorioAtual(){
   if(!todos[data])todos[data]={posts:[],notas:""};
   todos[data].notas=document.getElementById("relatorio-notas").value;
   salvarRelatorios(todos);
+}
+
+function mostrarStatusNotas(texto){
+  const status=document.getElementById("relatorio-notas-status");
+  status.textContent=texto;
+  setTimeout(()=>{if(status.textContent===texto)status.textContent=""},2000);
+}
+
+function salvarNotasRelatorio(){
+  salvarRelatorioAtual();
+  mostrarStatusNotas("Anotação salva.");
+}
+
+function limparNotasRelatorio(){
+  const textarea=document.getElementById("relatorio-notas");
+  if(!textarea.value.trim())return;
+  if(!confirm("Apagar a anotação desse dia?"))return;
+  textarea.value="";
+  salvarRelatorioAtual();
+  mostrarStatusNotas("Anotação apagada.");
 }
 
 function abrirRelatorioData(data){
