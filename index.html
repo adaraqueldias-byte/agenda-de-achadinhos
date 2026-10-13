@@ -757,16 +757,25 @@ function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId]
 
 // ===== Linhas de conteúdo: cada uma tem, todo dia, 1 post sempre visível + um pool de extras revelados com "+" =====
 const LINHAS_CONTEUDO=[
-  {prefixo:"garimpo",tipo:"Garimpo do Dia",destinos:["face_garimpo","grupo_garimpo","grupo_lucrando_shopee","grupo_ofertas_boas","grupo_garimpo_kids","grupo_achadinhos_beleza"]},
+  {prefixo:"garimpo",tipo:"Garimpo do Dia — Página",destinos:["face_garimpo"]},
+  {prefixo:"garimpo_grupo",tipo:"Garimpo do Dia — Grupo Garimpo",destinos:["grupo_garimpo"]},
+  {prefixo:"garimpo_lucrando_shopee",tipo:"Garimpo do Dia — Lucrando na Shop",destinos:["grupo_lucrando_shopee"]},
+  {prefixo:"garimpo_ofertas_boas",tipo:"Garimpo do Dia — Ofertas Boas",destinos:["grupo_ofertas_boas"]},
+  {prefixo:"garimpo_kids",tipo:"Garimpo do Dia — Garimpo Kids",destinos:["grupo_garimpo_kids"]},
+  {prefixo:"garimpo_beleza",tipo:"Garimpo do Dia — Achadinhos da Beleza",destinos:["grupo_achadinhos_beleza"]},
   {prefixo:"garimpo_insta",tipo:"Garimpo do Dia — Instagram",destinos:["insta_garimpo"]},
   {prefixo:"garimpo_shopee",tipo:"Garimpo do Dia — Shopee Video",destinos:["shopee_video"]},
   {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"]},
   {prefixo:"garimpo_pinterest",tipo:"Garimpo do Dia — Pinterest",destinos:["pinterest_garimpo"]},
-  {prefixo:"dashein",tipo:"Shein",destinos:["insta_dashein","face_dashein","grupo_shein"]},
+  {prefixo:"dashein",tipo:"Shein — Página",destinos:["face_dashein"]},
+  {prefixo:"dashein_insta",tipo:"Shein — Instagram",destinos:["insta_dashein"]},
+  {prefixo:"dashein_grupo",tipo:"Shein — Grupo Achadinhos da Shein",destinos:["grupo_shein"]},
   {prefixo:"cleverfinds",tipo:"Clever Finds USA — Página",destinos:["face_cleverfinds"],poolMax:8},
   {prefixo:"cleverfinds_grupo",tipo:"Clever Finds USA — Grupo",destinos:["grupo_cleverfinds"],poolMax:8},
   {prefixo:"cleverfinds_compartilhado",tipo:"Clever Finds USA — Compartilhado",destinos:["cleverfinds_extras"],poolMax:8},
-  {prefixo:"casamix",tipo:"CasaMix",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"]}
+  {prefixo:"casamix",tipo:"CasaMix — Página",destinos:["face_casamix"]},
+  {prefixo:"casamix_achadinhos",tipo:"CasaMix — Grupo Achadinhos pra Casa",destinos:["grupo_achadinhos_casa"]},
+  {prefixo:"casamix_ofertas",tipo:"CasaMix — Grupo Ofertas pra Casa",destinos:["grupo_ofertas_casa"]}
 ];
 const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
 const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
