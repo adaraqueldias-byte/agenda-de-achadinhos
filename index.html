@@ -642,6 +642,9 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
       </div>
     </section>
     <div style="text-align:center;margin-top:14px">
+      <button type="button" class="backup-link" onclick="padronizarFormatosRelatorio()">🔧 Padronizar formatos (Vídeo→Reels, Publicação→Outro)</button>
+    </div>
+    <div style="text-align:center;margin-top:10px">
       <button type="button" class="backup-link" onclick="zerarRelatorio()">🗑️ Zerar histórico do Relatório</button>
     </div>
   </div>
@@ -1773,6 +1776,27 @@ function zerarRelatorio(){
   atualizarDiaSemanaRelatorio();
   renderizarRelatorio();
 }
+function padronizarFormatosRelatorio(){
+  const mapa={"video":"Reels","publicacao":"Outro"};
+  const todos=carregarRelatorios();
+  let alterados=0;
+  Object.values(todos).forEach(r=>{
+    (r.posts||[]).forEach(p=>{
+      const chave=normalizarTexto(p.formato||"");
+      const novoFormato=mapa[chave];
+      if(novoFormato&&p.formato!==novoFormato){
+        p.formato=novoFormato;
+        alterados++;
+      }
+    });
+  });
+  if(!alterados){alert('Nenhum post com formato "Vídeo" ou "Publicação" encontrado — já está tudo padronizado.');return}
+  if(!confirm(`Vou mudar ${alterados} post(s): "Vídeo" vira "Reels" e "Publicação" vira "Outro". Quer continuar?`))return;
+  salvarRelatorios(todos);
+  renderizarRelatorio();
+  alert(`Pronto! ${alterados} post(s) atualizado(s).`);
+}
+
 function relatorioDataAtual(){return brParaIso(document.getElementById("relatorio-data").value)||hojeIsoBanco()}
 function relatorioDoDia(data){const todos=carregarRelatorios();return todos[data]||{posts:[],notas:""}}
 
