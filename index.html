@@ -186,7 +186,6 @@
     .relatorio-ir-semana{flex:none;width:28px;height:28px;border-radius:8px;border:none;background:var(--accent-soft);font-size:13px;cursor:pointer}
     .relatorio-pagina-grupos{padding-left:12px}
     .relatorio-pagina-grupos .relatorio-contador-linha:last-child{border-bottom:none}
-    .pill-agendado{flex:none;font-size:11px;font-weight:700;padding:4px 8px;border-radius:999px;background:#dbeafe;color:#1e40af;white-space:nowrap}
     .relatorio-contador-resumo{font-size:12px;font-weight:700;color:var(--accent-dark);background:var(--accent-soft);border-radius:10px;padding:7px 10px;margin-bottom:8px;text-align:center}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
@@ -1855,29 +1854,6 @@ function diasSemPostarNumero(dataIso){
   return Math.round((isoParaData(hojeIso)-isoParaData(dataIso))/86400000);
 }
 
-function contarAgendadosPorConta(){
-  const contagem={};
-  const hoje=dataParaIso(new Date());
-  for(let i=0;i<localStorage.length;i++){
-    const key=localStorage.key(i);
-    if(!key||!key.startsWith("agenda-achadinhos-semana-"))continue;
-    let dados;
-    try{dados=JSON.parse(localStorage.getItem(key)||"{}");}catch{continue}
-    if(!dados||!dados.slots)continue;
-    Object.values(dados.slots).forEach(s=>{
-      const destinosStatus=s.destinosStatus||{};
-      const destinosData=s.destinosData||{};
-      Object.entries(destinosStatus).forEach(([destId,status])=>{
-        if(status!=="agendado")return;
-        const data=destinosData[destId]||"";
-        if(data&&data<hoje)return;
-        contagem[destId]=(contagem[destId]||0)+1;
-      });
-    });
-  }
-  return contagem;
-}
-
 const PAGINA_PREFIXO_LINHA={face_garimpo:"garimpo",face_dashein:"dashein",face_cleverfinds:"cleverfinds",face_casamix:"casamix"};
 
 function irParaSemanaDoBloco(paginaId){
@@ -1912,12 +1888,10 @@ function toggleContadorPagina(paginaId){
 
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
-  const agendados=contarAgendadosPorConta();
   const linha=(id,nomeOverride)=>{
     const c=CONTAS[id];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
-    const n=agendados[id]||0;
-    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nomeOverride||c.nome)}</span><span style="display:flex;align-items:center;gap:5px;flex:none">${n?`<span class="pill-agendado">🕐 ${n}</span>`:""}<span class="pill-dias ${classe}">${texto}</span></span></div>`;
+    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
   };
   const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
 
@@ -1940,14 +1914,12 @@ function renderizarContadorCanais(){
     const c=CONTAS[paginaId];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
     const grupoIds=PAGINA_GRUPOS_RELATORIO[paginaId];
-    const nAgendadosBloco=[paginaId,...grupoIds].reduce((soma,id)=>soma+(agendados[id]||0),0);
     const gruposHtml=grupoIds.map(id=>linha(id)).join("");
     return `<div class="relatorio-pagina-bloco">
       <div class="relatorio-pagina-header-row">
         <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
           <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
           <span style="display:flex;align-items:center;gap:6px;flex:none">
-            ${nAgendadosBloco?`<span class="pill-agendado">🕐 ${nAgendadosBloco}</span>`:""}
             <span class="pill-dias ${classe}">${texto}</span>
             <span id="contador-seta-${paginaId}">▸</span>
           </span>
