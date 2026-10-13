@@ -2355,13 +2355,7 @@ function togglePublicadoBanco(id){
 function escaparBanco(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
 function parsePrecoBR(texto){
-  texto=(texto||"").trim().replace(/[^\d.,]/g,"");
-  if(!texto)return undefined;
-  if(texto.includes(",")){
-    texto=texto.replace(/\./g,"").replace(",",".");
-  }
-  const n=parseFloat(texto);
-  return isNaN(n)?undefined:n;
+  return parsePrecoInteligente(texto);
 }
 function formatarPrecoBR(n){
   return n.toLocaleString("pt-BR",{minimumFractionDigits:2,maximumFractionDigits:2});
@@ -2375,12 +2369,21 @@ function parseInteiroBR(texto){
 function formatarInteiroBR(n){
   return n.toLocaleString("pt-BR");
 }
-function parsePrecoUS(texto){
+function parsePrecoInteligente(texto){
   texto=(texto||"").trim().replace(/[^\d.,]/g,"");
   if(!texto)return undefined;
-  texto=texto.replace(/,/g,"");
+  const ultimaVirgula=texto.lastIndexOf(",");
+  const ultimoPonto=texto.lastIndexOf(".");
+  if(ultimaVirgula>ultimoPonto){
+    texto=texto.replace(/\./g,"").replace(",",".");
+  }else if(ultimoPonto>-1){
+    texto=texto.replace(/,/g,"");
+  }
   const n=parseFloat(texto);
   return isNaN(n)?undefined:n;
+}
+function parsePrecoUS(texto){
+  return parsePrecoInteligente(texto);
 }
 function formatarPrecoUS(n){
   return n.toLocaleString("en-US",{minimumFractionDigits:2,maximumFractionDigits:2});
