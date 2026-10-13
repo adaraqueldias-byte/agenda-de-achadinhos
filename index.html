@@ -130,6 +130,8 @@
     .destino-chip-agendado{background:#dbeafe;color:#1e40af;border-color:#60a5fa}
     .destino-chip-publicado{background:#dcfce7;color:#166534;border-color:#4ade80}
     .destino-chip-ativo{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
+    .grupos-toggle{font-size:11.5px;background:#fff;color:var(--accent-dark);border-radius:14px;padding:5px 9px;border:2px dashed var(--line);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
+    .grupos-ocultos{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
     .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
     .banco-ordenacao{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
     .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
@@ -757,25 +759,15 @@ function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId]
 
 // ===== Linhas de conteúdo: cada uma tem, todo dia, 1 post sempre visível + um pool de extras revelados com "+" =====
 const LINHAS_CONTEUDO=[
-  {prefixo:"garimpo",tipo:"Garimpo do Dia — Página",destinos:["face_garimpo"]},
-  {prefixo:"garimpo_grupo",tipo:"Garimpo do Dia — Grupo Garimpo",destinos:["grupo_garimpo"]},
-  {prefixo:"garimpo_lucrando_shopee",tipo:"Garimpo do Dia — Lucrando na Shop",destinos:["grupo_lucrando_shopee"]},
-  {prefixo:"garimpo_ofertas_boas",tipo:"Garimpo do Dia — Ofertas Boas",destinos:["grupo_ofertas_boas"]},
-  {prefixo:"garimpo_kids",tipo:"Garimpo do Dia — Garimpo Kids",destinos:["grupo_garimpo_kids"]},
-  {prefixo:"garimpo_beleza",tipo:"Garimpo do Dia — Achadinhos da Beleza",destinos:["grupo_achadinhos_beleza"]},
+  {prefixo:"garimpo",tipo:"Garimpo do Dia — Página",destinos:["face_garimpo","grupo_garimpo","grupo_lucrando_shopee","grupo_ofertas_boas","grupo_garimpo_kids","grupo_achadinhos_beleza"],gruposOcultos:["grupo_garimpo","grupo_lucrando_shopee","grupo_ofertas_boas","grupo_garimpo_kids","grupo_achadinhos_beleza"]},
   {prefixo:"garimpo_insta",tipo:"Garimpo do Dia — Instagram",destinos:["insta_garimpo"],poolMax:10},
   {prefixo:"garimpo_shopee",tipo:"Garimpo do Dia — Shopee Video",destinos:["shopee_video"],poolMax:10},
   {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"],poolMax:10},
   {prefixo:"garimpo_pinterest",tipo:"Garimpo do Dia — Pinterest",destinos:["pinterest_garimpo"],poolMax:10},
-  {prefixo:"dashein",tipo:"Shein — Página",destinos:["face_dashein"]},
+  {prefixo:"dashein",tipo:"Shein — Página",destinos:["face_dashein","grupo_shein"],gruposOcultos:["grupo_shein"]},
   {prefixo:"dashein_insta",tipo:"Shein — Instagram",destinos:["insta_dashein"]},
-  {prefixo:"dashein_grupo",tipo:"Shein — Grupo Achadinhos da Shein",destinos:["grupo_shein"]},
-  {prefixo:"cleverfinds",tipo:"Clever Finds USA — Página",destinos:["face_cleverfinds"],poolMax:8},
-  {prefixo:"cleverfinds_grupo",tipo:"Clever Finds USA — Grupo",destinos:["grupo_cleverfinds"],poolMax:8},
-  {prefixo:"cleverfinds_compartilhado",tipo:"Clever Finds USA — Compartilhado",destinos:["cleverfinds_extras"],poolMax:8},
-  {prefixo:"casamix",tipo:"CasaMix — Página",destinos:["face_casamix"]},
-  {prefixo:"casamix_achadinhos",tipo:"CasaMix — Grupo Achadinhos pra Casa",destinos:["grupo_achadinhos_casa"]},
-  {prefixo:"casamix_ofertas",tipo:"CasaMix — Grupo Ofertas pra Casa",destinos:["grupo_ofertas_casa"]}
+  {prefixo:"cleverfinds",tipo:"Clever Finds USA — Página",destinos:["face_cleverfinds","grupo_cleverfinds","cleverfinds_extras"],gruposOcultos:["grupo_cleverfinds","cleverfinds_extras"],poolMax:8},
+  {prefixo:"casamix",tipo:"CasaMix — Página",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"],gruposOcultos:["grupo_achadinhos_casa","grupo_ofertas_casa"]}
 ];
 const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
 const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
@@ -787,9 +779,9 @@ DIAS_SEMANA.forEach(([diaChave,diaLabel])=>{
   SLOTS_POR_GRUPO[diaChave]=[];
   LINHAS_CONTEUDO.forEach(linha=>{
     const baseId=`${linha.prefixo}_${diaChave}`;
-    const base={id:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos};
+    const base={id:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos,gruposOcultos:linha.gruposOcultos};
     const poolMax=linha.poolMax||POOL_MAX;
-    const extras=Array.from({length:poolMax-1},(_,i)=>({id:`${baseId}_extra${i+1}`,extraDe:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos}));
+    const extras=Array.from({length:poolMax-1},(_,i)=>({id:`${baseId}_extra${i+1}`,extraDe:baseId,dia:diaLabel,tipo:linha.tipo,destinos:linha.destinos,gruposOcultos:linha.gruposOcultos}));
     SLOTS.push(base,...extras);
     SLOTS_POR_GRUPO[diaChave].push(base.id,...extras.map(e=>e.id));
   });
@@ -1047,8 +1039,48 @@ async function copiarLinkItemSlot(key){
 
 const FORMATOS_OPCOES=["Foto","Carrossel","Vídeo","Reels"];
 
+function destinoChipHtml(slot,destId){
+  const c=CONTAS[destId];
+  return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`;
+}
+
 function destinosChipsHtml(slot){
-  return slot.destinos.map(destId=>{const c=CONTAS[destId];return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`}).join("");
+  const ocultos=slot.gruposOcultos||[];
+  const visiveis=slot.destinos.filter(d=>!ocultos.includes(d));
+  const escondidos=slot.destinos.filter(d=>ocultos.includes(d));
+  let html=visiveis.map(d=>destinoChipHtml(slot,d)).join("");
+  if(escondidos.length){
+    html+=`<button type="button" class="grupos-toggle" id="grupos-toggle-${slot.id}" onclick="toggleGruposOcultos('${slot.id}')">
+      <span id="grupos-toggle-label-${slot.id}">👥 Grupos (${escondidos.length})</span>
+      <span id="grupos-toggle-seta-${slot.id}">▾</span>
+    </button>
+    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map(d=>destinoChipHtml(slot,d)).join("")}</div>`;
+  }
+  return html;
+}
+
+function toggleGruposOcultos(slotId){
+  const div=document.getElementById("grupos-ocultos-"+slotId);
+  const seta=document.getElementById("grupos-toggle-seta-"+slotId);
+  const aberto=div.style.display!=="none";
+  div.style.display=aberto?"none":"block";
+  seta.textContent=aberto?"▾":"▴";
+}
+
+function atualizarIndicadorGrupos(slotId){
+  const slot=SLOTS.find(s=>s.id===slotId);
+  if(!slot||!slot.gruposOcultos||!slot.gruposOcultos.length)return;
+  const label=document.getElementById("grupos-toggle-label-"+slotId);
+  if(!label)return;
+  let melhor="nada",marcados=0;
+  slot.gruposOcultos.forEach(destId=>{
+    const el=document.getElementById(`status-destino-${slotId}-${destId}`);
+    const st=el?el.value:"nada";
+    if(st!=="nada")marcados++;
+    if(st==="publicado")melhor="publicado";
+    else if(st==="agendado"&&melhor==="nada")melhor="agendado";
+  });
+  label.textContent=`👥 Grupos (${slot.gruposOcultos.length})${marcados?` ${ICONES_STATUS_DESTINO[melhor]} ${marcados}`:""}`;
 }
 
 function extraPostTemplate(slot){
@@ -1178,6 +1210,7 @@ function atualizarChipDestino(slotId,destId){
   chip.classList.remove("destino-chip-agendado","destino-chip-publicado");
   if(status!=="nada")chip.classList.add(`destino-chip-${status}`);
   document.getElementById(`agendamento-${slotId}-${destId}`).style.display=status==="agendado"?"flex":"none";
+  atualizarIndicadorGrupos(slotId);
 }
 
 function ciclarStatusDestino(slotId,destId){
