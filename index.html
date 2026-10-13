@@ -193,6 +193,13 @@
     .relatorio-historico-item:hover,.relatorio-historico-item.ativo{border-color:var(--accent)}
     .relatorio-historico-data{font-size:13px;font-weight:800;color:var(--accent-dark)}
     .relatorio-historico-resumo{font-size:12px;color:var(--muted);margin-top:3px;white-space:pre-line}
+    .relatorio-anotacao-item{padding:10px 0;border-bottom:1px solid var(--line)}
+    .relatorio-anotacao-item:last-child{border-bottom:none}
+    .relatorio-anotacao-texto{font-size:13px;color:var(--text);white-space:pre-line;margin-top:3px}
+    @media print{
+      body *{display:none!important}
+      #anotacoes-imprimir,#anotacoes-imprimir *{display:block!important}
+    }
     .destino-status-icone{font-size:14px;line-height:1;flex:none}
     .destino-horario{font-size:9.5px;font-weight:800;background:rgba(255,255,255,.7);border-radius:999px;padding:1px 5px;flex:none}
     .slot-modo-toggle{display:flex;gap:8px;margin-bottom:6px}
@@ -624,9 +631,23 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
         <div id="relatorio-historico"></div>
       </div>
     </section>
+    <section class="card">
+      <button type="button" class="acordeon-titulo" onclick="toggleSecao('relatorio-anotacoes-arquivo')">
+        <span>📝 Anotações arquivadas</span>
+        <span id="relatorio-anotacoes-arquivo-seta">▸</span>
+      </button>
+      <div id="relatorio-anotacoes-arquivo-corpo" style="display:none">
+        <div id="relatorio-anotacoes-arquivo"></div>
+        <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="imprimirAnotacoes()">🖨️ Imprimir anotações</button>
+      </div>
+    </section>
     <div style="text-align:center;margin-top:14px">
       <button type="button" class="backup-link" onclick="zerarRelatorio()">🗑️ Zerar histórico do Relatório</button>
     </div>
+  </div>
+  <div id="anotacoes-imprimir" style="display:none">
+    <h2>Anotações do Relatório — Painel do Afiliado</h2>
+    <div id="anotacoes-imprimir-conteudo"></div>
   </div>
 </div>
 
@@ -1986,6 +2007,7 @@ function renderizarRelatorio(){
     }).join("");
   document.getElementById("relatorio-notas").value=r.notas||"";
   renderizarHistoricoRelatorios();
+  renderizarAnotacoesArquivadas();
   renderizarLevantamentoGeral();
   atualizarVinculoSemana();
 }
@@ -2349,6 +2371,7 @@ function mostrarStatusNotas(texto){
 
 function salvarNotasRelatorio(){
   salvarRelatorioAtual();
+  renderizarAnotacoesArquivadas();
   mostrarStatusNotas("Anotação salva.");
 }
 
@@ -2358,6 +2381,7 @@ function limparNotasRelatorio(){
   if(!confirm("Apagar a anotação desse dia?"))return;
   textarea.value="";
   salvarRelatorioAtual();
+  renderizarAnotacoesArquivadas();
   mostrarStatusNotas("Anotação apagada.");
 }
 
@@ -2382,6 +2406,32 @@ function renderizarHistoricoRelatorios(){
     const resumo=[resumoPosts,resumoNotas].filter(Boolean).join(" · ");
     return `<button type="button" class="relatorio-historico-item${d===dataAtual?" ativo":""}" onclick="abrirRelatorioData('${d}')"><div class="relatorio-historico-data">${dataFormatada}</div>${resumo?`<div class="relatorio-historico-resumo">${escaparBanco(resumo)}</div>`:""}</button>`;
   }).join("");
+}
+
+function renderizarAnotacoesArquivadas(){
+  const todos=carregarRelatorios();
+  const datas=Object.keys(todos).filter(d=>(todos[d].notas||"").trim()).sort((a,b)=>b.localeCompare(a));
+  const cont=document.getElementById("relatorio-anotacoes-arquivo");
+  if(datas.length===0){cont.innerHTML='<div class="relatorio-vazio">Nenhuma anotação registrada ainda.</div>';return}
+  cont.innerHTML=datas.map(d=>{
+    const[ano,mes,dia]=d.split("-");
+    return `<div class="relatorio-anotacao-item"><div class="relatorio-historico-data">${dia}/${mes}/${ano}</div><div class="relatorio-anotacao-texto">${escaparBanco(todos[d].notas)}</div></div>`;
+  }).join("");
+}
+
+function imprimirAnotacoes(){
+  const todos=carregarRelatorios();
+  const datas=Object.keys(todos).filter(d=>(todos[d].notas||"").trim()).sort((a,b)=>b.localeCompare(a));
+  if(datas.length===0){alert("Nenhuma anotação registrada ainda.");return}
+  const html=datas.map(d=>{
+    const[ano,mes,dia]=d.split("-");
+    return `<p><strong>${dia}/${mes}/${ano}</strong><br>${escaparBanco(todos[d].notas).replace(/\n/g,"<br>")}</p>`;
+  }).join("");
+  document.getElementById("anotacoes-imprimir-conteudo").innerHTML=html;
+  const overlay=document.getElementById("anotacoes-imprimir");
+  overlay.style.display="block";
+  window.onafterprint=()=>{overlay.style.display="none";window.onafterprint=null;};
+  window.print();
 }
 
 function onFotoBanco(input){
