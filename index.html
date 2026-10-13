@@ -566,9 +566,15 @@
           <textarea id="relatorio-colar-lista" rows="6" placeholder="Perfume Importado | COMPRA E VENDA BRASIL | 17/07/2026 | 10:06 | 5 | Foto
 Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></textarea>
           <p class="tip" style="margin:4px 0 0">Data, horário, visualizações e formato podem ficar em branco (ex.: "Nome | Canal | | | 5 |"). Se deixar o formato em branco na linha, usa o campo abaixo. A data precisa ter o ano (17/07/2026), senão usa a data do relatório selecionada acima.</p>
-          <p class="tip" style="margin:4px 0 0">💡 Se o canal digitado não bater com nenhuma conta cadastrada (ex.: um dos grupos externos do Clever Finds, tipo "USA Business Group" ou "Amazon Finds"), o app junta automaticamente todas as linhas desse produto/data num post só no canal "Outros grupos: Compartilhado (~10 grupos EUA)", somando as visualizações.</p>
         </div>
         <div class="field"><label>Formato padrão (só pras linhas sem formato próprio)</label><select id="relatorio-lote-formato"><option value="">—</option></select></div>
+        <div class="field">
+          <label>Grupos não reconhecidos (que não batem com nenhuma conta) vão pra qual canal?</label>
+          <select id="relatorio-lote-destino-externos">
+            <option value="">Não juntar — manter cada grupo separado como digitei</option>
+          </select>
+          <p class="tip" style="margin:4px 0 0">Use isso quando colar uma lista com grupos "extras" que não são contas oficiais do app (ex.: os ~10 grupos dos EUA do Clever Finds, ou os grupos locais que recebem o Garimpo do Dia). Escolhendo um canal aqui, essas linhas somam automaticamente num post só, por produto/data.</p>
+        </div>
         <button type="button" class="primary" style="width:100%" onclick="importarListaRelatorio()">📋 Importar lista colada</button>
 
         <button type="button" class="acordeon-titulo" style="margin-top:14px" onclick="toggleSecao('relatorio-lote-manual')">
@@ -743,6 +749,7 @@ const CONTAS={
   grupo_shein:   {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Shein"},
   grupo_cleverfinds: {rede:"Grupo Facebook", icone:"👥", nome:"Clever Finds USA"},
   cleverfinds_extras: {rede:"Outros grupos", icone:"📤", nome:"Compartilhado (~10 grupos EUA)"},
+  garimpo_extras: {rede:"Outros grupos", icone:"📤", nome:"Compartilhado (Garimpo do Dia)"},
   grupo_achadinhos_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos pra Casa"},
   grupo_ofertas_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Ofertas pra Casa"},
   shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
@@ -1762,6 +1769,13 @@ function popularSelectsFormatoRelatorio(){
   document.getElementById("relatorio-lote-formato").innerHTML=`<option value="">—</option>${opcoes}`;
 }
 
+function popularSelectDestinoExternos(){
+  const sel=document.getElementById("relatorio-lote-destino-externos");
+  const opcoesCatchAll=Object.values(CONTAS).filter(c=>c.rede==="Outros grupos")
+    .map(c=>`<option value="${chaveConta(c)}">${c.icone} ${c.nome}</option>`).join("");
+  sel.innerHTML=`<option value="">Não juntar — manter cada grupo separado como digitei</option>${opcoesCatchAll}`;
+}
+
 function rotuloPostRelatorio(post){
   return typeof post==="string"
     ?{texto:post,canal:"",horario:"",visualizacoes:undefined,formato:"",link:"",cliques:undefined,vendas:undefined,comissaoRecebida:undefined,gastoAnuncio:undefined,dataAtualizacaoMetricas:""}
@@ -2139,14 +2153,13 @@ function adicionarLinhaLote(){
   renderizarLinhasLote();
 }
 
-const CANAL_OUTROS_GRUPOS=chaveConta(CONTAS.cleverfinds_extras);
-
 function importarListaRelatorio(){
   const texto=document.getElementById("relatorio-colar-lista").value;
   const linhas=texto.split("\n").map(l=>l.trim()).filter(Boolean);
   if(!linhas.length){alert("Cole ao menos uma linha.");return}
   const formatoPadrao=document.getElementById("relatorio-lote-formato").value||"";
   const dataPadrao=relatorioDataAtual();
+  const canalCatchAll=document.getElementById("relatorio-lote-destino-externos").value||"";
   const diretos=[];
   const externosPorGrupo={};
   let reconhecidos=0,linhasExternas=0;
@@ -2162,8 +2175,8 @@ function importarListaRelatorio(){
     const visTexto=partes[4];
     const visualizacoes=visTexto===undefined||visTexto===""?undefined:parseInt(visTexto);
     const formato=partes[5]||formatoPadrao;
-    if(canalDigitado&&!canalResolvido){
-      // canal digitado mas não bate com nenhuma conta cadastrada (ex.: um dos ~10 grupos externos do Clever Finds) — soma no "Outros grupos: Compartilhado"
+    if(canalDigitado&&!canalResolvido&&canalCatchAll){
+      // canal digitado mas não bate com nenhuma conta cadastrada — soma no canal escolhido pra "grupos não reconhecidos"
       const chave=`${data}|${normalizarTexto(nome)}`;
       if(!externosPorGrupo[chave])externosPorGrupo[chave]={texto:nome,data,formato,horario,visualizacoes:undefined,canaisOriginais:new Set()};
       const g=externosPorGrupo[chave];
@@ -2181,7 +2194,7 @@ function importarListaRelatorio(){
   if(!totalLinhas){alert("Não consegui identificar nenhuma linha válida.");return}
   let mensagem=`Vou importar ${totalLinhas} linha(s):\n• ${reconhecidos} post(s) com canal reconhecido\n`;
   if(gruposExternos.length){
-    mensagem+=`• ${linhasExternas} linha(s) de grupos externos (não cadastrados) somadas em ${gruposExternos.length} post(s) no canal "${CANAL_OUTROS_GRUPOS}"\n`;
+    mensagem+=`• ${linhasExternas} linha(s) de grupos não reconhecidos somadas em ${gruposExternos.length} post(s) no canal "${canalCatchAll}"\n`;
   }
   mensagem+=`\nQuer continuar?`;
   if(!confirm(mensagem))return;
@@ -2192,7 +2205,7 @@ function importarListaRelatorio(){
   });
   gruposExternos.forEach(g=>{
     if(!todos[g.data])todos[g.data]={posts:[],notas:""};
-    todos[g.data].posts.push({texto:g.texto,canal:CANAL_OUTROS_GRUPOS,formato:g.formato,horario:g.horario,visualizacoes:g.visualizacoes});
+    todos[g.data].posts.push({texto:g.texto,canal:canalCatchAll,formato:g.formato,horario:g.horario,visualizacoes:g.visualizacoes});
   });
   salvarRelatorios(todos);
   document.getElementById("relatorio-colar-lista").value="";
@@ -2969,6 +2982,7 @@ document.getElementById("banco-data").max=hojeIsoBanco();
 document.getElementById("banco-data").value=hojeIsoBanco();
 renderizarLinhasLote();
 popularSelectsFormatoRelatorio();
+popularSelectDestinoExternos();
 migrarOrigensAntigasRelatorio();
 </script>
 </body>
