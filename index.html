@@ -179,6 +179,11 @@
     .pill-dias.ok{background:var(--ok-soft);color:var(--ok)}
     .pill-dias.warn{background:var(--warn-soft);color:var(--warn)}
     .pill-dias.danger{background:var(--danger-soft);color:var(--danger)}
+    .relatorio-pagina-bloco{border-bottom:1px solid var(--line)}
+    .relatorio-pagina-bloco:last-child{border-bottom:none}
+    .relatorio-pagina-header{width:100%;display:flex;justify-content:space-between;align-items:center;gap:6px;background:none;border:none;padding:7px 0;font-size:13px;font-weight:700;color:var(--text);cursor:pointer;font-family:inherit;text-align:left}
+    .relatorio-pagina-grupos{padding-left:12px}
+    .relatorio-pagina-grupos .relatorio-contador-linha:last-child{border-bottom:none}
     .relatorio-post-remover{background:none;border:none;color:var(--danger);font-size:17px;cursor:pointer;padding:0 4px;flex:none;line-height:1}
     .relatorio-vazio{font-size:13px;color:var(--muted);text-align:center;padding:14px 0}
     .relatorio-historico-item{display:block;width:100%;text-align:left;padding:11px 13px;border:1px solid var(--line);border-radius:14px;margin-bottom:8px;background:#fff;cursor:pointer;font-family:inherit}
@@ -1841,6 +1846,21 @@ function pillDiasSemPostar(dataIso){
 
 const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","face_casamix","grupo_garimpo","grupo_garimpo_kids","grupo_achadinhos_beleza","grupo_ofertas_boas","grupo_lucrando_shopee","grupo_shein","grupo_cleverfinds","grupo_achadinhos_casa","grupo_ofertas_casa","insta_garimpo","shopee_video","tiktok_garimpo","pinterest_garimpo"];
 
+const PAGINA_GRUPOS_RELATORIO={
+  face_garimpo:["grupo_garimpo","grupo_garimpo_kids","grupo_achadinhos_beleza","grupo_ofertas_boas","grupo_lucrando_shopee"],
+  face_dashein:["grupo_shein"],
+  face_cleverfinds:["grupo_cleverfinds"],
+  face_casamix:["grupo_achadinhos_casa","grupo_ofertas_casa"],
+};
+
+function toggleContadorPagina(paginaId){
+  const corpo=document.getElementById("contador-grupos-"+paginaId);
+  const seta=document.getElementById("contador-seta-"+paginaId);
+  const aberto=corpo.style.display!=="none";
+  corpo.style.display=aberto?"none":"block";
+  seta.textContent=aberto?"▸":"▾";
+}
+
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
   const linha=(nome,chave)=>{
@@ -1848,17 +1868,30 @@ function renderizarContadorCanais(){
     return `<div class="relatorio-contador-linha"><span>${escaparBanco(nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
   };
   const contasFoco=CANAIS_FOCO_RELATORIO.map(id=>CONTAS[id]);
-  const paginas=contasFoco.filter(c=>c.rede==="Facebook")
-    .map(c=>linha(c.nome.replace(/^Página\s*/,""),chaveConta(c))).join("");
-  const grupos=contasFoco.filter(c=>c.rede==="Grupo Facebook")
-    .map(c=>linha(c.nome,chaveConta(c))).join("");
+  const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
+  const paginas=paginasIds.map(paginaId=>{
+    const c=CONTAS[paginaId];
+    const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
+    const gruposHtml=PAGINA_GRUPOS_RELATORIO[paginaId].map(grupoId=>{
+      const g=CONTAS[grupoId];
+      return linha(g.nome,chaveConta(g));
+    }).join("");
+    return `<div class="relatorio-pagina-bloco">
+      <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
+        <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
+        <span style="display:flex;align-items:center;gap:6px;flex:none">
+          <span class="pill-dias ${classe}">${texto}</span>
+          <span id="contador-seta-${paginaId}">▸</span>
+        </span>
+      </button>
+      <div class="relatorio-pagina-grupos" id="contador-grupos-${paginaId}" style="display:none">${gruposHtml}</div>
+    </div>`;
+  }).join("");
   const outras=contasFoco.filter(c=>c.rede!=="Facebook"&&c.rede!=="Grupo Facebook")
     .map(c=>linha(`${c.rede}: ${c.nome}`,chaveConta(c))).join("");
   document.getElementById("relatorio-contador-canais").innerHTML=`
-    <div class="relatorio-canal-grupo-titulo">Páginas</div>
+    <div class="relatorio-canal-grupo-titulo">Páginas e grupos</div>
     ${paginas}
-    <div class="relatorio-canal-grupo-titulo">Grupos</div>
-    ${grupos}
     <div class="relatorio-canal-grupo-titulo">Outras redes</div>
     ${outras}
   `;
