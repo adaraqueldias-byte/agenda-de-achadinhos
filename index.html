@@ -2835,15 +2835,21 @@ function renderizarComissoesML(){
 
 const COMISSOES_AMAZON_EUA=[
   {cat:"Amazon Games",comissao:"20%",obs:"Maior taxa do programa"},
-  {cat:"Luxury Beauty, Premium Beauty",comissao:"10%"},
-  {cat:"Música digital/física, Handmade, Vídeos digitais",comissao:"5%"},
-  {cat:"Livros físicos, Cozinha, Automotivo",comissao:"4,5%"},
-  {cat:"Kindle/Fire devices, Moda Amazon, joias, malas, relógios",comissao:"4%"},
-  {cat:"Brinquedos, móveis, casa, jardim, pets, fones, beleza, esportes, bebês",comissao:"3%"},
-  {cat:"PC/componentes, DVD/Blu-ray",comissao:"2,5%"},
-  {cat:"TVs, jogos digitais",comissao:"2%"},
-  {cat:"Amazon Fresh, games físicos e consoles, mercado, saúde",comissao:"1%"},
-  {cat:"Gift cards, planos de celular, bebidas alcoólicas",comissao:"0%",obs:"Sem comissão"}
+  {cat:"Luxury Stores Beauty, Premium Beauty",comissao:"10%"},
+  {cat:"Amazon Essentials: Moda e Acessórios",comissao:"7%"},
+  {cat:"Amazon Basics: Casa e Tecnologia",comissao:"5%"},
+  {cat:"CDs e Vinil, Música Digital, Handmade, Vídeo sob demanda (aluguel/compra)",comissao:"5%"},
+  {cat:"Automotivo, Livros e didáticos, Cozinha e Jantar",comissao:"4,5%"},
+  {cat:"Blink, Roupas e acessórios, Echo, Echo Look, Fire TV, Fire Tablets, joias, Kindle, malas, Luxury Stores Fashion, Ring, sapatos/bolsas/carteiras/óculos, relógios",comissao:"4%"},
+  {cat:"Belas Artes (Fine Art)",comissao:"4%"},
+  {cat:"Todas as outras categorias",comissao:"4%"},
+  {cat:"Amazon Coins, bebê, beleza e cuidados pessoais, suprimentos industriais, móveis, fones de ouvido, casa, reforma, instrumentos musicais, recreação ao ar livre, jardim, suprimentos pet, ferramentas, esportes, brinquedos e jogos",comissao:"3%"},
+  {cat:"Blu-Ray e DVD, computadores/tablets e componentes",comissao:"2,5%"},
+  {cat:"TV (Home Entertainment), downloads de jogos",comissao:"2%"},
+  {cat:"Amazon Basics: Casa e Saúde",comissao:"1%"},
+  {cat:"Amazon Fresh, mercado e alimentos gourmet, saúde e casa, video games físicos",comissao:"1%"},
+  {cat:"Coach Products Q2",comissao:"variável",obs:"Taxa não fixa, consulte o painel"},
+  {cat:"Gift cards, Appstore Android, Kindle Unlimited, medicamentos pet, Prime, veículos, vinho/bebidas",comissao:"0%",obs:"Sem comissão"}
 ];
 const COMISSOES_AMAZON_BR=[
   {cat:"Bebê, beleza, beleza de luxo, saúde e cuidados pessoais, aparelhos de cuidados pessoais, bebidas alcoólicas, alimentos e bebidas, audiolivros",comissao:"13%",obs:"Maior taxa padrão"},
@@ -2870,7 +2876,7 @@ function renderizarComissoesAmazon(){
   ul.innerHTML=
     `<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">📅 Comissões mudam com frequência, confirme sempre no painel oficial.</li>`
     +tituloSecao("🇺🇸 Amazon EUA (Amazon Associates)")
-    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Verificado em 21/09/2026.</li>`
+    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Verificado em 14/10/2026.</li>`
     +COMISSOES_AMAZON_EUA.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Em 2026 a Amazon cortou comissões em várias categorias sem aviso formal — confirme sempre no painel do Amazon Associates.</li>`
     +tituloSecao("🇧🇷 Amazon Brasil (Programa de Associados)")
