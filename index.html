@@ -2846,14 +2846,15 @@ const COMISSOES_AMAZON_EUA=[
   {cat:"Gift cards, planos de celular, bebidas alcoólicas",comissao:"0%",obs:"Sem comissão"}
 ];
 const COMISSOES_AMAZON_BR=[
-  {cat:"Beleza, saúde, cuidados pessoais, audiolivros, alimentos e bebidas",comissao:"13%",obs:"Maior taxa padrão"},
+  {cat:"Bebê, beleza, beleza de luxo, saúde e cuidados pessoais, aparelhos de cuidados pessoais, bebidas alcoólicas, alimentos e bebidas, audiolivros",comissao:"13%",obs:"Maior taxa padrão"},
   {cat:"Roupas e Pet Shop",comissao:"11%"},
   {cat:"Livros e livros digitais",comissao:"10%"},
-  {cat:"Dispositivos Amazon (Kindle, Echo, Fire TV)",comissao:"9,5%"},
-  {cat:"Esportes, brinquedos, móveis, construção/reforma, eletrodomésticos, cozinha, jardim/piscina",comissao:"8%"},
-  {cat:"Eletrônicos, informática, câmeras, games e consoles",comissao:"8%"},
-  {cat:"Bolsas, malas, mochilas, calçados, joias, relógios",comissao:"7%"},
-  {cat:"CD, vinil, DVD",comissao:"7%"},
+  {cat:"Dispositivos Amazon (Echo, Fire TV e Kindle)",comissao:"9,5%"},
+  {cat:"Aventura e lazer, esportes, brinquedos e jogos, móveis, casa, construção e reforma, ferramentas, cozinha, jardim e piscina, eletrodomésticos",comissao:"8%"},
+  {cat:"Câmeras e foto, eletrônicos, informática, instrumentos musicais, papelaria e escritório, celulares e tecnologia sem fio, games e consoles, TV e áudio",comissao:"8%"},
+  {cat:"Bolsas, malas e mochilas, calçados, joias, relógios",comissao:"7%"},
+  {cat:"CD e vinil, DVD e Blu-ray, automotivo, produtos industriais e científicos",comissao:"7%"},
+  {cat:"Coach",comissao:"0%",obs:"Sem comissão"},
   {cat:"Outros",comissao:"7%",obs:"Categoria residual"}
 ];
 let comissaoAmazonAberto=false;
@@ -2867,11 +2868,13 @@ function renderizarComissoesAmazon(){
   const linha=c=>`<li class="banco-em-alta-item"><span class="banco-em-alta-nome">${escaparBanco(c.cat)}${c.obs?` — ${escaparBanco(c.obs)}`:""}</span><span class="banco-em-alta-badge info">${c.comissao}</span></li>`;
   const tituloSecao=texto=>`<li class="banco-em-alta-item" style="display:block;background:none;font-size:11px;font-weight:800;color:var(--accent-dark);padding-bottom:2px">${texto}</li>`;
   ul.innerHTML=
-    `<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">📅 Valores de referência, verificados em 21/09/2026 — comissões mudam com frequência, confirme sempre no painel oficial.</li>`
+    `<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">📅 Comissões mudam com frequência, confirme sempre no painel oficial.</li>`
     +tituloSecao("🇺🇸 Amazon EUA (Amazon Associates)")
+    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Verificado em 21/09/2026.</li>`
     +COMISSOES_AMAZON_EUA.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Em 2026 a Amazon cortou comissões em várias categorias sem aviso formal — confirme sempre no painel do Amazon Associates.</li>`
     +tituloSecao("🇧🇷 Amazon Brasil (Programa de Associados)")
+    +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Verificado em 14/10/2026.</li>`
     +COMISSOES_AMAZON_BR.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">+ Bônus: R$5 a R$15 por assinatura de serviço Amazon (Prime, Music Unlimited etc.) gerada via seu link.</li>`;
 }
