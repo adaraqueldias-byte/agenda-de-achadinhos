@@ -103,6 +103,15 @@
   .cta { margin-top: 26px; }
   .cta-note { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.75); }
   .cta-note.dark { color: var(--muted); }
+  .btn-canal {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    width: 100%; margin-top: 12px; padding: 14px 16px; border-radius: 16px;
+    border: 2px solid rgba(255,255,255,.35); background: rgba(255,255,255,.06);
+    color: #fff; font-size: 16px; font-weight: 800; text-decoration: none;
+  }
+  .btn-canal:active { background: rgba(255,255,255,.14); }
+  .btn-canal svg { width: 22px; height: 22px; flex: none; }
+  .or { text-align: center; font-size: 13px; color: rgba(255,255,255,.6); margin-top: 18px; }
   @media (prefers-reduced-motion: reduce) { .btn-wa::after, .ticker div, .dot, .msg { animation: none !important; } }
 
   /* ===== Celular com o grupo ===== */
@@ -248,6 +257,11 @@
         Quero entrar no grupo
       </a>
       <div class="cta-note"><span>🔒 100% gratuito</span><span>🔕 Sem spam</span><span>👋 Sai quando quiser</span></div>
+      <p class="or">Prefere não entrar em grupo?</p>
+      <a class="btn-canal" data-canal href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11v2a1 1 0 0 0 1 1h2l5 4V6L6 10H4a1 1 0 0 0-1 1z"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>
+        Seguir o canal no WhatsApp
+      </a>
     </div>
 
     <div class="phone" aria-label="Exemplo de mensagens do grupo">
@@ -311,7 +325,8 @@
     <details><summary>Precisa pagar alguma coisa?</summary><p>Não. A entrada é totalmente gratuita.</p></details>
     <details><summary>Vou receber mensagem demais?</summary><p>Só ofertas selecionadas. Se quiser, silencie o grupo e olhe quando tiver tempo.</p></details>
     <details><summary>As lojas são confiáveis?</summary><p>Os links levam direto para Shopee, Mercado Livre, Amazon e Magalu. A compra, o pagamento e a entrega são feitos pela própria loja.</p></details>
-    <details><summary>Outras pessoas veem meu número?</summary><p>É um grupo de avisos: só os administradores enviam mensagens.</p></details>
+    <details><summary>Outras pessoas veem meu número?</summary><p>No grupo, só os administradores postam, então ninguém consegue te mandar mensagem por lá. Mas, como em todo grupo de WhatsApp, os outros membros podem ver o seu número. Se preferir total privacidade, siga o nosso canal: nele ninguém vê o seu número.</p></details>
+    <details><summary>Qual a diferença entre o grupo e o canal?</summary><p>As ofertas são as mesmas. O grupo avisa na hora, como uma conversa normal. O canal fica na aba “Atualizações” e vem silenciado: toque no sininho 🔔 para receber os avisos.</p></details>
     <details><summary>Posso sair depois?</summary><p>Pode, a qualquer momento, sem precisar avisar ninguém.</p></details>
   </section>
 
@@ -319,6 +334,7 @@
     <h2>A próxima oferta pode ser a que você estava esperando.</h2>
     <p>Entre agora e receba já os achadinhos de hoje.</p>
     <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">Entrar no grupo grátis</a>
+    <a class="btn-canal" data-canal href="#" target="_blank" rel="noopener">Ou siga o canal</a>
   </div>
 
   <footer>
@@ -335,6 +351,9 @@
   /* ================= EDITE AQUI ================= */
   // Link de convite do seu grupo ou comunidade do WhatsApp
   const WHATSAPP_LINK = "https://chat.whatsapp.com/SEU-CODIGO-AQUI";
+
+  // Link do seu canal do WhatsApp (deixe "" para esconder os botões do canal)
+  const CANAL_LINK = "https://whatsapp.com/channel/SEU-CANAL-AQUI";
 
   // Nome que aparece no topo e no "celular"
   const NOME = "Agenda de Achadinhos";
@@ -378,6 +397,8 @@
 
   // Links e textos
   document.querySelectorAll("[data-wa]").forEach(a => a.href = WHATSAPP_LINK);
+  document.querySelectorAll("[data-canal]").forEach(a => CANAL_LINK ? a.href = CANAL_LINK : a.remove());
+  if (!CANAL_LINK) document.querySelector(".or").remove();
   document.getElementById("brandName").firstChild.textContent = NOME;
   document.getElementById("chatName").textContent = NOME_GRUPO;
   if (LOGO) document.getElementById("logo").innerHTML = `<img src="${esc(LOGO)}" alt="Logo">`;
