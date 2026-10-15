@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grupo de Achadinhos</title>
+<meta name="description" content="Cupons e achadinhos da Shopee, Mercado Livre, Amazon e Magalu no seu WhatsApp. Entrada gratuita.">
+<meta name="theme-color" content="#ffffff">
+<meta property="og:title" content="Grupo de Achadinhos — entrada gratuita">
+<meta property="og:description" content="Cupons e achadinhos todo dia no seu WhatsApp.">
+<meta property="og:image" content="../icon-512.png">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1c1c1e;
+    --muted: #6e6e73;
+    --line: #ececec;
+    --soft: #f7f6f4;
+    --accent: #d6336c;
+    --wa: #1f9d55;
+    --wa-hover: #1a8a4a;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background: #fff; color: var(--ink); line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  .wrap { max-width: 480px; margin: 0 auto; padding: 0 24px; }
+
+  header { display: flex; align-items: center; gap: 10px; padding: 24px 0; }
+  .logo { width: 36px; height: 36px; border-radius: 10px; background: var(--soft); display: grid; place-items: center; font-size: 18px; overflow: hidden; }
+  .logo img { width: 100%; height: 100%; object-fit: cover; }
+  .brand { font-weight: 600; font-size: 15px; }
+
+  .hero { padding: 32px 0 8px; }
+  .label { display: inline-block; font-size: 12px; font-weight: 600; color: var(--accent); letter-spacing: .04em; text-transform: uppercase; }
+  h1 { font-size: 34px; line-height: 1.15; font-weight: 700; letter-spacing: -.025em; margin-top: 10px; }
+  .lead { margin-top: 14px; font-size: 17px; color: var(--muted); }
+
+  .actions { margin-top: 28px; display: grid; gap: 10px; }
+  .btn {
+    display: flex; align-items: center; justify-content: center; gap: 10px;
+    padding: 16px; border-radius: 12px; font-size: 16px; font-weight: 600;
+    text-decoration: none; transition: background .15s;
+  }
+  .btn svg { width: 20px; height: 20px; flex: none; }
+  .btn-wa { background: var(--wa); color: #fff; }
+  .btn-wa:hover { background: var(--wa-hover); }
+  .btn-line { border: 1px solid var(--line); color: var(--ink); }
+  .btn-line:hover { background: var(--soft); }
+  .note { font-size: 13px; color: var(--muted); text-align: center; margin-top: 4px; }
+
+  section { padding: 56px 0 0; }
+  h2 { font-size: 20px; font-weight: 700; letter-spacing: -.01em; }
+  .sub { font-size: 14px; color: var(--muted); margin-top: 2px; }
+
+  .list { margin-top: 18px; border-top: 1px solid var(--line); }
+  .item { display: flex; align-items: center; gap: 14px; padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .thumb { width: 56px; height: 56px; flex: none; border-radius: 10px; background: var(--soft); display: grid; place-items: center; font-size: 26px; overflow: hidden; }
+  .thumb img { width: 100%; height: 100%; object-fit: contain; }
+  .info { flex: 1; min-width: 0; }
+  .info .name { font-size: 15px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .info .store { font-size: 12px; color: var(--muted); }
+  .price { text-align: right; }
+  .price b { display: block; font-size: 15px; font-weight: 600; }
+  .price span { font-size: 12px; color: var(--accent); font-weight: 600; }
+
+  .features { margin-top: 18px; display: grid; gap: 18px; }
+  .feature { display: flex; gap: 14px; }
+  .feature .n { width: 28px; height: 28px; flex: none; border-radius: 50%; border: 1px solid var(--line); font-size: 13px; font-weight: 600; display: grid; place-items: center; color: var(--muted); }
+  .feature b { display: block; font-size: 15px; font-weight: 600; }
+  .feature p { font-size: 14px; color: var(--muted); }
+
+  details { border-bottom: 1px solid var(--line); padding: 16px 0; }
+  details:first-of-type { border-top: 1px solid var(--line); margin-top: 18px; }
+  summary { font-size: 15px; font-weight: 500; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 12px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; color: var(--muted); font-weight: 400; font-size: 18px; line-height: 1; transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 8px; font-size: 14px; color: var(--muted); }
+
+  .end { margin: 56px 0 0; padding: 28px 24px; background: var(--soft); border-radius: 16px; text-align: center; }
+  .end h2 { font-size: 22px; }
+  .end .actions { margin-top: 18px; }
+
+  footer { padding: 32px 0 40px; font-size: 12px; color: var(--muted); text-align: center; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <div class="logo" id="logo">🛍️</div>
+    <div class="brand" id="brand">Agenda de Achadinhos</div>
+  </header>
+
+  <div class="hero">
+    <span class="label">Grupo gratuito</span>
+    <h1>Os melhores achadinhos do dia, direto no seu WhatsApp.</h1>
+    <p class="lead">Cupons e ofertas selecionadas da Shopee, Mercado Livre, Amazon e Magalu.</p>
+
+    <div class="actions">
+      <a class="btn btn-wa" data-wa href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.5L3 29l6.7-1.7c1.9 1 4 1.6 6.3 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.7c-2 0-4-.5-5.7-1.6l-.4-.2-4 1 1.1-3.9-.3-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.2 1.3 3.4c.2.2 2.3 3.5 5.6 4.9 2.8 1.1 3.3.9 3.9.8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+        Entrar no grupo
+      </a>
+      <a class="btn btn-line" data-canal href="#" target="_blank" rel="noopener">Seguir o canal</a>
+      <p class="note">Gratuito · Sem spam · Saia quando quiser</p>
+    </div>
+  </div>
+
+  <section>
+    <h2>Exemplos de ofertas</h2>
+    <p class="sub">O tipo de achadinho que você recebe.</p>
+    <div class="list" id="list"></div>
+  </section>
+
+  <section>
+    <h2>Como funciona</h2>
+    <div class="features">
+      <div class="feature"><div class="n">1</div><div><b>A gente garimpa</b><p>Procuramos as melhores ofertas e cupons todos os dias.</p></div></div>
+      <div class="feature"><div class="n">2</div><div><b>Você recebe</b><p>As ofertas chegam no WhatsApp, prontas para comprar.</p></div></div>
+      <div class="feature"><div class="n">3</div><div><b>Compra na loja oficial</b><p>O link leva direto para a loja. Pagamento e entrega são com ela.</p></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dúvidas</h2>
+    <details><summary>É gratuito?</summary><p>Sim, a entrada é totalmente gratuita.</p></details>
+    <details><summary>Grupo ou canal, qual escolher?</summary><p>As ofertas são as mesmas. O grupo avisa na hora, como uma conversa. O canal fica na aba “Atualizações” e vem silenciado: toque no sininho 🔔 para receber os avisos.</p></details>
+    <details><summary>Outras pessoas veem meu número?</summary><p>No grupo, só os administradores postam, mas os outros membros podem ver o seu número. No canal, ninguém vê o seu número.</p></details>
+    <details><summary>Posso sair depois?</summary><p>Pode, a qualquer momento.</p></details>
+  </section>
+
+  <div class="end">
+    <h2>Comece a economizar hoje</h2>
+    <div class="actions">
+      <a class="btn btn-wa" data-wa href="#" target="_blank" rel="noopener">Entrar no grupo</a>
+      <a class="btn btn-line" data-canal href="#" target="_blank" rel="noopener">Seguir o canal</a>
+    </div>
+  </div>
+
+  <footer>
+    Preços e disponibilidade podem mudar nas lojas.<br>
+    Podemos receber comissão pelas compras feitas pelos links, sem custo extra pra você.
+  </footer>
+</div>
+
+<script>
+  /* ================= EDITE AQUI ================= */
+  // Link de convite do grupo do WhatsApp
+  const WHATSAPP_LINK = "https://chat.whatsapp.com/SEU-CODIGO-AQUI";
+
+  // Link do canal do WhatsApp (deixe "" para esconder os botões do canal)
+  const CANAL_LINK = "https://whatsapp.com/channel/SEU-CANAL-AQUI";
+
+  // Nome que aparece no topo
+  const NOME = "Agenda de Achadinhos";
+
+  // URL da sua logo (deixe "" para usar o emoji 🛍️)
+  const LOGO = "";
+
+  // Exemplos de ofertas. "imagem" pode ser uma URL; vazio usa o emoji.
+  const PRODUTOS = [
+    { loja: "Amazon",        nome: "Fone de Ouvido Bluetooth", preco: 59.90,  de: 99.90,   emoji: "🎧", imagem: "" },
+    { loja: "Magalu",        nome: "Smart TV 32 pol.",         preco: 799.00, de: 1299.00, emoji: "📺", imagem: "" },
+    { loja: "Shopee",        nome: "Tênis Casual Feminino",    preco: 89.90,  de: 129.90,  emoji: "👟", imagem: "" },
+    { loja: "Mercado Livre", nome: "Air Fryer 4L",             preco: 299.90, de: 459.90,  emoji: "🍟", imagem: "" },
+  ];
+  /* ============================================== */
+
+  const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+  document.querySelectorAll("[data-wa]").forEach(a => a.href = WHATSAPP_LINK);
+  document.querySelectorAll("[data-canal]").forEach(a => CANAL_LINK ? a.href = CANAL_LINK : a.remove());
+  document.getElementById("brand").textContent = NOME;
+  if (LOGO) document.getElementById("logo").innerHTML = `<img src="${esc(LOGO)}" alt="">`;
+
+  const list = document.getElementById("list");
+  PRODUTOS.forEach(p => {
+    const off = p.de ? Math.round((1 - p.preco / p.de) * 100) : 0;
+    list.insertAdjacentHTML("beforeend", `
+      <div class="item">
+        <div class="thumb">${p.imagem ? `<img src="${esc(p.imagem)}" alt="" loading="lazy">` : (p.emoji || "🛍️")}</div>
+        <div class="info"><div class="name">${esc(p.nome)}</div><div class="store">${esc(p.loja)}</div></div>
+        <div class="price"><b>${brl(p.preco)}</b>${off > 0 ? `<span>−${off}%</span>` : ""}</div>
+      </div>`);
+  });
+</script>
+</body>
+</html>
