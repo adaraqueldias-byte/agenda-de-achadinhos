@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grupo VIP de Achadinhos</title>
+<meta name="description" content="Cupons, bugs de preço e achadinhos da Shopee, Mercado Livre, Amazon e Magalu direto no seu WhatsApp. Entrada gratuita.">
+<meta name="theme-color" content="#2a0f1c">
+<meta property="og:title" content="Grupo VIP de Achadinhos — entrada gratuita">
+<meta property="og:description" content="Pare de pagar caro. Receba os melhores achadinhos do dia no seu WhatsApp.">
+<meta property="og:image" content="../icon-512.png">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,600;0,9..144,800;1,9..144,700&family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --dark: #2a0f1c;
+    --dark-2: #3d1529;
+    --ink: #2b1420;
+    --muted: #7b5566;
+    --bg: #fff7f3;
+    --card: #ffffff;
+    --line: #f0dde3;
+    --pink: #ff3d7f;
+    --orange: #ff7a1a;
+    --yellow: #ffd23f;
+    --wa: #25d366;
+    --wa-2: #128c4a;
+    --chat-bg: #efe7dd;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    background: var(--bg); color: var(--ink); line-height: 1.5;
+    -webkit-font-smoothing: antialiased; overflow-x: hidden;
+    padding-bottom: 100px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 20px; }
+  h1, h2, .serif { font-family: "Fraunces", Georgia, serif; }
+  img { display: block; max-width: 100%; }
+
+  /* ===== Faixa de aviso ===== */
+  .ticker { background: var(--yellow); color: var(--dark); font-weight: 800; font-size: 13px; overflow: hidden; white-space: nowrap; }
+  .ticker div { display: inline-block; padding: 8px 0; animation: tick 28s linear infinite; }
+  .ticker span { margin: 0 18px; }
+  @keyframes tick { to { transform: translateX(-50%); } }
+
+  /* ===== Hero escuro ===== */
+  .hero {
+    position: relative; color: #fff; overflow: hidden;
+    background:
+      radial-gradient(600px 400px at 110% -10%, rgba(255, 61, 127, .55), transparent 60%),
+      radial-gradient(500px 380px at -20% 40%, rgba(255, 122, 26, .35), transparent 60%),
+      var(--dark);
+    padding-bottom: 40px;
+  }
+  header { display: flex; align-items: center; justify-content: space-between; padding: 18px 0; }
+  .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 15px; line-height: 1.1; }
+  .brand .logo {
+    width: 44px; height: 44px; border-radius: 12px; flex: none;
+    background: linear-gradient(135deg, var(--orange), var(--pink));
+    display: grid; place-items: center; font-size: 22px; overflow: hidden;
+  }
+  .brand .logo img { width: 100%; height: 100%; object-fit: cover; }
+  .brand small { display: block; font-weight: 500; opacity: .7; font-size: 12px; }
+  .free { font-size: 11px; font-weight: 800; letter-spacing: .12em; padding: 6px 10px; border-radius: 999px; border: 1px solid rgba(255,255,255,.3); }
+
+  .eyebrow { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; font-weight: 700; background: rgba(255,255,255,.1); padding: 6px 12px; border-radius: 999px; }
+  .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--wa); box-shadow: 0 0 0 0 rgba(37,211,102,.7); animation: ping 1.8s infinite; }
+  @keyframes ping { 70% { box-shadow: 0 0 0 8px rgba(37,211,102,0); } 100% { box-shadow: 0 0 0 0 rgba(37,211,102,0); } }
+
+  .hero h1 { font-size: clamp(36px, 10.5vw, 52px); line-height: 1.02; font-weight: 800; margin-top: 14px; letter-spacing: -.02em; }
+  .hero h1 em {
+    font-style: italic; font-weight: 700;
+    background: linear-gradient(90deg, var(--yellow), var(--orange) 60%, var(--pink));
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero .lead { margin-top: 16px; font-size: 17px; color: rgba(255,255,255,.82); }
+  .hero .lead b { color: #fff; }
+
+  .stores { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .stores span { font-size: 12px; font-weight: 800; padding: 6px 11px; border-radius: 999px; background: #fff; }
+
+  /* ===== Botão WhatsApp ===== */
+  .btn-wa {
+    position: relative; display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%; padding: 19px 18px; border-radius: 18px; overflow: hidden;
+    background: linear-gradient(180deg, #2ee06f, var(--wa-2));
+    box-shadow: 0 6px 0 #0c6234, 0 14px 30px rgba(37, 211, 102, .35);
+    color: #fff; font-size: 19px; font-weight: 900; text-decoration: none; letter-spacing: -.01em;
+    transition: transform .1s, box-shadow .1s;
+  }
+  .btn-wa::after {
+    content: ""; position: absolute; inset: 0; width: 40%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.45), transparent);
+    transform: translateX(-150%) skewX(-20deg); animation: shine 3.2s ease-in-out infinite;
+  }
+  @keyframes shine { 60%, 100% { transform: translateX(350%) skewX(-20deg); } }
+  .btn-wa:active { transform: translateY(4px); box-shadow: 0 2px 0 #0c6234, 0 8px 18px rgba(37,211,102,.3); }
+  .btn-wa svg { width: 28px; height: 28px; flex: none; }
+  .cta { margin-top: 26px; }
+  .cta-note { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 14px; font-size: 13px; color: rgba(255,255,255,.75); }
+  .cta-note.dark { color: var(--muted); }
+  @media (prefers-reduced-motion: reduce) { .btn-wa::after, .ticker div, .dot, .msg { animation: none !important; } }
+
+  /* ===== Celular com o grupo ===== */
+  .phone {
+    position: relative; margin: 34px auto 0; width: min(330px, 100%);
+    border-radius: 38px; padding: 10px; background: #111;
+    box-shadow: 0 30px 60px rgba(0,0,0,.45), inset 0 0 0 2px #333;
+    transform: rotate(-2deg);
+  }
+  .screen { border-radius: 30px; overflow: hidden; background: var(--chat-bg); }
+  .wa-bar { display: flex; align-items: center; gap: 10px; padding: 12px 14px; background: #075e54; color: #fff; }
+  .wa-bar .av { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--orange), var(--pink)); display: grid; place-items: center; font-size: 16px; }
+  .wa-bar b { font-size: 14px; display: block; line-height: 1.2; }
+  .wa-bar small { font-size: 11px; opacity: .8; }
+  .chat { padding: 12px 10px 14px; display: flex; flex-direction: column; gap: 8px; min-height: 360px; }
+  .msg {
+    align-self: flex-start; max-width: 88%; background: #fff; color: #111; border-radius: 4px 12px 12px 12px;
+    padding: 6px 6px 4px; font-size: 13px; line-height: 1.35; box-shadow: 0 1px 1px rgba(0,0,0,.08);
+    opacity: 0; transform: translateY(10px); animation: in .5s forwards;
+  }
+  .msg .thumb { height: 92px; border-radius: 8px; display: grid; place-items: center; font-size: 46px; background: #f6f1ee; margin-bottom: 6px; overflow: hidden; }
+  .msg .thumb img { max-height: 92px; object-fit: contain; }
+  .msg p { padding: 0 4px; }
+  .msg .old { text-decoration: line-through; color: #8a8a8a; }
+  .msg .new { font-weight: 800; color: #0a7c3c; }
+  .msg .lnk { color: #0277bd; word-break: break-all; }
+  .msg time { display: block; text-align: right; font-size: 10px; color: #8a8a8a; padding: 0 4px; }
+  @keyframes in { to { opacity: 1; transform: none; } }
+
+  /* ===== Seções ===== */
+  section { padding: 44px 0 0; }
+  .kicker { font-size: 12px; font-weight: 800; letter-spacing: .14em; color: var(--pink); text-transform: uppercase; }
+  section h2 { font-size: 30px; line-height: 1.1; margin-top: 6px; letter-spacing: -.01em; }
+  .sub { color: var(--muted); font-size: 15px; margin-top: 6px; }
+
+  /* Números */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-top: -26px; position: relative; z-index: 2; }
+  .stat { background: var(--card); border: 1px solid var(--line); border-radius: 16px; padding: 14px 8px; text-align: center; box-shadow: 0 10px 24px rgba(42,15,28,.08); }
+  .stat b { display: block; font-family: "Fraunces", serif; font-size: 24px; font-weight: 800; color: var(--pink); line-height: 1.1; }
+  .stat span { font-size: 12px; color: var(--muted); font-weight: 600; }
+
+  /* Vitrine */
+  .carousel { display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory; padding: 20px 20px 12px; margin: 0 -20px; scrollbar-width: none; }
+  .carousel::-webkit-scrollbar { display: none; }
+  .card { flex: 0 0 70%; max-width: 250px; scroll-snap-align: start; background: var(--card); border-radius: 20px; overflow: hidden; border: 1px solid var(--line); box-shadow: 0 6px 18px rgba(42,15,28,.07); }
+  .card-img { position: relative; height: 160px; display: grid; place-items: center; font-size: 70px; background: linear-gradient(180deg, #fff, #fbf3f5); }
+  .card-img img { max-width: 80%; max-height: 130px; object-fit: contain; }
+  .off { position: absolute; top: 10px; left: 10px; background: var(--pink); color: #fff; font-weight: 900; font-size: 14px; padding: 4px 10px; border-radius: 999px; }
+  .card-body { padding: 14px 16px 16px; }
+  .store { font-size: 11px; font-weight: 800; padding: 3px 8px; border-radius: 6px; color: #fff; display: inline-block; }
+  .name { font-weight: 700; font-size: 15px; line-height: 1.3; margin: 8px 0; min-height: 40px; }
+  .price { font-size: 20px; font-weight: 900; }
+  .price s { display: block; font-size: 12px; font-weight: 500; color: #a08791; }
+  .save { margin-top: 8px; font-size: 12px; font-weight: 800; color: #0a7c3c; background: #e5f8ec; padding: 5px 8px; border-radius: 8px; display: inline-block; }
+  .dots { display: flex; justify-content: center; gap: 6px; margin-top: 4px; }
+  .dots i { width: 6px; height: 6px; border-radius: 99px; background: var(--line); transition: all .2s; }
+  .dots i.on { width: 18px; background: var(--pink); }
+
+  /* Antes x depois */
+  .compare { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .compare div { border-radius: 18px; padding: 16px; font-size: 14px; }
+  .compare h3 { font-size: 15px; margin-bottom: 10px; }
+  .compare ul { list-style: none; display: grid; gap: 8px; }
+  .compare .bad { background: #f6eef1; color: var(--muted); }
+  .compare .good { background: var(--dark); color: #fff; }
+  .compare .good li::before { content: "✓ "; color: var(--wa); font-weight: 900; }
+  .compare .bad li::before { content: "✕ "; color: #c0607e; font-weight: 900; }
+
+  /* Benefícios */
+  .benefits { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 18px; }
+  .benefit { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+  .benefit .ico { font-size: 26px; }
+  .benefit b { display: block; margin-top: 8px; font-size: 15px; line-height: 1.25; }
+  .benefit span { display: block; margin-top: 4px; color: var(--muted); font-size: 13px; line-height: 1.4; }
+
+  /* Depoimentos */
+  .quotes { display: grid; gap: 10px; margin-top: 18px; }
+  .quote { background: var(--card); border: 1px solid var(--line); border-radius: 18px; padding: 16px; }
+  .quote p { font-size: 15px; }
+  .quote small { display: block; margin-top: 8px; color: var(--muted); font-weight: 700; }
+
+  /* FAQ */
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 15px 16px; margin-top: 10px; }
+  summary { font-weight: 700; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 22px; line-height: 1; color: var(--pink); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+  /* Final */
+  .final { margin-top: 48px; background: var(--dark); color: #fff; border-radius: 28px; padding: 32px 22px 26px; text-align: center; position: relative; overflow: hidden; }
+  .final::before { content: ""; position: absolute; inset: -40% -20% auto auto; width: 300px; height: 300px; background: radial-gradient(circle, rgba(255,61,127,.5), transparent 65%); }
+  .final > * { position: relative; }
+  .final h2 { font-size: 30px; line-height: 1.1; }
+  .final p { color: rgba(255,255,255,.8); margin: 10px 0 22px; }
+
+  footer { padding: 28px 0 10px; text-align: center; font-size: 12px; color: var(--muted); }
+
+  /* Botão fixo */
+  .sticky {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 20;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: rgba(255, 247, 243, .92); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px);
+    border-top: 1px solid var(--line);
+    transform: translateY(110%); transition: transform .25s;
+  }
+  .sticky.show { transform: none; }
+  .sticky .btn-wa { max-width: 520px; margin: 0 auto; padding: 15px; font-size: 17px; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity .6s, transform .6s; }
+  .reveal.in { opacity: 1; transform: none; }
+</style>
+</head>
+<body>
+
+<div class="ticker" aria-hidden="true"><div id="ticker"></div></div>
+
+<div class="hero">
+  <div class="wrap">
+    <header>
+      <div class="brand">
+        <div class="logo" id="logo">🛍️</div>
+        <div id="brandName">Agenda de Achadinhos<small>Grupo VIP de ofertas</small></div>
+      </div>
+      <div class="free">GRÁTIS</div>
+    </header>
+
+    <div class="eyebrow"><i class="dot"></i> Ofertas novas todos os dias</div>
+
+    <h1>Pare de pagar caro. Receba os <em>achadinhos</em> do dia no seu WhatsApp.</h1>
+    <p class="lead">Cupons, bugs de preço e promoções relâmpago <b>garimpados a dedo</b> — você só abre o grupo e escolhe.</p>
+
+    <div class="stores">
+      <span style="color:#ee4d2d">Shopee</span>
+      <span style="color:#2d3277">Mercado Livre</span>
+      <span style="color:#232f3e">Amazon</span>
+      <span style="color:#0086ff">Magalu</span>
+    </div>
+
+    <div class="cta" id="cta-top">
+      <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">
+        <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.5L3 29l6.7-1.7c1.9 1 4 1.6 6.3 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.7c-2 0-4-.5-5.7-1.6l-.4-.2-4 1 1.1-3.9-.3-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.2 1.3 3.4c.2.2 2.3 3.5 5.6 4.9 2.8 1.1 3.3.9 3.9.8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+        Quero entrar no grupo
+      </a>
+      <div class="cta-note"><span>🔒 100% gratuito</span><span>🔕 Sem spam</span><span>👋 Sai quando quiser</span></div>
+    </div>
+
+    <div class="phone" aria-label="Exemplo de mensagens do grupo">
+      <div class="screen">
+        <div class="wa-bar">
+          <div class="av">🛍️</div>
+          <div><b id="chatName">Achadinhos VIP 💖</b><small>Só administradores podem enviar</small></div>
+        </div>
+        <div class="chat" id="chat"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <div class="stats" id="stats"></div>
+
+  <section class="reveal">
+    <div class="kicker">Vitrine</div>
+    <h2>Um gostinho do que chega pra você</h2>
+    <p class="sub">Arraste para o lado →</p>
+    <div class="carousel" id="carousel"></div>
+    <div class="dots" id="dots"></div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">A diferença</div>
+    <h2>Comprar sozinha × comprar com o grupo</h2>
+    <div class="compare">
+      <div class="bad">
+        <h3>Sem o grupo</h3>
+        <ul><li>Horas comparando preço</li><li>Cupom que já expirou</li><li>Descobre a promoção depois que acabou</li></ul>
+      </div>
+      <div class="good">
+        <h3>Com o grupo</h3>
+        <ul><li>Oferta pronta, é só tocar</li><li>Cupom testado na hora</li><li>Fica sabendo primeiro</li></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">Por que entrar</div>
+    <h2>Economia de verdade, sem esforço</h2>
+    <div class="benefits">
+      <div class="benefit"><div class="ico">🔎</div><b>Garimpo diário</b><span>A gente procura, você só escolhe.</span></div>
+      <div class="benefit"><div class="ico">🎟️</div><b>Cupons</b><span>Códigos e descontos assim que saem.</span></div>
+      <div class="benefit"><div class="ico">⚡</div><b>Bugs de preço</b><span>Ofertas que somem em minutos.</span></div>
+      <div class="benefit"><div class="ico">✅</div><b>Lojas oficiais</b><span>Compra e entrega pela própria loja.</span></div>
+    </div>
+  </section>
+
+  <section class="reveal" id="quotesSection" hidden>
+    <div class="kicker">Quem já está lá</div>
+    <h2>O que dizem do grupo</h2>
+    <div class="quotes" id="quotes"></div>
+  </section>
+
+  <section class="reveal">
+    <div class="kicker">Dúvidas</div>
+    <h2>Perguntas frequentes</h2>
+    <details><summary>Precisa pagar alguma coisa?</summary><p>Não. A entrada é totalmente gratuita.</p></details>
+    <details><summary>Vou receber mensagem demais?</summary><p>Só ofertas selecionadas. Se quiser, silencie o grupo e olhe quando tiver tempo.</p></details>
+    <details><summary>As lojas são confiáveis?</summary><p>Os links levam direto para Shopee, Mercado Livre, Amazon e Magalu. A compra, o pagamento e a entrega são feitos pela própria loja.</p></details>
+    <details><summary>Outras pessoas veem meu número?</summary><p>É um grupo de avisos: só os administradores enviam mensagens.</p></details>
+    <details><summary>Posso sair depois?</summary><p>Pode, a qualquer momento, sem precisar avisar ninguém.</p></details>
+  </section>
+
+  <div class="final reveal">
+    <h2>A próxima oferta pode ser a que você estava esperando.</h2>
+    <p>Entre agora e receba já os achadinhos de hoje.</p>
+    <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">Entrar no grupo grátis</a>
+  </div>
+
+  <footer>
+    Preços e disponibilidade podem mudar a qualquer momento nas lojas.<br>
+    Podemos receber comissão pelas compras feitas pelos links, sem custo extra pra você.
+  </footer>
+</div>
+
+<div class="sticky" id="sticky">
+  <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">Entrar no grupo grátis</a>
+</div>
+
+<script>
+  /* ================= EDITE AQUI ================= */
+  // Link de convite do seu grupo ou comunidade do WhatsApp
+  const WHATSAPP_LINK = "https://chat.whatsapp.com/SEU-CODIGO-AQUI";
+
+  // Nome que aparece no topo e no "celular"
+  const NOME = "Agenda de Achadinhos";
+  const NOME_GRUPO = "Achadinhos VIP 💖";
+
+  // URL da sua logo (deixe "" para usar o emoji 🛍️)
+  const LOGO = "";
+
+  // Números do grupo. Use SÓ números verdadeiros. Deixe a lista vazia [] para esconder.
+  const NUMEROS = [
+    { valor: "+10",  texto: "ofertas por dia" },
+    { valor: "4",    texto: "lojas garimpadas" },
+    { valor: "R$ 0", texto: "para entrar" },
+  ];
+
+  // Produtos da vitrine e do "celular". "imagem" pode ser uma URL; vazio usa o emoji.
+  const PRODUTOS = [
+    { loja: "amazon",       nome: "Fone de Ouvido Bluetooth", preco: 59.90,  de: 99.90,   emoji: "🎧", imagem: "" },
+    { loja: "magalu",       nome: "Smart TV 32 pol.",         preco: 799.00, de: 1299.00, emoji: "📺", imagem: "" },
+    { loja: "shopee",       nome: "Tênis Casual Feminino",    preco: 89.90,  de: 129.90,  emoji: "👟", imagem: "" },
+    { loja: "mercadolivre", nome: "Air Fryer 4L",             preco: 299.90, de: 459.90,  emoji: "🍟", imagem: "" },
+    { loja: "shopee",       nome: "Kit Skincare Completo",    preco: 49.90,  de: 89.90,   emoji: "🧴", imagem: "" },
+  ];
+
+  // Depoimentos REAIS de membros (com permissão). Deixe [] para esconder a seção.
+  const DEPOIMENTOS = [
+    // { texto: "Comprei minha air fryer com 35% de desconto!", nome: "Fulana, SP" },
+  ];
+  /* ============================================== */
+
+  const LOJAS = {
+    amazon:       { nome: "Amazon",        cor: "#232f3e" },
+    magalu:       { nome: "Magalu",        cor: "#0086ff" },
+    shopee:       { nome: "Shopee",        cor: "#ee4d2d" },
+    mercadolivre: { nome: "Mercado Livre", cor: "#2d3277" },
+  };
+  const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const pct = p => p.de ? Math.round((1 - p.preco / p.de) * 100) : 0;
+  const thumb = p => p.imagem ? `<img src="${esc(p.imagem)}" alt="" loading="lazy">` : (p.emoji || "🛍️");
+
+  // Links e textos
+  document.querySelectorAll("[data-wa]").forEach(a => a.href = WHATSAPP_LINK);
+  document.getElementById("brandName").firstChild.textContent = NOME;
+  document.getElementById("chatName").textContent = NOME_GRUPO;
+  if (LOGO) document.getElementById("logo").innerHTML = `<img src="${esc(LOGO)}" alt="Logo">`;
+
+  // Faixa amarela
+  const frases = ["🔥 Cupons novos hoje", "⚡ Bugs de preço", "🛒 Shopee · Mercado Livre · Amazon · Magalu", "💸 Entrada gratuita"];
+  const t = frases.map(f => `<span>${f}</span>`).join("");
+  document.getElementById("ticker").innerHTML = t + t + t + t;
+
+  // Números
+  const stats = document.getElementById("stats");
+  if (!NUMEROS.length) stats.remove();
+  NUMEROS.forEach(n => stats.insertAdjacentHTML("beforeend", `<div class="stat"><b>${esc(n.valor)}</b><span>${esc(n.texto)}</span></div>`));
+
+  // Mensagens no celular
+  const chat = document.getElementById("chat");
+  PRODUTOS.slice(0, 3).forEach((p, i) => {
+    const loja = LOJAS[p.loja] || { nome: p.loja };
+    chat.insertAdjacentHTML("beforeend", `
+      <div class="msg" style="animation-delay:${0.4 + i * 0.9}s">
+        <div class="thumb">${thumb(p)}</div>
+        <p>🔥 <b>${esc(p.nome)}</b> na ${esc(loja.nome)}<br>
+        ${p.de ? `<span class="old">${brl(p.de)}</span> ` : ""}<span class="new">${brl(p.preco)}</span>${pct(p) > 0 ? ` (-${pct(p)}%)` : ""}<br>
+        <span class="lnk">🛒 link da oferta</span></p>
+        <time>${String(8 + i * 3).padStart(2, "0")}:${["12", "47", "05"][i]}</time>
+      </div>`);
+  });
+
+  // Vitrine
+  const box = document.getElementById("carousel"), dots = document.getElementById("dots");
+  PRODUTOS.forEach((p, i) => {
+    const loja = LOJAS[p.loja] || { nome: p.loja, cor: "#2b1420" };
+    const off = pct(p);
+    box.insertAdjacentHTML("beforeend", `
+      <article class="card">
+        <div class="card-img">${off > 0 ? `<span class="off">-${off}%</span>` : ""}${thumb(p)}</div>
+        <div class="card-body">
+          <span class="store" style="background:${loja.cor}">${esc(loja.nome)}</span>
+          <div class="name">${esc(p.nome)}</div>
+          <div class="price">${p.de ? `<s>${brl(p.de)}</s>` : ""}${brl(p.preco)}</div>
+          ${p.de ? `<div class="save">Economia de ${brl(p.de - p.preco)}</div>` : ""}
+        </div>
+      </article>`);
+    dots.insertAdjacentHTML("beforeend", `<i${i === 0 ? ' class="on"' : ""}></i>`);
+  });
+  box.addEventListener("scroll", () => {
+    const card = box.querySelector(".card");
+    if (!card) return;
+    const i = Math.round(box.scrollLeft / (card.offsetWidth + 14));
+    [...dots.children].forEach((d, j) => d.classList.toggle("on", j === Math.min(i, dots.children.length - 1)));
+  }, { passive: true });
+
+  // Depoimentos
+  if (DEPOIMENTOS.length) {
+    document.getElementById("quotesSection").hidden = false;
+    DEPOIMENTOS.forEach(d => document.getElementById("quotes").insertAdjacentHTML("beforeend",
+      `<div class="quote"><p>“${esc(d.texto)}”</p><small>— ${esc(d.nome)}</small></div>`));
+  }
+
+  // Animação ao rolar
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { e.target.classList.add("in"); io.unobserve(e.target); } }), { threshold: .12 });
+  document.querySelectorAll(".reveal").forEach(el => io.observe(el));
+
+  // Botão fixo quando o botão principal sai da tela
+  const sticky = document.getElementById("sticky");
+  new IntersectionObserver(([e]) => sticky.classList.toggle("show", !e.isIntersecting && e.boundingClientRect.top < 0))
+    .observe(document.getElementById("cta-top"));
+</script>
+</body>
+</html>
