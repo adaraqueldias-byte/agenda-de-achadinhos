@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Grupo VIP de Achadinhos</title>
+<meta name="description" content="Ofertas, cupons e bugs de preço garimpados na Shopee, Mercado Livre, Amazon e Magalu, direto no seu WhatsApp. Entrada gratuita.">
+<meta name="theme-color" content="#fde8ef">
+<meta property="og:title" content="Grupo VIP de Achadinhos — entrada gratuita">
+<meta property="og:description" content="Cupons e achadinhos todo dia no seu celular.">
+<meta property="og:image" content="../icon-512.png">
+<link rel="icon" href="../icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,700;1,9..144,700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg-top: #fde8ef;
+    --bg: #fff8fa;
+    --ink: #3b1a24;
+    --muted: #7a4a58;
+    --accent: #e8590c;
+    --pink: #e83e8c;
+    --card: #ffffff;
+    --line: #f1d9e1;
+    --wa: #128c4a;
+    --wa-dark: #0b6b37;
+    --radius: 18px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: "Inter", system-ui, -apple-system, sans-serif;
+    color: var(--ink);
+    background: linear-gradient(180deg, var(--bg-top) 0%, var(--bg) 520px);
+    background-color: var(--bg);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 96px;
+  }
+  .wrap { max-width: 560px; margin: 0 auto; padding: 0 22px; }
+  h1, h2 { font-family: "Fraunces", Georgia, serif; font-weight: 700; letter-spacing: -0.01em; }
+
+  /* Topo */
+  header { display: flex; align-items: center; justify-content: space-between; padding: 22px 0 8px; }
+  .logo {
+    width: 64px; height: 64px; border-radius: 16px;
+    background: linear-gradient(145deg, #ffb38a, #f78c6b);
+    display: grid; place-items: center; text-align: center;
+    color: #fff; box-shadow: 0 6px 16px rgba(232, 89, 12, .2);
+  }
+  .logo img { width: 100%; height: 100%; object-fit: cover; border-radius: 16px; }
+  .logo span { font-family: "Fraunces", serif; font-size: 11px; line-height: 1.05; }
+  .tag { text-align: right; font-size: 12px; font-weight: 700; letter-spacing: .16em; color: var(--muted); line-height: 1.8; }
+
+  /* Hero */
+  .hero { padding: 28px 0 8px; }
+  .hero h1 { font-size: clamp(32px, 9vw, 44px); line-height: 1.1; }
+  .hero h1 em { color: var(--accent); }
+  .hero p { margin-top: 16px; font-size: 17px; color: var(--muted); }
+  .hero p strong { color: var(--ink); }
+
+  /* Botão WhatsApp */
+  .cta-box {
+    margin: 28px 0 8px; padding: 12px; border-radius: 26px;
+    background: rgba(255,255,255,.7); border: 1px solid var(--line);
+    box-shadow: 0 10px 28px rgba(59, 26, 36, .08);
+  }
+  .btn-wa {
+    display: flex; align-items: center; justify-content: center; gap: 12px;
+    width: 100%; padding: 20px 18px; border-radius: 20px;
+    background: linear-gradient(180deg, #1a9d57, var(--wa));
+    box-shadow: 0 6px 0 var(--wa-dark), 0 0 0 6px rgba(18, 140, 74, .15);
+    color: #fff; font-size: 20px; font-weight: 800; text-decoration: none;
+    transition: transform .12s, box-shadow .12s;
+    animation: pulse 2.4s ease-in-out infinite;
+  }
+  .btn-wa:active { transform: translateY(4px); box-shadow: 0 2px 0 var(--wa-dark), 0 0 0 6px rgba(18,140,74,.15); }
+  .btn-wa svg { width: 30px; height: 30px; flex: none; }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 6px 0 var(--wa-dark), 0 0 0 6px rgba(18,140,74,.15); }
+    50% { box-shadow: 0 6px 0 var(--wa-dark), 0 0 0 12px rgba(18,140,74,.06); }
+  }
+  @media (prefers-reduced-motion: reduce) { .btn-wa { animation: none; } }
+  .cta-note { text-align: center; font-size: 13px; color: var(--muted); margin-top: 12px; }
+
+  /* Seções */
+  section { padding: 32px 0 8px; }
+  section h2 { font-size: 26px; line-height: 1.2; }
+  .sub { color: var(--muted); font-size: 15px; margin-top: 4px; }
+  .center { text-align: center; }
+
+  /* Carrossel */
+  .carousel {
+    display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+    padding: 18px 22px 10px; margin: 0 -22px; scrollbar-width: none;
+  }
+  .carousel::-webkit-scrollbar { display: none; }
+  .card {
+    flex: 0 0 72%; max-width: 260px; scroll-snap-align: start;
+    background: var(--card); border: 1px solid var(--line); border-radius: var(--radius);
+    overflow: hidden; box-shadow: 0 4px 14px rgba(59,26,36,.06);
+  }
+  .card-img { position: relative; height: 170px; display: grid; place-items: center; background: #fff; border-bottom: 1px solid var(--line); font-size: 72px; }
+  .card-img img { max-width: 80%; max-height: 140px; object-fit: contain; }
+  .off {
+    position: absolute; top: 10px; left: 10px; padding: 3px 10px; border-radius: 999px;
+    background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.1); font-size: 14px; font-weight: 700;
+  }
+  .card-body { padding: 14px 16px 16px; background: #fffbfc; }
+  .store { font-size: 12px; font-weight: 800; letter-spacing: .02em; }
+  .name { font-weight: 600; font-size: 16px; line-height: 1.3; margin: 6px 0 8px; min-height: 42px; }
+  .price { font-size: 18px; font-weight: 800; }
+  .price s { font-size: 13px; font-weight: 500; color: #9b7a84; margin-left: 6px; }
+
+  /* Benefícios */
+  .benefits { display: grid; gap: 12px; margin-top: 18px; }
+  .benefit { display: flex; gap: 14px; align-items: flex-start; background: var(--card); border: 1px solid var(--line); border-radius: var(--radius); padding: 16px; }
+  .benefit .ico { flex: none; width: 44px; height: 44px; border-radius: 12px; background: #fde8ef; display: grid; place-items: center; font-size: 22px; }
+  .benefit b { display: block; font-size: 16px; }
+  .benefit span { color: var(--muted); font-size: 14px; }
+
+  /* Passos */
+  .steps { counter-reset: s; display: grid; gap: 10px; margin-top: 18px; }
+  .step { display: flex; gap: 14px; align-items: center; font-size: 15px; }
+  .step::before {
+    counter-increment: s; content: counter(s);
+    flex: none; width: 34px; height: 34px; border-radius: 50%;
+    background: var(--pink); color: #fff; font-weight: 800; display: grid; place-items: center;
+  }
+
+  /* FAQ */
+  details { background: var(--card); border: 1px solid var(--line); border-radius: 14px; padding: 14px 16px; margin-top: 10px; }
+  summary { font-weight: 600; cursor: pointer; list-style: none; display: flex; justify-content: space-between; gap: 10px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: "+"; font-size: 20px; line-height: 1; color: var(--pink); }
+  details[open] summary::after { content: "–"; }
+  details p { margin-top: 8px; color: var(--muted); font-size: 15px; }
+
+  footer { padding: 36px 0 20px; text-align: center; font-size: 12px; color: var(--muted); }
+
+  /* Botão fixo no rodapé */
+  .sticky {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 10;
+    padding: 12px 16px calc(12px + env(safe-area-inset-bottom));
+    background: linear-gradient(180deg, rgba(255,248,250,0), rgba(255,248,250,.96) 35%);
+    transform: translateY(110%); transition: transform .25s;
+  }
+  .sticky.show { transform: none; }
+  .sticky .btn-wa { max-width: 520px; margin: 0 auto; padding: 15px; font-size: 18px; animation: none; }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+  <header>
+    <div class="logo" id="logo"><span>Agenda de<br>Achadinhos</span></div>
+    <div class="tag">GRUPO VIP<br>ENTRADA GRATUITA</div>
+  </header>
+
+  <div class="hero">
+    <h1>Cupons e <em>Achadinhos</em> todo dia no seu celular</h1>
+    <p>Ofertas, cupons e bugs de preço com <strong>descontos de verdade</strong>, garimpados na Shopee, Mercado Livre, Amazon e Magalu, direto pra você.</p>
+  </div>
+
+  <div class="cta-box" id="cta-top">
+    <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">
+      <svg viewBox="0 0 32 32" fill="currentColor" aria-hidden="true"><path d="M16 3C8.8 3 3 8.8 3 16c0 2.3.6 4.5 1.7 6.5L3 29l6.7-1.7c1.9 1 4 1.6 6.3 1.6 7.2 0 13-5.8 13-13S23.2 3 16 3zm0 23.7c-2 0-4-.5-5.7-1.6l-.4-.2-4 1 1.1-3.9-.3-.4A10.7 10.7 0 1 1 16 26.7zm5.9-8c-.3-.2-1.9-1-2.2-1-.3-.1-.5-.2-.7.2l-1 1.2c-.2.2-.4.2-.7.1-.3-.2-1.4-.5-2.6-1.6-1-.9-1.6-1.9-1.8-2.2-.2-.3 0-.5.1-.7l.5-.6.3-.5c.1-.2 0-.4 0-.6l-1-2.4c-.3-.6-.5-.5-.7-.5h-.6c-.2 0-.6.1-.9.4-.3.3-1.1 1.1-1.1 2.7s1.2 3.2 1.3 3.4c.2.2 2.3 3.5 5.6 4.9 2.8 1.1 3.3.9 3.9.8.6-.1 1.9-.8 2.2-1.5.3-.8.3-1.4.2-1.5-.1-.2-.3-.3-.6-.4z"/></svg>
+      Entrar no WhatsApp
+    </a>
+    <p class="cta-note">100% gratuito · Você sai quando quiser</p>
+  </div>
+
+  <section>
+    <h2>Um gostinho do que chega pra você</h2>
+    <p class="sub">Arraste para o lado para ver mais →</p>
+    <div class="carousel" id="carousel"></div>
+  </section>
+
+  <section>
+    <h2 class="center">Por que entrar?</h2>
+    <p class="sub center">Economia de verdade, sem esforço</p>
+    <div class="benefits">
+      <div class="benefit"><div class="ico">🔎</div><div><b>Garimpo diário</b><span>A gente pesquisa as lojas pra você não perder tempo procurando.</span></div></div>
+      <div class="benefit"><div class="ico">🎟️</div><div><b>Cupons exclusivos</b><span>Cupons e descontos relâmpago assim que aparecem.</span></div></div>
+      <div class="benefit"><div class="ico">⚡</div><div><b>Bugs de preço</b><span>Promoções que acabam em minutos — quem está no grupo vê primeiro.</span></div></div>
+      <div class="benefit"><div class="ico">🔕</div><div><b>Sem bagunça</b><span>Só os administradores postam. Nada de spam nem conversa paralela.</span></div></div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Como funciona</h2>
+    <div class="steps">
+      <div class="step">Toque no botão verde “Entrar no WhatsApp”</div>
+      <div class="step">Confirme a entrada no grupo</div>
+      <div class="step">Receba os achadinhos e compre com desconto</div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Dúvidas frequentes</h2>
+    <details><summary>Precisa pagar alguma coisa?</summary><p>Não. O grupo é totalmente gratuito.</p></details>
+    <details><summary>Vou receber muitas mensagens?</summary><p>Só ofertas selecionadas. Se preferir, é só silenciar o grupo e olhar quando quiser.</p></details>
+    <details><summary>Os produtos são confiáveis?</summary><p>Os links levam direto para as lojas oficiais (Shopee, Mercado Livre, Amazon, Magalu). A compra e a entrega são feitas pela própria loja.</p></details>
+    <details><summary>Meu número fica visível?</summary><p>Usamos grupo de avisos/comunidade, onde só os administradores postam.</p></details>
+  </section>
+
+  <div class="cta-box">
+    <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">Quero entrar no grupo</a>
+  </div>
+
+  <footer>
+    Os preços e a disponibilidade podem mudar a qualquer momento nas lojas.<br>
+    Podemos receber comissão pelas compras feitas pelos links, sem custo extra pra você.
+  </footer>
+</div>
+
+<div class="sticky" id="sticky">
+  <a class="btn-wa" data-wa href="#" target="_blank" rel="noopener">Entrar no WhatsApp</a>
+</div>
+
+<script>
+  /* ======== EDITE AQUI ======== */
+  // Link de convite do seu grupo/comunidade do WhatsApp
+  const WHATSAPP_LINK = "https://chat.whatsapp.com/SEU-CODIGO-AQUI";
+
+  // Caminho ou URL da sua logo (deixe "" para usar o texto)
+  const LOGO = "";
+
+  // Produtos do carrossel. "imagem" pode ser uma URL; se ficar vazio, usa o emoji.
+  const PRODUTOS = [
+    { loja: "amazon",       nome: "Fone de Ouvido Bluetooth",  preco: 59.90,  de: 99.90,   emoji: "🎧", imagem: "" },
+    { loja: "magalu",       nome: "Smart TV 32 pol.",          preco: 799.00, de: 1299.00, emoji: "📺", imagem: "" },
+    { loja: "shopee",       nome: "Tênis Casual Feminino",     preco: 89.90,  de: 129.90,  emoji: "👟", imagem: "" },
+    { loja: "mercadolivre", nome: "Air Fryer 4L",              preco: 299.90, de: 459.90,  emoji: "🍟", imagem: "" },
+    { loja: "shopee",       nome: "Kit Skincare Completo",     preco: 49.90,  de: 89.90,   emoji: "🧴", imagem: "" },
+  ];
+  /* ============================ */
+
+  const LOJAS = {
+    amazon:       { nome: "amazon",        cor: "#232f3e" },
+    magalu:       { nome: "magalu",        cor: "#0086ff" },
+    shopee:       { nome: "Shopee",        cor: "#ee4d2d" },
+    mercadolivre: { nome: "Mercado Livre", cor: "#2d3277" },
+  };
+  const brl = v => v.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+
+  document.querySelectorAll("[data-wa]").forEach(a => a.href = WHATSAPP_LINK);
+  if (LOGO) document.getElementById("logo").innerHTML = `<img src="${LOGO}" alt="Logo">`;
+
+  const box = document.getElementById("carousel");
+  PRODUTOS.forEach(p => {
+    const loja = LOJAS[p.loja] || { nome: p.loja, cor: "#3b1a24" };
+    const off = p.de ? Math.round((1 - p.preco / p.de) * 100) : 0;
+    const el = document.createElement("article");
+    el.className = "card";
+    el.innerHTML = `
+      <div class="card-img">
+        ${off > 0 ? `<span class="off">-${off}%</span>` : ""}
+        ${p.imagem ? `<img src="${p.imagem}" alt="" loading="lazy">` : p.emoji || "🛍️"}
+      </div>
+      <div class="card-body">
+        <div class="store" style="color:${loja.cor}">${loja.nome}</div>
+        <div class="name"></div>
+        <div class="price">${brl(p.preco)}${p.de ? `<s>${brl(p.de)}</s>` : ""}</div>
+      </div>`;
+    el.querySelector(".name").textContent = p.nome;
+    box.appendChild(el);
+  });
+
+  // Mostra o botão fixo quando o botão principal sai da tela
+  const sticky = document.getElementById("sticky");
+  new IntersectionObserver(([e]) => sticky.classList.toggle("show", !e.isIntersecting))
+    .observe(document.getElementById("cta-top"));
+</script>
+</body>
+</html>
