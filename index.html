@@ -300,6 +300,7 @@
     .item-produto-nome{display:block;font-weight:700;font-size:13px;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .item-produto-nome:hover{color:var(--accent-dark)}
     .item-produto-link{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .item-produto-link-botao{display:inline-flex;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;background:#e0f2ff;color:#1d6fa5;text-decoration:none;font-size:12px;flex:none}
     .item-produto-publicacoes{display:block;font-size:11px;line-height:1.5;color:var(--text);white-space:normal;overflow-wrap:break-word}
     .item-produto-loja{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 7px;margin-top:3px}
     .item-produto-comissao{display:inline-block;font-size:11px;font-weight:700;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
@@ -2925,16 +2926,16 @@ function pillConcorrencia(concorrencia,afiliados){
   if(concorrencia===undefined||concorrencia===null||isNaN(concorrencia))return null;
   if(afiliados!==undefined&&afiliados!==null&&!isNaN(afiliados)&&afiliados>0){
     const taxa=concorrencia/afiliados;
-    const pct=Math.round(taxa*100);
-    const base=`${formatarInteiroBR(concorrencia)} de ${formatarInteiroBR(afiliados)} afiliados fizeram vídeo (${pct}%)`;
-    if(taxa<=0.15)return{classe:"ok",texto:`${base} · baixa concorrência`};
-    if(taxa<=0.4)return{classe:"warn",texto:`${base} · concorrência média`};
-    return{classe:"danger",texto:`${base} · concorrência alta`};
+    const texto=`${formatarInteiroBR(afiliados)} promovem · ${formatarInteiroBR(concorrencia)} vídeos`;
+    if(taxa<=0.15)return{classe:"ok",texto};
+    if(taxa<=0.4)return{classe:"warn",texto};
+    return{classe:"danger",texto};
   }
   const n=concorrencia;
-  if(n<=5)return{classe:"ok",texto:`${n} vídeo${n===1?"":"s"} ativo${n===1?"":"s"} · baixa concorrência`};
-  if(n<=20)return{classe:"warn",texto:`${n} vídeos ativos · concorrência média`};
-  return{classe:"danger",texto:`${n} vídeos ativos · concorrência alta`};
+  const texto=`${n} vídeo${n===1?"":"s"}`;
+  if(n<=5)return{classe:"ok",texto};
+  if(n<=20)return{classe:"warn",texto};
+  return{classe:"danger",texto};
 }
 
 function detectarLojaPeloLink(url){
@@ -3312,14 +3313,16 @@ function cardProdutoBanco(p){
         ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
         <div class="item-produto-info">
           ${p.link?`<a class="item-produto-nome" href="${p.link}" target="_blank" rel="noopener">${escaparBanco(p.nome)}</a>`:`<span class="item-produto-nome">${escaparBanco(p.nome)}</span>`}
+          ${p.link||(p.comissao!==undefined&&p.comissao!==null)?`<span style="display:flex;align-items:center;gap:6px;margin-top:3px">
+            ${p.link?`<a class="item-produto-link-botao" href="${p.link}" target="_blank" rel="noopener" title="Abrir link do produto">🔗</a>`:""}
+            ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<7?'baixa':''}">${p.comissao}%</span>`:""}
+          </span>`:""}
           ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
           ${rotuloCategoriaBanco(p)?`<span class="item-produto-categoria">${CATEGORIAS_EM_ALTA.has(rotuloCategoriaBanco(p))?"🔥 ":""}${escaparBanco(rotuloCategoriaBanco(p))}</span>`:""}
           ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${formatarPrecoBancoComMoeda(p.preco,p.loja)}</span>`:""}
-          ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<7?'baixa':''}">${p.comissao}%</span>`:""}
           ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao ${p.valorComissao<5?'baixa':''}">💰 ${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}${p.valorComissao<5?" ⚠️ abaixo do critério":""}</span>`:""}
           ${pillConcorrencia(p.concorrencia,p.afiliados)?`<span class="pill-dias ${pillConcorrencia(p.concorrencia,p.afiliados).classe}" style="display:inline-block;white-space:normal;margin-top:3px">🎥 ${pillConcorrencia(p.concorrencia,p.afiliados).texto}</span>`:""}
           ${p.afiliados!==undefined&&p.afiliados!==null&&(p.concorrencia===undefined||p.concorrencia===null)?`<span class="item-produto-link">👥 ${formatarInteiroBR(p.afiliados)} afiliados promovendo</span>`:""}
-          <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
         </div>
       </div>
       ${publicacoesHtml}
