@@ -1045,10 +1045,13 @@ function aplicarProdutoDoBanco(key){
   if(!id){bancoIdInput.value="";return}
   const produto=carregarBanco().find(p=>String(p.id)===id);
   if(!produto)return;
-  document.getElementById("produto-"+key).value=produto.nome||"";
+  // Se já tem nome/link/foto digitados (ex.: uma legenda escrita na mão), não sobrescreve —
+  // só vincula o bancoId, pra poder cruzar "onde foi publicado" sem perder o que já foi escrito.
+  const nomeEl=document.getElementById("produto-"+key);
+  if(!nomeEl.value.trim())nomeEl.value=produto.nome||"";
   const linkEl=document.getElementById("link-"+key);
-  if(linkEl&&produto.link)linkEl.value=produto.link;
-  if(produto.foto){
+  if(linkEl&&produto.link&&!linkEl.value.trim())linkEl.value=produto.link;
+  if(produto.foto&&!document.getElementById("foto-valor-"+key).value){
     document.getElementById("foto-valor-"+key).value=produto.foto;
     const prev=document.getElementById("foto-preview-"+key);
     prev.src=produto.foto;prev.style.display="block";
