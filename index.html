@@ -3009,7 +3009,7 @@ function rotuloCategoriaBanco(p){
 
 
 function renderizarOrdenacaoBanco(){
-  const opcoes=[{chave:"recentes",rotulo:"Recentes"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"categoria",rotulo:"Categoria"},{chave:"preco",rotulo:"Preço"},{chave:"nome",rotulo:"Nome"}];
+  const opcoes=[{chave:"recentes",rotulo:"Recentes"},{chave:"naopostado",rotulo:"Não postado"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"categoria",rotulo:"Categoria"},{chave:"preco",rotulo:"Preço"},{chave:"nome",rotulo:"Nome"}];
   const html='<span class="banco-ordenacao-label">Ordenar por:</span>'
     +opcoes.map(o=>{
       const ativo=ordenacaoAtual===o.chave;
@@ -3228,6 +3228,17 @@ function aplicarOrdenacao(lista){
     sorted.forEach((p,i)=>{const loja=p.loja||"__sem__";if(loja!==ultimaLoja){grupos.push({indice:i,rotulo:p.loja&&LOJAS_BANCO[p.loja]?LOJAS_BANCO[p.loja]:"Sem plataforma"});ultimaLoja=loja;}});
     return{itens:sorted,grupos};
   }
+  if(ordenacaoAtual==="naopostado"){
+    const comContagem=lista.map(p=>({p,qtd:publicacoesDoProdutoBanco(p.id).length}));
+    comContagem.sort((a,b)=>a.qtd-b.qtd);
+    const sorted=comContagem.map(x=>x.p);
+    const grupos=[];let ultimoGrupo=null;
+    comContagem.forEach((x,i)=>{
+      const grupo=x.qtd===0?"__zero__":"__algum__";
+      if(grupo!==ultimoGrupo){grupos.push({indice:i,rotulo:x.qtd===0?"🔴 Ainda não postado em nenhum canal":"✅ Já postado em algum canal"});ultimoGrupo=grupo;}
+    });
+    return{itens:sorted,grupos};
+  }
   if(ordenacaoAtual==="categoria"){
     const sorted=[...lista].sort((a,b)=>{
       const ra=(rotuloCategoriaBanco(a)||"").toLowerCase();
@@ -3287,7 +3298,7 @@ function cardProdutoBanco(p){
   const publicacoes=publicacoesDoProdutoBanco(p.id);
   const publicacoesHtml=publicacoes.length
     ?`<div class="item-produto-link" style="display:block"><strong>📍 Onde foi publicado:</strong><br>${publicacoes.slice(0,4).map(pub=>`${pub.status==="publicado"?"✅":"🕐"} ${escaparBanco(pub.canal)}${pub.data?` — ${isoParaBR(pub.data)}`:""}`).join("<br>")}${publicacoes.length>4?`<br>+${publicacoes.length-4} outra(s)`:""}</div>`
-    :"";
+    :`<div class="item-produto-link" style="display:block;color:var(--danger);font-weight:700">🔴 Ainda não postado em nenhum canal</div>`;
   return `<div class="item-produto${p.publicado?' publicado':''}">
       ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
       <div class="item-produto-info">
