@@ -190,6 +190,11 @@
     .relatorio-contador-cols{display:flex;gap:16px}
     .relatorio-contador-cols>div{flex:1;min-width:0}
     .relatorio-contador-linha{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
+    .relatorio-contador-linha.pagina-garimpo,.relatorio-contador-linha.pagina-dashein,.relatorio-contador-linha.pagina-cleverfinds,.relatorio-contador-linha.pagina-casamix{border-bottom:none;border-radius:10px;padding:7px 9px;margin-bottom:6px}
+    .relatorio-contador-linha.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
+    .relatorio-contador-linha.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
+    .relatorio-contador-linha.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
+    .relatorio-contador-linha.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
     .relatorio-contador-linha span{color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .relatorio-contador-linha strong{color:var(--accent-dark);font-weight:800;flex:none}
     .pill-dias{flex:none;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
@@ -1993,12 +1998,15 @@ function toggleContadorPagina(paginaId){
   seta.textContent=aberto?"▸":"▾";
 }
 
+const CONTA_PAGINA_EXTRA={insta_garimpo:"garimpo",shopee_video:"garimpo",tiktok_garimpo:"garimpo",pinterest_garimpo:"garimpo",insta_dashein:"dashein"};
+
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
   const linha=(id,nomeOverride)=>{
     const c=CONTAS[id];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
-    return `<div class="relatorio-contador-linha"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
+    const paginaKey=CONTA_PAGINA_EXTRA[id]||"";
+    return `<div class="relatorio-contador-linha${paginaKey?` pagina-${paginaKey}`:""}"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
   };
   const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
 
