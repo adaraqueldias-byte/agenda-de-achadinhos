@@ -26,6 +26,14 @@
       --warn-soft:#fdf0dc;
       --danger:#c62828;
       --danger-soft:#fbe4e4;
+      --pagina-garimpo:#ffb37a;
+      --pagina-garimpo-bg:#fff8f3;
+      --pagina-dashein:#9db3f0;
+      --pagina-dashein-bg:#f5f7ff;
+      --pagina-cleverfinds:#7ecba6;
+      --pagina-cleverfinds-bg:#f3fbf7;
+      --pagina-casamix:#e0c158;
+      --pagina-casamix-bg:#fffbf0;
     }
     *{box-sizing:border-box}
     body{
@@ -57,6 +65,14 @@
       margin-bottom:13px;
       box-shadow:0 6px 18px rgba(139,92,246,.08)
     }
+    .card.pagina-garimpo{border-left:5px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
+    .card.pagina-dashein{border-left:5px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
+    .card.pagina-cleverfinds{border-left:5px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
+    .card.pagina-casamix{border-left:5px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
+    .relatorio-pagina-bloco.pagina-garimpo{border-left:5px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg);padding-left:8px;margin-left:-8px;border-radius:0 10px 10px 0}
+    .relatorio-pagina-bloco.pagina-dashein{border-left:5px solid var(--pagina-dashein);background:var(--pagina-dashein-bg);padding-left:8px;margin-left:-8px;border-radius:0 10px 10px 0}
+    .relatorio-pagina-bloco.pagina-cleverfinds{border-left:5px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg);padding-left:8px;margin-left:-8px;border-radius:0 10px 10px 0}
+    .relatorio-pagina-bloco.pagina-casamix{border-left:5px solid var(--pagina-casamix);background:var(--pagina-casamix-bg);padding-left:8px;margin-left:-8px;border-radius:0 10px 10px 0}
     label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
     input,textarea{
       width:100%;
@@ -1199,6 +1215,15 @@ function adicionarExtraPool(parentId){
   salvarSemana();
 }
 
+function paginaKeyPeloTipo(tipo){
+  if(!tipo)return"";
+  if(tipo.startsWith("Garimpo do Dia"))return"garimpo";
+  if(tipo.startsWith("Shein"))return"dashein";
+  if(tipo.startsWith("Clever Finds"))return"cleverfinds";
+  if(tipo.startsWith("CasaMix"))return"casamix";
+  return"";
+}
+
 function slotTemplate(slot,extraHtml){
   const total=totalItensSlot(slot);
   const itensHtml=Array.from({length:total},(_,i)=>itemProdutoSlotTemplate(slot,i,total)).join("");
@@ -1212,7 +1237,8 @@ function slotTemplate(slot,extraHtml){
       </div>
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>`;
-  const cardHtml=`<section class="card">
+  const paginaKey=paginaKeyPeloTipo(slot.tipo);
+  const cardHtml=`<section class="card${paginaKey?` pagina-${paginaKey}`:""}">
     ${cabecalhoHtml}
     <div class="slot-destinos-linha">
       <div class="slot-destinos">${destinosChipsHtml(slot)}</div>
@@ -1997,7 +2023,8 @@ function renderizarContadorCanais(){
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
     const grupoIds=PAGINA_GRUPOS_RELATORIO[paginaId];
     const gruposHtml=grupoIds.map(id=>linha(id)).join("");
-    return `<div class="relatorio-pagina-bloco">
+    const paginaKey=paginaId.replace(/^face_/,"");
+    return `<div class="relatorio-pagina-bloco pagina-${paginaKey}">
       <div class="relatorio-pagina-header-row">
         <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
           <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
