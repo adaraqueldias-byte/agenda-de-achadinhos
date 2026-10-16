@@ -2464,19 +2464,34 @@ function renderizarAnotacoesArquivadas(){
 function imprimirRelatorioDoDia(){
   const data=relatorioDataAtual();
   const r=relatorioDoDia(data);
-  if(r.posts.length===0){alert("Nenhum post registrado nesse dia ainda.");return}
+  if(r.posts.length===0){alert("Nenhum post registrado nesse dia ainda. Digite a data no campo acima e confira se a lista \"Posts feitos no dia\" mostra os posts antes de imprimir.");return}
   const[ano,mes,dia]=data.split("-");
   const linhas=r.posts.map(post=>{
     const p=rotuloPostRelatorio(post);
     const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:"",p.cliques!==undefined?`🖱️ ${p.cliques} cliques`:"",p.vendas!==undefined?`🛒 ${p.vendas} vendas`:"",p.comissaoRecebida!==undefined?`💰 ${formatarPrecoBR(p.comissaoRecebida)} recebido`:"",p.gastoAnuncio!==undefined?`📣 ${formatarPrecoBR(p.gastoAnuncio)} em anúncio`:""].filter(Boolean).join(" · ");
-    return `<p>${p.canal?`<strong>${escaparBanco(p.canal)}</strong><br>`:""}${escaparBanco(p.texto)}${meta?`<br><span style="font-size:12px;color:#555">${meta}</span>`:""}</p>`;
+    return `<div class="post">${p.canal?`<span class="canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${meta?`<span class="meta">${meta}</span>`:""}</div>`;
   }).join("");
-  const notasHtml=(r.notas||"").trim()?`<p><strong>Anotações do dia</strong><br>${escaparBanco(r.notas).replace(/\n/g,"<br>")}</p>`:"";
-  document.getElementById("anotacoes-imprimir-conteudo").innerHTML=`<p><strong>Relatório de ${dia}/${mes}/${ano}</strong></p>${linhas}${notasHtml}`;
-  const overlay=document.getElementById("anotacoes-imprimir");
-  overlay.style.display="block";
-  window.onafterprint=()=>{overlay.style.display="none";window.onafterprint=null;};
-  window.print();
+  const notasHtml=(r.notas||"").trim()?`<div class="notas"><strong>Anotações do dia</strong><br>${escaparBanco(r.notas).replace(/\n/g,"<br>")}</div>`:"";
+  const html=`<!doctype html><html><head><meta charset="utf-8"><title>Relatório ${dia}/${mes}/${ano}</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;padding:24px;color:#222;max-width:700px;margin:0 auto}
+    h1{font-size:19px;margin:0 0 16px}
+    .post{margin-bottom:13px;padding-bottom:11px;border-bottom:1px solid #ddd}
+    .canal{font-weight:700;display:block;margin-bottom:2px}
+    .meta{font-size:12px;color:#555;display:block;margin-top:3px}
+    .notas{margin-top:22px;padding-top:12px;border-top:2px solid #333;font-size:13px;white-space:pre-line}
+  </style></head><body>
+  <h1>Relatório de ${dia}/${mes}/${ano}</h1>
+  ${linhas}
+  ${notasHtml}
+  </body></html>`;
+  const janela=window.open("","_blank");
+  if(!janela){alert("Não consegui abrir a janela de impressão — o navegador pode ter bloqueado o pop-up. Verifique as configurações do navegador e tente de novo.");return}
+  janela.document.open();
+  janela.document.write(html);
+  janela.document.close();
+  janela.focus();
+  setTimeout(()=>{janela.print();},250);
 }
 
 function imprimirAnotacoes(){
