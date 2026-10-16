@@ -982,6 +982,23 @@ function atualizarTodosSelectsProdutoBanco(){
   });
 }
 
+function resincronizarSelectsProdutoBanco(){
+  document.querySelectorAll('select[id^="produto-banco-"]').forEach(sel=>{
+    if(!sel.value)return;
+    const key=sel.id.replace(/^produto-banco-/,"");
+    const bancoIdInput=document.getElementById("bancoId-"+key);
+    const nomeInput=document.getElementById("produto-"+key);
+    if(!bancoIdInput||!nomeInput)return;
+    // o navegador (celular) às vezes restaura visualmente o select sem disparar o "change" —
+    // aqui a gente detecta essa inconsistência (seleção visível mas bancoId não bate) e corrige sozinho
+    if(bancoIdInput.value!==sel.value){
+      aplicarProdutoDoBanco(key);
+    }
+  });
+}
+window.addEventListener("pageshow",resincronizarSelectsProdutoBanco);
+document.addEventListener("visibilitychange",()=>{if(document.visibilityState==="visible")resincronizarSelectsProdutoBanco();});
+
 function aplicarProdutoDoBanco(key){
   const sel=document.getElementById("produto-banco-"+key);
   const bancoIdInput=document.getElementById("bancoId-"+key);
