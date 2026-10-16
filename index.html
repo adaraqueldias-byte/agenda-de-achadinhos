@@ -174,6 +174,10 @@
     .simulador-lucro{color:#166534;font-weight:700}
     .simulador-prejuizo{color:#991b1b;font-weight:700}
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:0;font-size:13px;background:#fffafb}
+    .relatorio-post-item.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
+    .relatorio-post-item.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
+    .relatorio-post-item.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
+    .relatorio-post-item.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
     .relatorio-post-item-wrap{margin-bottom:7px}
     .relatorio-post-metricas{background:#fdf2f4;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:10px 12px;margin-top:-1px}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -1990,6 +1994,43 @@ const PAGINA_GRUPOS_RELATORIO={
   face_casamix:["grupo_achadinhos_casa","grupo_ofertas_casa"],
 };
 
+const CONTA_PAGINA_EXTRA={insta_garimpo:"garimpo",shopee_video:"garimpo",tiktok_garimpo:"garimpo",pinterest_garimpo:"garimpo",insta_dashein:"dashein"};
+
+const CONTA_PAGINA=(()=>{
+  const mapa={};
+  Object.entries(PAGINA_GRUPOS_RELATORIO).forEach(([paginaId,grupoIds])=>{
+    const key=paginaId.replace(/^face_/,"");
+    mapa[paginaId]=key;
+    grupoIds.forEach(gid=>mapa[gid]=key);
+  });
+  Object.assign(mapa,CONTA_PAGINA_EXTRA);
+  mapa.garimpo_extras="garimpo";
+  mapa.casamix_extras="casamix";
+  mapa.cleverfinds_extras="cleverfinds";
+  return mapa;
+})();
+
+function resolverContaIdPeloCanal(canalTexto){
+  const norm=normalizarTexto(canalTexto);
+  if(!norm)return null;
+  for(const[id,c]of Object.entries(CONTAS)){
+    if(normalizarTexto(chaveConta(c))===norm)return id;
+  }
+  for(const[id,c]of Object.entries(CONTAS)){
+    if(normalizarTexto(c.nome)===norm)return id;
+  }
+  for(const[id,c]of Object.entries(CONTAS)){
+    const nomeNorm=normalizarTexto(c.nome);
+    if(nomeNorm.length>=4&&(norm.includes(nomeNorm)||nomeNorm.includes(norm)))return id;
+  }
+  return null;
+}
+
+function paginaKeyPeloCanalRelatorio(canalTexto){
+  const id=resolverContaIdPeloCanal(canalTexto);
+  return id?(CONTA_PAGINA[id]||""):"";
+}
+
 function toggleContadorPagina(paginaId){
   const corpo=document.getElementById("contador-grupos-"+paginaId);
   const seta=document.getElementById("contador-seta-"+paginaId);
@@ -1998,14 +2039,12 @@ function toggleContadorPagina(paginaId){
   seta.textContent=aberto?"▸":"▾";
 }
 
-const CONTA_PAGINA_EXTRA={insta_garimpo:"garimpo",shopee_video:"garimpo",tiktok_garimpo:"garimpo",pinterest_garimpo:"garimpo",insta_dashein:"dashein"};
-
 function renderizarContadorCanais(){
   const ultimas=ultimaDataPorCanal();
   const linha=(id,nomeOverride)=>{
     const c=CONTAS[id];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
-    const paginaKey=CONTA_PAGINA_EXTRA[id]||"";
+    const paginaKey=CONTA_PAGINA[id]||"";
     return `<div class="relatorio-contador-linha${paginaKey?` pagina-${paginaKey}`:""}"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
   };
   const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
@@ -2072,8 +2111,9 @@ function renderizarRelatorio(){
       const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:"",p.cliques!==undefined?`🖱️ ${p.cliques} cliques`:"",p.vendas!==undefined?`🛒 ${p.vendas} vendas`:"",p.comissaoRecebida!==undefined?`💰 ${formatarPrecoBR(p.comissaoRecebida)} recebido`:"",p.gastoAnuncio!==undefined?`📣 ${formatarPrecoBR(p.gastoAnuncio)} em anúncio`:""].filter(Boolean).join(" · ");
       const atualizacao=p.dataAtualizacaoMetricas?`<span class="relatorio-post-meta" style="display:block;margin-top:2px">🔄 atualizado em ${isoParaBR(p.dataAtualizacaoMetricas)}</span>`:"";
       const linkHtml=p.link?`<a class="relatorio-post-meta" href="${escaparBanco(p.link)}" target="_blank" rel="noopener" style="display:block">🔗 ${escaparBanco(p.link)}</a>`:"";
+      const paginaKey=paginaKeyPeloCanalRelatorio(p.canal);
       return `<div class="relatorio-post-item-wrap">
-        <div class="relatorio-post-item">
+        <div class="relatorio-post-item${paginaKey?` pagina-${paginaKey}`:""}">
           <div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${linkHtml}${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}${atualizacao}</div>
           <div style="display:flex;gap:4px;flex:none">
             <button type="button" class="relatorio-post-remover" onclick="toggleMetricasPostRelatorio(${i})" title="Editar métricas">✏️</button>
