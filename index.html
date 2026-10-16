@@ -288,25 +288,25 @@
     /* Banco de produtos */
     select{width:100%;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:15px;background:#fffafb;font-family:inherit;color:var(--text)}
     select:focus{outline:2px solid var(--accent-soft);border-color:var(--accent)}
-    .item-produto{display:flex;flex-direction:column;gap:8px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:10px 12px;margin-bottom:8px;box-shadow:0 4px 10px rgba(139,92,246,.06)}
+    .item-produto{display:flex;flex-direction:column;gap:6px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:9px 11px;margin-bottom:8px;box-shadow:0 4px 10px rgba(139,92,246,.06)}
     .item-produto.publicado{border-color:var(--ok);background:#f0fdf4}
-    .item-produto-linha{display:flex;align-items:flex-start;gap:12px}
+    .item-produto-linha{display:flex;align-items:center;gap:10px}
     .item-produto-publicado{display:block;margin-top:5px;font-size:11px;font-weight:700;border:none;background:none;color:var(--muted);padding:0;cursor:pointer;text-align:left}
     .item-produto-publicado.sim{color:var(--ok)}
-    .item-produto-foto{width:48px;height:48px;border-radius:10px;object-fit:cover;flex:none;background:var(--accent-soft)}
+    .item-produto-foto{width:40px;height:40px;border-radius:9px;object-fit:cover;flex:none;background:var(--accent-soft)}
     .item-produto-foto.vazio{display:flex;align-items:center;justify-content:center;font-size:20px}
     .item-produto-info{flex:1;min-width:0}
     .item-produto-nome{display:block;font-weight:700;font-size:14px;color:var(--text);text-decoration:none;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .item-produto-nome:hover{color:var(--accent-dark)}
     .item-produto-link{display:block;font-size:11px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
     .item-produto-publicacoes{display:block;font-size:11px;line-height:1.5;color:var(--text);white-space:normal;overflow-wrap:break-word}
-    .item-produto-loja{display:inline-block;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 8px;margin-top:3px}
-    .item-produto-comissao{display:inline-block;font-size:10px;font-weight:700;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
+    .item-produto-loja{display:inline-block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.3px;background:var(--accent-soft);color:#7d214f;border-radius:999px;padding:2px 7px;margin-top:3px}
+    .item-produto-comissao{display:inline-block;font-size:11px;font-weight:700;background:#dcfce7;color:#166534;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
     .item-produto-comissao.baixa{background:#fee2e2;color:#991b1b}
-    .item-produto-preco{display:inline-block;font-size:10px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
-    .item-produto-categoria{display:inline-block;font-size:10px;font-weight:700;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 8px;margin-top:3px;margin-left:4px}
-    .item-produto-acoes{flex:none;display:flex;gap:6px;justify-content:flex-end}
-    .item-produto-icone{width:32px;height:32px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .item-produto-preco{display:inline-block;font-size:11px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
+    .item-produto-categoria{display:inline-block;font-size:11px;font-weight:700;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
+    .item-produto-acoes{flex:none;display:flex;gap:5px;justify-content:flex-end}
+    .item-produto-icone{width:28px;height:28px;border-radius:7px;border:none;font-size:13px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
     .item-produto-lixeira{background:#ffe2e2;color:var(--danger)}
     .item-produto-editar{background:var(--accent-soft);color:#7d214f}
     .item-produto-copiar{background:#e0f2ff;color:#1d6fa5}
@@ -1069,18 +1069,18 @@ function itemDisplayHTML(key){
   const link=linkEl?linkEl.value:"";
   const foto=document.getElementById("foto-valor-"+key).value;
   return `
-    <div class="item-produto-acoes">
-      <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
-      ${link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkItemSlot('${key}')">🔗</button>`:""}
-      <button class="item-produto-icone item-produto-editar" onclick="mostrarItemEdicao('${key}')">✏️</button>
-      <button class="item-produto-icone item-produto-lixeira" onclick="limparItemSlot('${key}')">🗑️</button>
-    </div>
     <div class="item-produto-linha">
       ${foto?`<img class="item-produto-foto" src="${foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
       <div class="item-produto-info">
         ${link?`<a class="item-produto-nome" href="${link}" target="_blank" rel="noopener">${escaparBanco(nome||"(sem nome)")}</a>`:`<span class="item-produto-nome">${escaparBanco(nome||"(sem nome)")}</span>`}
         <span class="item-produto-link">${link?escaparBanco(link):"sem link"}</span>
       </div>
+    </div>
+    <div class="item-produto-acoes">
+      <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
+      ${link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkItemSlot('${key}')">🔗</button>`:""}
+      <button class="item-produto-icone item-produto-editar" onclick="mostrarItemEdicao('${key}')">✏️</button>
+      <button class="item-produto-icone item-produto-lixeira" onclick="limparItemSlot('${key}')">🗑️</button>
     </div>
   `;
 }
@@ -3307,12 +3307,6 @@ function cardProdutoBanco(p){
     ?`<div class="item-produto-publicacoes"><strong>📍 Onde foi publicado:</strong><br>${publicacoes.slice(0,4).map(pub=>`${pub.status==="publicado"?"✅":"🕐"} ${escaparBanco(pub.canal)}${pub.data?` — ${isoParaBR(pub.data)}`:""}`).join("<br>")}${publicacoes.length>4?`<br>+${publicacoes.length-4} outra(s)`:""}</div>`
     :`<div class="item-produto-publicacoes" style="color:var(--danger)">🔴 Ainda não postado em nenhum canal</div>`;
   return `<div class="item-produto${p.publicado?' publicado':''}">
-      <div class="item-produto-acoes">
-        <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeBanco(${p.id})">📋</button>
-        ${p.link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkBanco(${p.id})">🔗</button>`:""}
-        <button class="item-produto-icone item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
-        <button class="item-produto-icone item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
-      </div>
       <div class="item-produto-linha">
         ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
         <div class="item-produto-info">
@@ -3326,6 +3320,12 @@ function cardProdutoBanco(p){
           ${p.afiliados!==undefined&&p.afiliados!==null&&(p.concorrencia===undefined||p.concorrencia===null)?`<span class="item-produto-link">👥 ${formatarInteiroBR(p.afiliados)} afiliados promovendo</span>`:""}
           <span class="item-produto-link">${p.link?escaparBanco(p.link):"sem link"}</span>
         </div>
+      </div>
+      <div class="item-produto-acoes">
+        <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeBanco(${p.id})">📋</button>
+        ${p.link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkBanco(${p.id})">🔗</button>`:""}
+        <button class="item-produto-icone item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
+        <button class="item-produto-icone item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
       </div>
       ${publicacoesHtml}
       <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
