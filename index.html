@@ -292,7 +292,7 @@
     .item-produto.publicado{border-color:var(--ok);background:#f0fdf4}
     .item-produto-linha{display:flex;align-items:center;gap:10px}
     .item-produto-rodape{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:2px}
-    .item-produto-publicado{display:block;font-size:11px;font-weight:700;border:none;background:none;color:var(--muted);padding:0;cursor:pointer;text-align:left}
+    .item-produto-publicado{display:block;font-size:11px;font-weight:700;color:var(--muted);text-align:left}
     .item-produto-publicado.sim{color:var(--ok)}
     .item-produto-foto{width:44px;height:44px;border-radius:9px;object-fit:cover;flex:none;background:var(--accent-soft)}
     .item-produto-foto.vazio{display:flex;align-items:center;justify-content:center;font-size:20px}
@@ -2813,16 +2813,6 @@ function removerProdutoBanco(id){
   renderizarBanco();
 }
 
-function togglePublicadoBanco(id){
-  const lista=carregarBanco();
-  const item=lista.find(p=>p.id===id);
-  if(!item)return;
-  item.publicado=!item.publicado;
-  const salvou=salvarBanco(lista);
-  if(!salvou){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
-  renderizarBanco();
-}
-
 function escaparBanco(s){return String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]))}
 
 function parsePrecoBR(texto){
@@ -3305,10 +3295,11 @@ function publicacoesDoProdutoBanco(bancoId){
 
 function cardProdutoBanco(p){
   const publicacoes=publicacoesDoProdutoBanco(p.id);
+  const publicado=publicacoes.length>0;
   const publicacoesHtml=publicacoes.length
     ?`<div class="item-produto-publicacoes"><strong>📍 Onde foi publicado:</strong><br>${publicacoes.slice(0,4).map(pub=>`${pub.status==="publicado"?"✅":"🕐"} ${escaparBanco(pub.canal)}${pub.data?` — ${isoParaBR(pub.data)}`:""}`).join("<br>")}${publicacoes.length>4?`<br>+${publicacoes.length-4} outra(s)`:""}</div>`
     :`<div class="item-produto-publicacoes" style="color:var(--danger)">🔴</div>`;
-  return `<div class="item-produto${p.publicado?' publicado':''}">
+  return `<div class="item-produto${publicado?' publicado':''}">
       <div class="item-produto-linha">
         ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
         <div class="item-produto-info">
@@ -3323,7 +3314,7 @@ function cardProdutoBanco(p){
       </div>
       ${publicacoesHtml}
       <div class="item-produto-rodape">
-        <button class="item-produto-publicado${p.publicado?' sim':''}" onclick="togglePublicadoBanco(${p.id})">${p.publicado?"✅ Publicado":"☐ Marcar como publicado"}</button>
+        <span class="item-produto-publicado${publicado?' sim':''}">${publicado?"✅ Publicado":"⬜ Ainda não publicado"}</span>
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeBanco(${p.id})">📋</button>
           ${p.link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkBanco(${p.id})">🔗</button>`:""}
