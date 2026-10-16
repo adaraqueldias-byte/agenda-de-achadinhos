@@ -1330,13 +1330,6 @@ function ciclarStatusDestino(slotId,destId){
   const dataInput=document.getElementById(`data-destino-${slotId}-${destId}`);
   const horarioInput=document.getElementById(`horario-destino-${slotId}-${destId}`);
   const novoStatus=PROXIMO_STATUS_DESTINO[input.value||"nada"];
-  if(novoStatus!=="nada"){
-    const slot=SLOTS.find(s=>s.id===slotId);
-    if(slot&&!nomeProdutoDoSlot(slot)){
-      alert("Preenche o nome do produto antes de marcar esse status.");
-      return;
-    }
-  }
   if(novoStatus==="agendado"&&!dataInput.value){
     const hoje=new Date();
     dataInput.value=hoje.getFullYear()+"-"+String(hoje.getMonth()+1).padStart(2,"0")+"-"+String(hoje.getDate()).padStart(2,"0");
