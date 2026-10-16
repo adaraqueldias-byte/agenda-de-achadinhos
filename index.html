@@ -1808,7 +1808,14 @@ function mostrarView(nome){
 }
 
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
-function salvarRelatorios(dados){localStorage.setItem("agenda-achadinhos-relatorios",JSON.stringify(dados))}
+function salvarRelatorios(dados){
+  try{
+    localStorage.setItem("agenda-achadinhos-relatorios",JSON.stringify(dados));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
 
 function isoParaBR(iso){
   if(!iso)return "";
@@ -2483,7 +2490,9 @@ function salvarRelatorioAtual(){
   const todos=carregarRelatorios();
   if(!todos[data])todos[data]={posts:[],notas:""};
   todos[data].notas=document.getElementById("relatorio-notas").value;
-  salvarRelatorios(todos);
+  const salvou=salvarRelatorios(todos);
+  if(!salvou)mostrarStatusNotas("⚠️ Não salvou — memória do navegador está cheia. Apague fotos antigas do Banco de Produtos.");
+  return salvou;
 }
 
 function mostrarStatusNotas(texto){
