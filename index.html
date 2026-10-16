@@ -479,6 +479,7 @@
         </div>
         <p class="tip" style="margin-top:4px">O que define a concorrência real é o nº de vídeos ativos, não o de afiliados — pode ter muito afiliado cadastrado e pouco vídeo de verdade.</p>
       </div>
+      <div id="banco-rascunho-status" class="status"></div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
       <button class="secondary" id="banco-btn-cancelar" style="width:100%;margin-top:8px;display:none" onclick="cancelarEdicaoBanco()">Cancelar edição</button>
     </section>
@@ -2530,7 +2531,71 @@ function onFotoBanco(input){
     const prev=document.getElementById("banco-foto-preview");
     prev.src=dataUrl;prev.style.display="block";
     document.getElementById("banco-foto-placeholder").style.display="none";
+    salvarRascunhoBanco();
   });
+}
+
+// ===== Rascunho do formulário do Banco (sobrevive a fechar/trocar de app no meio do cadastro) =====
+function coletarRascunhoBanco(){
+  return{
+    nome:document.getElementById("banco-nome").value,
+    link:document.getElementById("banco-link").value,
+    loja:document.getElementById("banco-loja").value,
+    categoria:document.getElementById("banco-categoria").value,
+    data:document.getElementById("banco-data").value,
+    preco:document.getElementById("banco-preco").value,
+    comissao:document.getElementById("banco-comissao").value,
+    valorComissao:document.getElementById("banco-valor-comissao").value,
+    concorrencia:document.getElementById("banco-concorrencia").value,
+    afiliados:document.getElementById("banco-afiliados").value,
+    foto:bancoFotoAtual||"",
+    editandoId:bancoEditandoId
+  };
+}
+function rascunhoBancoEstaVazio(r){
+  return!r.nome&&!r.link&&!r.loja&&!r.categoria&&!r.preco&&!r.comissao&&!r.valorComissao&&!r.concorrencia&&!r.afiliados&&!r.foto;
+}
+function salvarRascunhoBanco(){
+  const r=coletarRascunhoBanco();
+  if(rascunhoBancoEstaVazio(r)){localStorage.removeItem("agenda-achadinhos-banco-rascunho");return}
+  try{
+    localStorage.setItem("agenda-achadinhos-banco-rascunho",JSON.stringify(r));
+  }catch(e){
+    try{localStorage.setItem("agenda-achadinhos-banco-rascunho",JSON.stringify({...r,foto:""}));}catch(e2){}
+  }
+}
+function limparRascunhoBanco(){localStorage.removeItem("agenda-achadinhos-banco-rascunho")}
+function restaurarRascunhoBanco(){
+  let r;
+  try{r=JSON.parse(localStorage.getItem("agenda-achadinhos-banco-rascunho")||"null");}catch{r=null}
+  if(!r||rascunhoBancoEstaVazio(r))return;
+  document.getElementById("banco-nome").value=r.nome||"";
+  document.getElementById("banco-link").value=r.link||"";
+  document.getElementById("banco-loja").value=r.loja||"";
+  atualizarLabelPreco();
+  document.getElementById("banco-categoria").value=r.categoria||"";
+  if(r.data)document.getElementById("banco-data").value=r.data;
+  document.getElementById("banco-preco").value=r.preco||"";
+  document.getElementById("banco-comissao").value=r.comissao||"";
+  document.getElementById("banco-valor-comissao").value=r.valorComissao||"";
+  document.getElementById("banco-concorrencia").value=r.concorrencia||"";
+  document.getElementById("banco-afiliados").value=r.afiliados||"";
+  atualizarVisibilidadeConcorrencia();
+  bancoNomeAutoPreenchido=false;
+  bancoLojaAutoPreenchida=false;
+  if(r.foto){
+    bancoFotoAtual=r.foto;
+    const prev=document.getElementById("banco-foto-preview");
+    prev.src=r.foto;prev.style.display="block";
+    document.getElementById("banco-foto-placeholder").style.display="none";
+  }
+  if(r.editandoId!==null&&r.editandoId!==undefined&&carregarBanco().some(p=>p.id===r.editandoId)){
+    bancoEditandoId=r.editandoId;
+    document.getElementById("banco-btn-salvar").textContent="Salvar alterações";
+    document.getElementById("banco-btn-cancelar").style.display="block";
+  }
+  const status=document.getElementById("banco-rascunho-status");
+  if(status)status.textContent="↩️ Recuperamos o que você estava digitando antes de sair.";
 }
 
 function carregarBanco(){return JSON.parse(localStorage.getItem("agenda-achadinhos-banco-produtos")||"[]")}
@@ -2582,6 +2647,8 @@ function limparFormBanco(){
   bancoEditandoId=null;
   document.getElementById("banco-btn-salvar").textContent="+ Adicionar ao banco";
   document.getElementById("banco-btn-cancelar").style.display="none";
+  document.getElementById("banco-rascunho-status").textContent="";
+  limparRascunhoBanco();
 }
 
 function adicionarProdutoBanco(){
@@ -3223,6 +3290,20 @@ document.getElementById("view-semana").addEventListener("input",e=>{
   }
 });
 
+// Salva um rascunho do formulário do Banco enquanto a pessoa digita, pra não perder
+// tudo se ela sair do app (pra copiar dado de outro lugar) e o navegador fechar a aba sozinho
+let autoSalvarRascunhoBancoTimeout=null;
+document.getElementById("view-banco").addEventListener("input",e=>{
+  const id=e.target.id||"";
+  if(/^banco-(nome|link|loja|categoria|data|preco|comissao|valor-comissao|concorrencia|afiliados)$/.test(id)){
+    clearTimeout(autoSalvarRascunhoBancoTimeout);
+    autoSalvarRascunhoBancoTimeout=setTimeout(salvarRascunhoBanco,500);
+  }
+});
+document.getElementById("view-banco").addEventListener("change",e=>{
+  if(e.target.id==="banco-loja")salvarRascunhoBanco();
+});
+
 montarTela();
 diaAtualISO=dataParaIso(new Date());
 date.value=segundaFeiraDeHoje();
@@ -3231,6 +3312,7 @@ carregarSemana();
 abrirApenasDia(CHAVE_DIA_POR_INDICE[new Date().getDay()]);
 document.getElementById("banco-data").max=hojeIsoBanco();
 document.getElementById("banco-data").value=hojeIsoBanco();
+restaurarRascunhoBanco();
 renderizarLinhasLote();
 popularSelectsFormatoRelatorio();
 popularSelectDestinoExternos();
