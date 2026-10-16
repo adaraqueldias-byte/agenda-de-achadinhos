@@ -500,12 +500,12 @@
         <div class="field"><label>Comissão (%)</label><input id="banco-comissao" type="number" min="0" max="100" step="0.1" placeholder="Ex.: 12" oninput="calcularComissaoAutomatica()"></div>
         <div class="field"><label id="banco-valor-comissao-label">Valor da comissão (R$)</label><input id="banco-valor-comissao" type="text" inputmode="decimal" placeholder="Calculado sozinho, mas pode editar"></div>
       </div>
-      <div id="banco-concorrencia-bloco" style="display:none">
+      <div id="banco-concorrencia-bloco">
         <div class="grid">
           <div class="field"><label>👥 Afiliados promovendo</label><input id="banco-afiliados" type="text" inputmode="numeric" placeholder="Ex.: 8.200"></div>
           <div class="field"><label>🎥 Vídeos ativos</label><input id="banco-concorrencia" type="text" inputmode="numeric" placeholder="Ex.: 5"></div>
         </div>
-        <p class="tip" style="margin-top:4px">O que define a concorrência real é o nº de vídeos ativos, não o de afiliados — pode ter muito afiliado cadastrado e pouco vídeo de verdade.</p>
+        <p class="tip" style="margin-top:4px">Esse dado costuma vir do painel de afiliados da Shopee. O que define a concorrência real é o nº de vídeos ativos, não o de afiliados — pode ter muito afiliado cadastrado e pouco vídeo de verdade.</p>
       </div>
       <div id="banco-rascunho-status" class="status"></div>
       <button class="primary" id="banco-btn-salvar" style="width:100%" onclick="adicionarProdutoBanco()">+ Adicionar ao banco</button>
@@ -2665,7 +2665,6 @@ function restaurarRascunhoBanco(){
   document.getElementById("banco-valor-comissao").value=r.valorComissao||"";
   document.getElementById("banco-concorrencia").value=r.concorrencia||"";
   document.getElementById("banco-afiliados").value=r.afiliados||"";
-  atualizarVisibilidadeConcorrencia();
   bancoNomeAutoPreenchido=false;
   bancoLojaAutoPreenchida=false;
   if(r.foto){
@@ -2791,7 +2790,6 @@ function editarProdutoBanco(id){
   document.getElementById("banco-valor-comissao").value=item.valorComissao!==undefined&&item.valorComissao!==null?formatarPrecoBanco(item.valorComissao,item.loja):"";
   document.getElementById("banco-concorrencia").value=item.concorrencia!==undefined&&item.concorrencia!==null?formatarInteiroBR(item.concorrencia):"";
   document.getElementById("banco-afiliados").value=item.afiliados!==undefined&&item.afiliados!==null?formatarInteiroBR(item.afiliados):"";
-  atualizarVisibilidadeConcorrencia();
   bancoFotoAtual=item.foto||"";
   const prev=document.getElementById("banco-foto-preview");
   if(item.foto){prev.src=item.foto;prev.style.display="block";document.getElementById("banco-foto-placeholder").style.display="none"}
@@ -2903,13 +2901,7 @@ function atualizarLabelPreco(){
     labelComissao.textContent="Valor da comissão (R$)";
   }
   atualizarVisibilidadeComissaoAmazon();
-  atualizarVisibilidadeConcorrencia();
   calcularComissaoAutomatica();
-}
-
-function atualizarVisibilidadeConcorrencia(){
-  const loja=document.getElementById("banco-loja").value;
-  document.getElementById("banco-concorrencia-bloco").style.display=loja==="shopee"?"block":"none";
 }
 
 function pillConcorrencia(concorrencia,afiliados){
