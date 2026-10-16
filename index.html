@@ -307,8 +307,8 @@
     .item-produto-comissao.baixa{background:#fee2e2;color:#991b1b}
     .item-produto-preco{display:inline-block;font-size:11px;font-weight:700;background:#dbeafe;color:#1e40af;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
     .item-produto-categoria{display:inline-block;font-size:11px;font-weight:700;background:#ede9fe;color:#5b21b6;border-radius:999px;padding:2px 7px;margin-top:3px;margin-left:4px}
-    .item-produto-acoes{flex:none;display:flex;gap:8px;justify-content:flex-end}
-    .item-produto-icone{width:30px;height:30px;border-radius:8px;border:none;font-size:14px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
+    .item-produto-acoes{flex:none;display:flex;gap:12px;justify-content:flex-end}
+    .item-produto-icone{width:36px;height:36px;border-radius:9px;border:none;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
     .item-produto-lixeira{background:#ffe2e2;color:var(--danger)}
     .item-produto-editar{background:var(--accent-soft);color:#7d214f}
     .item-produto-copiar{background:#e0f2ff;color:#1d6fa5}
@@ -3318,8 +3318,6 @@ function cardProdutoBanco(p){
             ${p.comissao!==undefined&&p.comissao!==null?`<span class="item-produto-comissao ${p.comissao<7?'baixa':''}">${p.comissao}%</span>`:""}
           </span>`:""}
           ${p.loja&&LOJAS_BANCO[p.loja]?`<span class="item-produto-loja">${LOJAS_BANCO[p.loja]}</span>`:""}
-          ${rotuloCategoriaBanco(p)?`<span class="item-produto-categoria">${CATEGORIAS_EM_ALTA.has(rotuloCategoriaBanco(p))?"🔥 ":""}${escaparBanco(rotuloCategoriaBanco(p))}</span>`:""}
-          ${p.preco!==undefined&&p.preco!==null?`<span class="item-produto-preco">🏷️ ${formatarPrecoBancoComMoeda(p.preco,p.loja)}</span>`:""}
           ${p.valorComissao!==undefined&&p.valorComissao!==null?`<span class="item-produto-comissao ${p.valorComissao<5?'baixa':''}">💰 ${formatarPrecoBancoComMoeda(p.valorComissao,p.loja)}${p.valorComissao<5?" ⚠️ abaixo do critério":""}</span>`:""}
           ${pillConcorrencia(p.concorrencia,p.afiliados)?`<span class="pill-dias ${pillConcorrencia(p.concorrencia,p.afiliados).classe}" style="display:inline-block;white-space:normal;margin-top:3px">🎥 ${pillConcorrencia(p.concorrencia,p.afiliados).texto}</span>`:""}
           ${p.afiliados!==undefined&&p.afiliados!==null&&(p.concorrencia===undefined||p.concorrencia===null)?`<span class="item-produto-link">👥 ${formatarInteiroBR(p.afiliados)} afiliados promovendo</span>`:""}
