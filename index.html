@@ -556,6 +556,7 @@
     <section class="card">
       <div class="semana-titulo" style="margin:0 0 10px">Posts feitos no dia</div>
       <div id="relatorio-posts-lista"></div>
+      <button type="button" class="secondary" style="width:100%;margin-top:8px" onclick="imprimirRelatorioDoDia()">🖨️ Imprimir relatório do dia</button>
       <div class="field" style="margin-top:10px">
         <input id="relatorio-post-novo" type="text" placeholder="Ex.: Reels Shopee - fone bluetooth" onkeydown="if(event.key==='Enter'){event.preventDefault();document.getElementById('relatorio-canal-novo').focus();}">
       </div>
@@ -2458,6 +2459,24 @@ function renderizarAnotacoesArquivadas(){
     const[ano,mes,dia]=d.split("-");
     return `<div class="relatorio-anotacao-item"><div class="relatorio-historico-data">${dia}/${mes}/${ano}</div><div class="relatorio-anotacao-texto">${escaparBanco(todos[d].notas)}</div></div>`;
   }).join("");
+}
+
+function imprimirRelatorioDoDia(){
+  const data=relatorioDataAtual();
+  const r=relatorioDoDia(data);
+  if(r.posts.length===0){alert("Nenhum post registrado nesse dia ainda.");return}
+  const[ano,mes,dia]=data.split("-");
+  const linhas=r.posts.map(post=>{
+    const p=rotuloPostRelatorio(post);
+    const meta=[p.formato?`🎬 ${p.formato}`:"",p.horario?`🕐 ${p.horario}`:"",p.visualizacoes!==undefined?`👁️ ${p.visualizacoes}`:"",p.cliques!==undefined?`🖱️ ${p.cliques} cliques`:"",p.vendas!==undefined?`🛒 ${p.vendas} vendas`:"",p.comissaoRecebida!==undefined?`💰 ${formatarPrecoBR(p.comissaoRecebida)} recebido`:"",p.gastoAnuncio!==undefined?`📣 ${formatarPrecoBR(p.gastoAnuncio)} em anúncio`:""].filter(Boolean).join(" · ");
+    return `<p>${p.canal?`<strong>${escaparBanco(p.canal)}</strong><br>`:""}${escaparBanco(p.texto)}${meta?`<br><span style="font-size:12px;color:#555">${meta}</span>`:""}</p>`;
+  }).join("");
+  const notasHtml=(r.notas||"").trim()?`<p><strong>Anotações do dia</strong><br>${escaparBanco(r.notas).replace(/\n/g,"<br>")}</p>`:"";
+  document.getElementById("anotacoes-imprimir-conteudo").innerHTML=`<p><strong>Relatório de ${dia}/${mes}/${ano}</strong></p>${linhas}${notasHtml}`;
+  const overlay=document.getElementById("anotacoes-imprimir");
+  overlay.style.display="block";
+  window.onafterprint=()=>{overlay.style.display="none";window.onafterprint=null;};
+  window.print();
 }
 
 function imprimirAnotacoes(){
