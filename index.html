@@ -121,7 +121,7 @@
     .semana-seta{flex:none;width:44px;height:44px;border-radius:50%;border:none;background:var(--accent-soft);color:var(--accent-dark);font-size:20px;font-weight:800;cursor:pointer}
     .semana-nav-info{flex:1;text-align:center}
     .semana-nav-titulo{font-size:18px;font-weight:800;color:var(--text)}
-    .dia-nav-data{font-size:13px;color:var(--muted);margin-top:1px}
+    .dia-nav-data{font-size:13px;color:var(--muted);margin-top:1px;background:none;border:none;font-family:inherit;cursor:pointer;text-decoration:underline dotted;padding:2px 4px}
     .semana-hoje{margin-top:6px;background:var(--accent-soft);color:var(--accent-dark);border:none;border-radius:999px;padding:4px 14px;font-size:12px;font-weight:800;cursor:pointer}
     .semana-hoje.ativo{background:linear-gradient(135deg,var(--accent),#8b5cf6);color:#fff}
     .destino-chip{font-size:11.5px;background:var(--accent-soft);color:#7d214f;border-radius:14px;padding:5px 9px;border:2px solid transparent;cursor:pointer;font-family:inherit;display:inline-flex;flex-wrap:wrap;align-items:center;gap:3px 5px;text-align:left}
@@ -328,11 +328,12 @@
         <button type="button" class="semana-seta" onclick="mudarDia(-1)">‹</button>
         <div class="semana-nav-info">
           <div class="semana-nav-titulo" id="dia-nav-nome"></div>
-          <div class="dia-nav-data" id="dia-nav-data"></div>
+          <button type="button" class="dia-nav-data" id="dia-nav-data" title="Toque para digitar uma data" onclick="abrirSeletorDia()"></button>
           <button type="button" class="semana-hoje" id="semana-hoje-btn" onclick="irParaHojeDia()">HOJE</button>
         </div>
         <button type="button" class="semana-seta" onclick="mudarDia(1)">›</button>
       </div>
+      <input type="date" id="dia-seletor-input" style="position:absolute;width:1px;height:1px;opacity:0;pointer-events:none" onchange="selecionarDiaDigitado(this)">
       <input type="hidden" id="date" value="">
       <div id="globalStatus" class="status">Tudo é salvo automaticamente enquanto você digita.</div>
       <div class="semana-progresso-geral">
@@ -935,6 +936,18 @@ function mudarDia(delta){
 
 function irParaHojeDia(){
   diaAtualISO=dataParaIso(new Date());
+  aplicarDiaAtual();
+}
+
+function abrirSeletorDia(){
+  const input=document.getElementById("dia-seletor-input");
+  input.value=diaAtualISO;
+  if(input.showPicker){input.showPicker();}else{input.focus();input.click();}
+}
+
+function selecionarDiaDigitado(input){
+  if(!input.value)return;
+  diaAtualISO=input.value;
   aplicarDiaAtual();
 }
 
