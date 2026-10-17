@@ -965,7 +965,7 @@ function renderizarContadorPlataformas(){
   const el=document.getElementById("producao-plataformas");
   if(!el)return;
   const c=contarPorPlataformaSemana();
-  el.innerHTML=REDES_FOCO_CONTADOR.map(r=>`<span class="pill-plataforma" title="${r.rede}">${r.icone} <strong>${c[r.rede]}</strong></span>`).join("");
+  el.innerHTML=REDES_FOCO_CONTADOR.map(r=>`<span class="pill-plataforma">${r.rede}: <strong>${c[r.rede]}</strong></span>`).join("");
 }
 
 function abrirApenasDia(chaveDia){
