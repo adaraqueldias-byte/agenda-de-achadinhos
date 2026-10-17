@@ -253,6 +253,8 @@
     .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7;padding:12px 15px}
     .producao-titulo{color:#5b21a6}
     .producao-corpo{margin-top:4px}
+    .producao-plataformas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .pill-plataforma{font-size:12px;font-weight:700;background:#fff;border:1px solid #ddc9f7;color:#5b21a6;border-radius:999px;padding:4px 10px}
     .passo-linha{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
     .passo-linha:first-of-type{border-top:none}
     .passo-texto{flex:1;min-width:180px}
@@ -931,6 +933,39 @@ function atualizarProgressoDias(){
     el.textContent=feitos?`${feitos} post${feitos>1?"s":""}`:"";
   });
   document.getElementById("semana-progresso-texto").textContent=feitosSemana?`${feitosSemana} post${feitosSemana>1?"s":""} feito${feitosSemana>1?"s":""} essa semana`:"Nenhum post feito ainda essa semana.";
+  renderizarContadorPlataformas();
+}
+
+const REDES_FOCO_CONTADOR=[
+  {rede:"Facebook",icone:"📘"},
+  {rede:"Instagram",icone:"📸"},
+  {rede:"Shopee Video",icone:"🎥"},
+  {rede:"TikTok",icone:"🎵"},
+  {rede:"Pinterest",icone:"📌"}
+];
+
+function contarPorPlataformaSemana(){
+  const contagem={};
+  REDES_FOCO_CONTADOR.forEach(r=>contagem[r.rede]=0);
+  SLOTS.forEach(slot=>{
+    slot.destinos.forEach(destId=>{
+      const el=document.getElementById(`status-destino-${slot.id}-${destId}`);
+      if(!el||el.value!=="publicado")return;
+      const conta=CONTAS[destId];
+      if(!conta)return;
+      let rede=conta.rede;
+      if(rede==="Grupo Facebook"||rede==="Outros grupos")rede="Facebook";
+      if(contagem[rede]!==undefined)contagem[rede]++;
+    });
+  });
+  return contagem;
+}
+
+function renderizarContadorPlataformas(){
+  const el=document.getElementById("producao-plataformas");
+  if(!el)return;
+  const c=contarPorPlataformaSemana();
+  el.innerHTML=REDES_FOCO_CONTADOR.map(r=>`<span class="pill-plataforma">${r.icone} ${r.rede}: <strong>${c[r.rede]}</strong></span>`).join("");
 }
 
 function abrirApenasDia(chaveDia){
@@ -1493,6 +1528,7 @@ function producaoTemplate(){
       <span>🗓️ Segunda e Quinta à tarde — Sessão de produção</span>
       <span id="producao-seta">▸</span>
     </button>
+    <div id="producao-plataformas" class="producao-plataformas"></div>
     <div id="producao-corpo" class="producao-corpo" style="display:none">
       ${PASSOS.map((p,i)=>`
       <div class="passo-linha">
