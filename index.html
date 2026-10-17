@@ -3300,7 +3300,7 @@ function cardProdutoBanco(p){
   const publicado=!!p.publicado;
   const publicacoesHtml=publicacoes.length
     ?`<div class="item-produto-publicacoes"><strong>📍 Onde foi publicado:</strong><br>${publicacoes.slice(0,4).map(pub=>`${pub.status==="publicado"?"✅":"🕐"} ${escaparBanco(pub.canal)}${pub.data?` — ${isoParaBR(pub.data)}`:""}`).join("<br>")}${publicacoes.length>4?`<br>+${publicacoes.length-4} outra(s)`:""}</div>`
-    :`<div class="item-produto-publicacoes" style="color:var(--danger)">🔴</div>`;
+    :publicado?"":`<div class="item-produto-publicacoes" style="color:var(--danger);cursor:pointer" onclick="togglePublicadoBanco(${p.id})" title="Toque para marcar como publicado">🔴</div>`;
   return `<div class="item-produto${publicado?' publicado':''}">
       <div class="item-produto-linha">
         ${p.foto?`<img class="item-produto-foto" src="${p.foto}">`:`<div class="item-produto-foto vazio">🛍️</div>`}
