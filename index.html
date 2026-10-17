@@ -3230,13 +3230,13 @@ function aplicarOrdenacao(lista){
     return{itens:sorted,grupos};
   }
   if(ordenacaoAtual==="naopostado"){
-    const comContagem=lista.map(p=>({p,qtd:publicacoesDoProdutoBanco(p.id).length}));
-    comContagem.sort((a,b)=>a.qtd-b.qtd);
-    const sorted=comContagem.map(x=>x.p);
+    const comStatus=lista.map(p=>({p,publicado:!!p.publicado}));
+    comStatus.sort((a,b)=>Number(a.publicado)-Number(b.publicado));
+    const sorted=comStatus.map(x=>x.p);
     const grupos=[];let ultimoGrupo=null;
-    comContagem.forEach((x,i)=>{
-      const grupo=x.qtd===0?"__zero__":"__algum__";
-      if(grupo!==ultimoGrupo){grupos.push({indice:i,rotulo:x.qtd===0?"🔴 Ainda não postado em nenhum canal":"✅ Já postado em algum canal"});ultimoGrupo=grupo;}
+    comStatus.forEach((x,i)=>{
+      const grupo=x.publicado?"__sim__":"__nao__";
+      if(grupo!==ultimoGrupo){grupos.push({indice:i,rotulo:x.publicado?"✅ Já publicado":"🔴 Ainda não postado em nenhum canal"});ultimoGrupo=grupo;}
     });
     return{itens:sorted,grupos};
   }
