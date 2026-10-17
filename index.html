@@ -253,7 +253,8 @@
     .producao-card{background:linear-gradient(135deg,#f3ecff,#fff8fb);border:1px solid #ddc9f7;padding:12px 15px}
     .producao-titulo{color:#5b21a6}
     .producao-corpo{margin-top:4px}
-    .producao-plataformas{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+    .producao-plataformas{display:flex;flex-wrap:wrap;gap:6px;flex:1}
+    .producao-titulo-mini{flex:none;background:none;border:none;font-size:13px;cursor:pointer;padding:2px;display:flex;align-items:center;gap:2px;color:#5b21a6}
     .pill-plataforma{font-size:10px;font-weight:700;background:#fff;border:1px solid #ddc9f7;color:#5b21a6;border-radius:999px;padding:2px 8px;display:inline-flex;align-items:center;gap:3px}
     .passo-linha{display:flex;flex-wrap:wrap;gap:10px;align-items:flex-start;justify-content:space-between;padding:8px 0;border-top:1px solid #ecdffc;font-size:13px;line-height:1.5;color:#3d2a52}
     .passo-linha:first-of-type{border-top:none}
@@ -1524,11 +1525,12 @@ function marcarPublicadoNaSemana(monday,slotId,destId){
 
 function producaoTemplate(){
   return `<section class="card producao-card">
-    <button type="button" class="acordeon-titulo producao-titulo" onclick="toggleSecao('producao')">
-      <span>🗓️ Segunda e Quinta à tarde — Sessão de produção</span>
-      <span id="producao-seta">▸</span>
-    </button>
-    <div id="producao-plataformas" class="producao-plataformas"></div>
+    <div style="display:flex;align-items:center;justify-content:space-between;gap:8px">
+      <div id="producao-plataformas" class="producao-plataformas"></div>
+      <button type="button" class="producao-titulo-mini" onclick="toggleSecao('producao')" title="Segunda e Quinta à tarde — Sessão de produção">
+        🗓️ <span id="producao-seta">▸</span>
+      </button>
+    </div>
     <div id="producao-corpo" class="producao-corpo" style="display:none">
       ${PASSOS.map((p,i)=>`
       <div class="passo-linha">
