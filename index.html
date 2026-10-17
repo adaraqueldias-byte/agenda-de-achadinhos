@@ -676,6 +676,9 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
       <button type="button" class="backup-link" onclick="padronizarFormatosRelatorio()">🔧 Padronizar formatos (Vídeo→Reels, Publicação→Outro)</button>
     </div>
     <div style="text-align:center;margin-top:10px">
+      <button type="button" class="backup-link" onclick="importarHistoricoSemanaPontual()">📥 Atualizar Semana (histórico Clever Finds + CasaMix)</button>
+    </div>
+    <div style="text-align:center;margin-top:10px">
       <button type="button" class="backup-link" onclick="zerarRelatorio()">🗑️ Zerar histórico do Relatório</button>
     </div>
   </div>
@@ -1774,6 +1777,85 @@ function carregarSemana(){
   });
   globalStatus.textContent=raw?"Semana carregada.":"Semana nova pra essa data — modelos padrão carregados.";
   atualizarProgressoDias();
+}
+
+// ===== Importação pontual de histórico (Clever Finds + CasaMix) pra Semana =====
+// Uso único: marca os destinos como publicados nas datas reais, sem duplicar no Relatório
+// (que já foi preenchido separadamente via "Colar lista").
+const HISTORICO_IMPORT_PONTUAL=[
+  {prefixo:"cleverfinds",nome:"Fresh juice, your favorite flavors",data:"2026-10-11",destinos:[{id:"face_cleverfinds",hora:"12:44"},{id:"grupo_cleverfinds",hora:"12:44"}]},
+  {prefixo:"cleverfinds",nome:"Say goodbye to stubborn dirt",data:"2026-10-10",destinos:[{id:"grupo_cleverfinds",hora:"12:34"}]},
+  {prefixo:"cleverfinds",nome:"Upgrade your TV in seconds",data:"2026-09-16",destinos:[{id:"grupo_cleverfinds",hora:"19:44"}]},
+  {prefixo:"cleverfinds",nome:"Need a home printer - Canon PIXMA",data:"2026-08-27",destinos:[{id:"grupo_cleverfinds",hora:"19:48"}]},
+  {prefixo:"cleverfinds",nome:"Print scan and copy with ease",data:"2026-08-27",destinos:[{id:"face_cleverfinds",hora:"18:57"}]},
+  {prefixo:"cleverfinds",nome:"Clean high places with ease",data:"2026-08-27",destinos:[{id:"face_cleverfinds",hora:"18:16"}]},
+  {prefixo:"cleverfinds",nome:"Tired of juggling pots and pans",data:"2026-10-10",destinos:[{id:"grupo_cleverfinds",hora:"15:11"}]},
+  {prefixo:"cleverfinds",nome:"Big fun for the whole family",data:"2026-10-10",destinos:[{id:"face_cleverfinds",hora:"20:00"}]},
+  {prefixo:"cleverfinds",nome:"Upgrade your setup - Samsung 27 monitor",data:"2026-10-10",destinos:[{id:"grupo_cleverfinds",hora:"16:45"}]},
+  {prefixo:"cleverfinds",nome:"Charge at home on your schedule",data:"2026-10-11",destinos:[{id:"face_cleverfinds",hora:"12:06"}]},
+  {prefixo:"cleverfinds",nome:"Which Ninja fits your routine",data:"2026-10-11",destinos:[{id:"face_cleverfinds",hora:"08:00"}]},
+  {prefixo:"casamix",nome:"Chega de perder tempo na pia",data:"2026-10-14",destinos:[{id:"face_casamix",hora:"14:48"},{id:"grupo_achadinhos_casa",hora:"14:48"},{id:"grupo_ofertas_casa",hora:"14:48"}]},
+  {prefixo:"casamix",nome:"Espaço de sobra e muita praticidade",data:"2026-09-24",destinos:[{id:"grupo_achadinhos_casa",hora:"17:35"},{id:"face_casamix",hora:"17:16"}]},
+  {prefixo:"casamix",nome:"Freezer Vertical Midea 174L Frost Free",data:"2026-09-23",destinos:[{id:"face_casamix",hora:"23:14"},{id:"grupo_ofertas_casa",hora:"23:14"}]},
+  {prefixo:"casamix",nome:"Mais espaço e praticidade para sua rotina",data:"2026-09-23",destinos:[{id:"grupo_achadinhos_casa",hora:"22:47"},{id:"grupo_ofertas_casa",hora:"22:47"}]},
+  {prefixo:"casamix",nome:"Freezer Midea 142L Inverter",data:"2026-09-23",destinos:[{id:"grupo_achadinhos_casa",hora:"22:26"}]},
+  {prefixo:"casamix",nome:"Mais espaço e economia para sua rotina",data:"2026-09-23",destinos:[{id:"face_casamix",hora:"21:57"},{id:"grupo_ofertas_casa",hora:"21:57"}]},
+];
+
+function importarHistoricoSemanaPontual(){
+  if(!confirm(`Isso vai marcar ${HISTORICO_IMPORT_PONTUAL.length} posts como publicados na Semana, nas datas reais (Clever Finds + CasaMix). Não mexe no que já está preenchido. Quer continuar?`))return;
+  const porSemana={};
+  HISTORICO_IMPORT_PONTUAL.forEach(item=>{
+    const seg=dataParaIso(segundaDaData(isoParaData(item.data)));
+    if(!porSemana[seg])porSemana[seg]=[];
+    porSemana[seg].push(item);
+  });
+  const log=[];
+  Object.entries(porSemana).forEach(([segunda,itens])=>{
+    const chave="agenda-achadinhos-semana-"+segunda;
+    let semanaDados;
+    try{semanaDados=JSON.parse(localStorage.getItem(chave)||"null");}catch{semanaDados=null}
+    if(!semanaDados||typeof semanaDados!=="object")semanaDados={data:segunda,slots:{},producao:{}};
+    if(!semanaDados.slots)semanaDados.slots={};
+    itens.forEach(item=>{
+      const diaChave=CHAVE_DIA_POR_INDICE[isoParaData(item.data).getDay()];
+      const baseId=`${item.prefixo}_${diaChave}`;
+      const linha=LINHAS_CONTEUDO.find(l=>l.prefixo===item.prefixo);
+      const poolMax=linha.poolMax||POOL_MAX;
+      const candidatos=[baseId,...Array.from({length:poolMax-1},(_,i)=>`${baseId}_extra${i+1}`)];
+      const nomeNorm=normalizarTexto(item.nome);
+      let slotEscolhido=candidatos.find(sid=>{
+        const s=semanaDados.slots[sid];
+        return s&&s.itens&&s.itens[0]&&normalizarTexto(s.itens[0].produto||"")===nomeNorm;
+      });
+      if(!slotEscolhido){
+        slotEscolhido=candidatos.find(sid=>{
+          const s=semanaDados.slots[sid];
+          return !s||!s.itens||!s.itens[0]||!s.itens[0].produto;
+        });
+      }
+      if(!slotEscolhido){
+        log.push(`⚠️ Sem espaço livre pra "${item.nome}" em ${isoParaBR(item.data)}`);
+        return;
+      }
+      if(!semanaDados.slots[slotEscolhido])semanaDados.slots[slotEscolhido]={itens:[{produto:"",link:"",bancoId:""}],destinosStatus:{},destinosHorario:{},destinosData:{}};
+      const slotObj=semanaDados.slots[slotEscolhido];
+      if(!slotObj.itens||!slotObj.itens[0])slotObj.itens=[{produto:"",link:"",bancoId:""}];
+      if(!slotObj.itens[0].produto)slotObj.itens[0].produto=item.nome;
+      slotObj.destinosStatus=slotObj.destinosStatus||{};
+      slotObj.destinosHorario=slotObj.destinosHorario||{};
+      slotObj.destinosData=slotObj.destinosData||{};
+      item.destinos.forEach(dest=>{
+        slotObj.destinosStatus[dest.id]="publicado";
+        slotObj.destinosHorario[dest.id]=dest.hora||"";
+        slotObj.destinosData[dest.id]=item.data;
+      });
+      log.push(`✅ ${item.nome} — ${isoParaBR(item.data)}`);
+    });
+    localStorage.setItem(chave,JSON.stringify(semanaDados));
+  });
+  alert("Semana atualizada!\n\n"+log.join("\n"));
+  if(document.getElementById("date").value)carregarSemana();
 }
 
 // ===== Banco de produtos (guarda foto/nome/loja/link antes de decidir onde postar) =====
