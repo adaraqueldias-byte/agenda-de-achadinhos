@@ -149,11 +149,21 @@
     .destino-chip-ativo{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
     .grupos-toggle{font-size:11.5px;background:#fff;color:var(--accent-dark);border-radius:14px;padding:5px 9px;border:2px dashed var(--line);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
     .grupos-ocultos{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
-    .grupo-item-bloco{flex:0 0 100%;padding-bottom:10px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
-    .grupo-item-bloco:last-child{border-bottom:none;padding-bottom:0}
+    .grupo-item-bloco{flex:0 0 100%;padding:8px;border-radius:12px;margin-bottom:2px}
     .grupo-produto-mini{margin-top:6px;padding:8px;background:#fff;border-radius:10px;border:1px solid var(--line)}
+    .grupo-produto-mini-titulo{font-weight:800;font-size:13px;margin-bottom:2px}
     .grupo-produto-mini .field{margin-bottom:6px}
     .grupo-produto-mini .field:last-of-type{margin-bottom:0}
+    .grupo-cor-0{background:#fff1f8;border:2px solid #f0a3c7}
+    .grupo-cor-1{background:#eef5fc;border:2px solid #5b9bd9}
+    .grupo-cor-2{background:#eefbfd;border:2px solid #7fd4e0}
+    .grupo-cor-3{background:#fff8f3;border:2px solid #ffb37a}
+    .grupo-cor-4{background:#f3fbf7;border:2px solid #7ecba6}
+    .grupo-cor-0 .grupo-produto-mini-titulo{color:#be185d}
+    .grupo-cor-1 .grupo-produto-mini-titulo{color:#1e40af}
+    .grupo-cor-2 .grupo-produto-mini-titulo{color:#0e7490}
+    .grupo-cor-3 .grupo-produto-mini-titulo{color:#c2410c}
+    .grupo-cor-4 .grupo-produto-mini-titulo{color:#166534}
     .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
     .banco-ordenacao{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
     .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
@@ -1181,7 +1191,9 @@ function chaveGrupoProduto(slotId,destId){return `${slotId}__${destId}`}
 
 function itemProdutoGrupoTemplate(slotId,destId){
   const key=chaveGrupoProduto(slotId,destId);
+  const conta=CONTAS[destId];
   return `<div class="grupo-produto-mini">
+    <div class="grupo-produto-mini-titulo">${conta.icone} ${conta.nome}</div>
     <div id="item-display-${key}" class="item-produto" style="display:none"></div>
     <div id="item-edit-${key}">
       <div class="field"><label>🛍️ Usar produto do Banco (opcional)</label><select id="produto-banco-${key}" onchange="aplicarProdutoDoBanco('${key}')"></select></div>
@@ -1212,7 +1224,7 @@ function destinosChipsHtml(slot){
       <span id="grupos-toggle-label-${slot.id}">👥 Grupos (${escondidos.length})</span>
       <span id="grupos-toggle-seta-${slot.id}">▾</span>
     </button>
-    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map(d=>`<div class="grupo-item-bloco">${destinoChipHtml(slot,d)}${itemProdutoGrupoTemplate(slot.id,d)}</div>`).join("")}</div>`;
+    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map((d,i)=>`<div class="grupo-item-bloco grupo-cor-${i%5}">${destinoChipHtml(slot,d)}${itemProdutoGrupoTemplate(slot.id,d)}</div>`).join("")}</div>`;
   }
   return html;
 }
