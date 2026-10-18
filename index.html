@@ -540,13 +540,7 @@
       <div class="field">
         <label id="simulador-investimento-label">💰 Quanto pretende investir em anúncio (R$)</label>
         <input id="simulador-investimento" type="text" inputmode="decimal" placeholder="Ex.: 50,00" oninput="calcularSimuladorTrafego()">
-        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:6px">
-          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Meta Ads R$10/dia</button>
-          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Google Ads R$10/dia</button>
-          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(10)">Shopee Ads R$10/dia</button>
-          <button type="button" class="secondary" style="font-size:11px;padding:6px 10px;width:auto" onclick="preencherInvestimentoSugerido(50)">Google Ads na Shopee R$50/dia</button>
-        </div>
-        <p class="tip" style="margin-top:4px">💡 Sugestões de valor, verificadas em 21/09/2026 — as plataformas mudam mínimos com frequência, confirme na conta antes de investir.</p>
+        <p class="tip" style="margin-top:4px">💡 Meta Ads — o valor varia bastante, confira o mínimo direto na plataforma antes de investir.</p>
       </div>
       <div class="field" id="simulador-conversao-bloco" style="display:none">
         <label><input id="simulador-investimento-reais" type="checkbox" onchange="calcularSimuladorTrafego()" style="width:auto;margin-right:6px">Prefiro digitar o investimento em R$ (produto é em US$)</label>
@@ -3209,15 +3203,6 @@ function renderizarComissoesAmazon(){
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">Verificado em 14/10/2026.</li>`
     +COMISSOES_AMAZON_BR.map(linha).join("")
     +`<li class="banco-em-alta-item" style="font-size:11px;color:var(--muted);display:block">+ Bônus: R$5 a R$15 por assinatura de serviço Amazon (Prime, Music Unlimited etc.) gerada via seu link.</li>`;
-}
-
-function preencherInvestimentoSugerido(valor){
-  const blocoConversao=document.getElementById("simulador-conversao-bloco");
-  if(blocoConversao&&blocoConversao.style.display!=="none"){
-    document.getElementById("simulador-investimento-reais").checked=true;
-  }
-  document.getElementById("simulador-investimento").value=formatarPrecoBR(valor);
-  calcularSimuladorTrafego();
 }
 
 let simuladorAberto=false;
