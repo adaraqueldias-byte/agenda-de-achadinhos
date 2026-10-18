@@ -154,16 +154,6 @@
     .grupo-produto-mini-titulo{font-weight:800;font-size:13px;margin-bottom:2px}
     .grupo-produto-mini .field{margin-bottom:6px}
     .grupo-produto-mini .field:last-of-type{margin-bottom:0}
-    .grupo-cor-0{background:#fff8f3;border:2px solid #ffb37a}
-    .grupo-cor-1{background:#fff7e6;border:2px solid #f5a623}
-    .grupo-cor-2{background:#fff2e8;border:2px solid #ff8c42}
-    .grupo-cor-3{background:#fdeee5;border:2px solid #e2672a}
-    .grupo-cor-4{background:#fdf6e3;border:2px solid #d9a441}
-    .grupo-cor-0 .grupo-produto-mini-titulo{color:#c2611a}
-    .grupo-cor-1 .grupo-produto-mini-titulo{color:#92400e}
-    .grupo-cor-2 .grupo-produto-mini-titulo{color:#c2410c}
-    .grupo-cor-3 .grupo-produto-mini-titulo{color:#9a3412}
-    .grupo-cor-4 .grupo-produto-mini-titulo{color:#854d0e}
     .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
     .banco-ordenacao{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
     .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
@@ -1189,11 +1179,11 @@ function destinoChipHtml(slot,destId){
 
 function chaveGrupoProduto(slotId,destId){return `${slotId}__${destId}`}
 
-function itemProdutoGrupoTemplate(slotId,destId){
+function itemProdutoGrupoTemplate(slotId,destId,numero,corTitulo){
   const key=chaveGrupoProduto(slotId,destId);
   const conta=CONTAS[destId];
   return `<div class="grupo-produto-mini">
-    <div class="grupo-produto-mini-titulo">${conta.icone} ${conta.nome}</div>
+    <div class="grupo-produto-mini-titulo" style="color:${corTitulo}">${numero}. ${conta.icone} ${conta.nome}</div>
     <div id="item-display-${key}" class="item-produto" style="display:none"></div>
     <div id="item-edit-${key}">
       <div class="field"><label>🛍️ Usar produto do Banco (opcional)</label><select id="produto-banco-${key}" onchange="aplicarProdutoDoBanco('${key}')"></select></div>
@@ -1214,17 +1204,44 @@ function salvarItemGrupo(slotId,destId){
   salvarSemana();
 }
 
+const PALETA_GRUPOS_POR_PAGINA={
+  garimpo:[
+    {bg:"#fff8f3",borda:"#ffb37a",titulo:"#c2611a"},
+    {bg:"#fff7e6",borda:"#f5a623",titulo:"#92400e"},
+    {bg:"#fff2e8",borda:"#ff8c42",titulo:"#c2410c"},
+    {bg:"#fdeee5",borda:"#e2672a",titulo:"#9a3412"},
+    {bg:"#fdf6e3",borda:"#d9a441",titulo:"#854d0e"}
+  ],
+  dashein:[
+    {bg:"#fff1f8",borda:"#f0a3c7",titulo:"#be185d"},
+    {bg:"#ffe3f0",borda:"#e8639f",titulo:"#9d174d"}
+  ],
+  cleverfinds:[
+    {bg:"#eef5fc",borda:"#5b9bd9",titulo:"#1e40af"},
+    {bg:"#e3eefc",borda:"#3b78c4",titulo:"#1e3a8a"}
+  ],
+  casamix:[
+    {bg:"#eefbfd",borda:"#7fd4e0",titulo:"#0e7490"},
+    {bg:"#e3f7fa",borda:"#4db8c9",titulo:"#155e63"}
+  ]
+};
+
 function destinosChipsHtml(slot){
   const ocultos=slot.gruposOcultos||[];
   const visiveis=slot.destinos.filter(d=>!ocultos.includes(d));
   const escondidos=slot.destinos.filter(d=>ocultos.includes(d));
   let html=visiveis.map(d=>destinoChipHtml(slot,d)).join("");
   if(escondidos.length){
+    const paginaKey=paginaKeyPeloTipo(slot.tipo);
+    const paleta=PALETA_GRUPOS_POR_PAGINA[paginaKey]||PALETA_GRUPOS_POR_PAGINA.garimpo;
     html+=`<button type="button" class="grupos-toggle" id="grupos-toggle-${slot.id}" onclick="toggleGruposOcultos('${slot.id}')">
       <span id="grupos-toggle-label-${slot.id}">👥 Grupos (${escondidos.length})</span>
       <span id="grupos-toggle-seta-${slot.id}">▾</span>
     </button>
-    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map((d,i)=>`<div class="grupo-item-bloco grupo-cor-${i%5}">${destinoChipHtml(slot,d)}${itemProdutoGrupoTemplate(slot.id,d)}</div>`).join("")}</div>`;
+    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map((d,i)=>{
+      const cor=paleta[i%paleta.length];
+      return `<div class="grupo-item-bloco" style="background:${cor.bg};border:2px solid ${cor.borda}">${destinoChipHtml(slot,d)}${itemProdutoGrupoTemplate(slot.id,d,i+1,cor.titulo)}</div>`;
+    }).join("")}</div>`;
   }
   return html;
 }
