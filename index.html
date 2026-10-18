@@ -1183,7 +1183,7 @@ function itemProdutoGrupoTemplate(slotId,destId,numero,corTitulo){
   const key=chaveGrupoProduto(slotId,destId);
   const conta=CONTAS[destId];
   return `<div class="grupo-produto-mini">
-    <div class="grupo-produto-mini-titulo" style="color:${corTitulo}">${numero}. ${conta.icone} ${conta.nome}</div>
+    <div class="grupo-produto-mini-titulo" style="color:${corTitulo}">${conta.icone} ${conta.nome}</div>
     <div id="item-display-${key}" class="item-produto" style="display:none"></div>
     <div id="item-edit-${key}">
       <div class="field"><label>🛍️ Usar produto do Banco (opcional)</label><select id="produto-banco-${key}" onchange="aplicarProdutoDoBanco('${key}')"></select></div>
@@ -1270,8 +1270,9 @@ function atualizarIndicadorGrupos(slotId){
   label.textContent=`👥 Grupos (${slot.gruposOcultos.length})${marcados?` ${ICONES_STATUS_DESTINO[melhor]} ${marcados}`:""}`;
 }
 
-function extraPostTemplate(slot){
+function extraPostTemplate(slot,numero){
   return `<div class="extra-wrapper">
+    <div class="item-slot-titulo">Produto ${numero}</div>
     <div class="slot-destinos-linha"><div class="slot-destinos">${destinosChipsHtml(slot)}</div></div>
     ${itemProdutoSlotTemplate(slot,0,1)}
     <div id="status-${slot.id}" class="status"></div>
@@ -1289,7 +1290,7 @@ function poolWrapperHtml(parentId){
   const blocos=Array.from({length:max},(_,i)=>{
     const n=i+1;
     const s=SLOTS.find(x=>x.id===`${parentId}_extra${n}`);
-    return `<div id="extra-${s.id}" style="display:none">${extraPostTemplate(s)}</div>`;
+    return `<div id="extra-${s.id}" style="display:none">${extraPostTemplate(s,n+1)}</div>`;
   }).join("");
   return `${blocos}<input type="hidden" id="extra-count-${parentId}" value="0"><button type="button" class="secondary" id="extra-add-${parentId}" style="width:100%;margin-top:6px" onclick="adicionarExtraPool('${parentId}')">➕</button>`;
 }
