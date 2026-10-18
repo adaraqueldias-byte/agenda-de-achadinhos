@@ -149,6 +149,11 @@
     .destino-chip-ativo{background:#ede9fe;color:#5b21b6;border-color:#a78bfa}
     .grupos-toggle{font-size:11.5px;background:#fff;color:var(--accent-dark);border-radius:14px;padding:5px 9px;border:2px dashed var(--line);cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:5px}
     .grupos-ocultos{flex:0 0 100%;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+    .grupo-item-bloco{flex:0 0 100%;padding-bottom:10px;margin-bottom:2px;border-bottom:1px dashed var(--line)}
+    .grupo-item-bloco:last-child{border-bottom:none;padding-bottom:0}
+    .grupo-produto-mini{margin-top:6px;padding:8px;background:#fff;border-radius:10px;border:1px solid var(--line)}
+    .grupo-produto-mini .field{margin-bottom:6px}
+    .grupo-produto-mini .field:last-of-type{margin-bottom:0}
     .banco-filtros{display:flex;flex-wrap:wrap;gap:6px;margin:0 0 8px}
     .banco-ordenacao{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin:0 0 10px}
     .banco-ordenacao-label{font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.3px;margin-right:2px}
@@ -1172,6 +1177,31 @@ function destinoChipHtml(slot,destId){
   return `<div class="destino-grupo"><button type="button" class="destino-chip" id="chip-${slot.id}-${destId}" onclick="ciclarStatusDestino('${slot.id}','${destId}')"><span class="destino-status-icone" id="status-icone-${slot.id}-${destId}">⚪</span><span class="destino-chip-texto">${c.icone} <strong>${c.rede}:</strong> ${c.nome}</span><span class="destino-horario" id="status-horario-${slot.id}-${destId}" style="display:none"></span></button><input type="hidden" id="status-destino-${slot.id}-${destId}" value="nada"><div class="destino-agendamento" id="agendamento-${slot.id}-${destId}" style="display:none"><input type="date" id="data-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"><input type="time" id="horario-destino-${slot.id}-${destId}" onchange="salvarSemana();atualizarChipDestino('${slot.id}','${destId}')"></div></div>`;
 }
 
+function chaveGrupoProduto(slotId,destId){return `${slotId}__${destId}`}
+
+function itemProdutoGrupoTemplate(slotId,destId){
+  const key=chaveGrupoProduto(slotId,destId);
+  return `<div class="grupo-produto-mini">
+    <div id="item-display-${key}" class="item-produto" style="display:none"></div>
+    <div id="item-edit-${key}">
+      <div class="field"><label>🛍️ Usar produto do Banco (opcional)</label><select id="produto-banco-${key}" onchange="aplicarProdutoDoBanco('${key}')"></select></div>
+      <input type="hidden" id="bancoId-${key}">
+      <input type="hidden" id="foto-valor-${key}">
+      <div class="field"><label>Nome do produto</label><input id="produto-${key}" placeholder="Ex.: Jaqueta masculina"></div>
+      <div class="field"><label>Link de afiliado — referência interna, nunca entra na legenda</label><input id="link-${key}" type="url" placeholder="Cole o link aqui"></div>
+      <button type="button" class="success" style="width:100%;margin-top:4px" onclick="salvarItemGrupo('${slotId}','${destId}')">✓ Salvar produto</button>
+    </div>
+  </div>`;
+}
+
+function salvarItemGrupo(slotId,destId){
+  const key=chaveGrupoProduto(slotId,destId);
+  atualizarDisplayItemSlot(key);
+  document.getElementById("item-edit-"+key).style.display="none";
+  document.getElementById("item-display-"+key).style.display="flex";
+  salvarSemana();
+}
+
 function destinosChipsHtml(slot){
   const ocultos=slot.gruposOcultos||[];
   const visiveis=slot.destinos.filter(d=>!ocultos.includes(d));
@@ -1182,7 +1212,7 @@ function destinosChipsHtml(slot){
       <span id="grupos-toggle-label-${slot.id}">👥 Grupos (${escondidos.length})</span>
       <span id="grupos-toggle-seta-${slot.id}">▾</span>
     </button>
-    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map(d=>destinoChipHtml(slot,d)).join("")}</div>`;
+    <div class="grupos-ocultos" id="grupos-ocultos-${slot.id}" style="display:none">${escondidos.map(d=>`<div class="grupo-item-bloco">${destinoChipHtml(slot,d)}${itemProdutoGrupoTemplate(slot.id,d)}</div>`).join("")}</div>`;
   }
   return html;
 }
@@ -1373,7 +1403,11 @@ function ciclarStatusDestino(slotId,destId){
   if(novoStatus==="agendado")dataInput.focus();
 }
 
-function nomeProdutoDoSlot(slot){
+function nomeProdutoDoSlot(slot,destId){
+  if(destId&&slot.gruposOcultos&&slot.gruposOcultos.includes(destId)){
+    const el=document.getElementById("produto-"+chaveGrupoProduto(slot.id,destId));
+    return el?el.value.trim():"";
+  }
   if(slot.vitrine){
     for(let n=1;n<=slot.vitrine.max;n++){
       const el=document.getElementById(`vitrine-nome-${slot.id}-${n}`);
@@ -1410,7 +1444,7 @@ function registrarPostNoRelatorio(slotId,destId){
   if(!slot||!conta)return;
   const dataPost=dataDoSlotNaSemana(slotId);
   const canal=`${conta.rede} - ${conta.nome}`;
-  const texto=nomeProdutoDoSlot(slot)||"Post sem nome do produto";
+  const texto=nomeProdutoDoSlot(slot,destId)||"Post sem nome do produto";
   const horarioEl=document.getElementById(`horario-destino-${slotId}-${destId}`);
   const horario=horarioEl?horarioEl.value||"":"";
   const origem=chaveOrigemRelatorio(slotId,destId);
@@ -1450,8 +1484,12 @@ function migrarOrigensAntigasRelatorio(){
 }
 
 
-function nomeProdutoDoSlotSalvo(slot,s){
+function nomeProdutoDoSlotSalvo(slot,s,destId){
   if(!s)return "";
+  if(destId&&slot.gruposOcultos&&slot.gruposOcultos.includes(destId)){
+    const gi=(s.gruposItens&&s.gruposItens[destId])||{};
+    return(gi.produto||"").trim();
+  }
   if(slot.vitrine){
     const produtos=(s.vitrine&&s.vitrine.produtos)||[];
     for(const p of produtos){if(p&&p.nome&&p.nome.trim())return p.nome.trim();}
@@ -1477,7 +1515,7 @@ function candidatosSemanaParaData(dataIso,destId){
     const slot=SLOTS.find(s=>s.id===slotId);
     const s=(dados.slots&&dados.slots[slotId])||{};
     const status=(s.destinosStatus&&s.destinosStatus[destId])||"nada";
-    const nomeProduto=nomeProdutoDoSlotSalvo(slot,s);
+    const nomeProduto=nomeProdutoDoSlotSalvo(slot,s,destId);
     return{slotId,monday,status,nomeProduto};
   });
 }
@@ -1649,6 +1687,21 @@ function coletarDados(){
       const elD=document.getElementById(`data-destino-${slot.id}-${destId}`);
       destinosData[destId]=elD?elD.value:"";
     });
+    let gruposItens;
+    if(slot.gruposOcultos&&slot.gruposOcultos.length){
+      gruposItens={};
+      slot.gruposOcultos.forEach(destId=>{
+        const key=chaveGrupoProduto(slot.id,destId);
+        const elNome=document.getElementById("produto-"+key);
+        if(!elNome)return;
+        gruposItens[destId]={
+          produto:elNome.value,
+          link:document.getElementById("link-"+key).value,
+          foto:document.getElementById("foto-valor-"+key).value||undefined,
+          bancoId:document.getElementById("bancoId-"+key).value||undefined
+        };
+      });
+    }
     slots[slot.id]={
       itens,
       itensVariavelCount,
@@ -1657,6 +1710,7 @@ function coletarDados(){
       destinosStatus,
       destinosHorario,
       destinosData,
+      gruposItens,
       modo:slot.alterna?document.getElementById("modo-"+slot.id).value:undefined,
       formatoSelecionado:slot.formatoDefault!==undefined?document.getElementById("formato-select-"+slot.id).value:undefined
     };
@@ -1692,6 +1746,29 @@ function carregarSemana(){
       document.getElementById(`data-destino-${slot.id}-${destId}`).value=dataAgendada;
       atualizarChipDestino(slot.id,destId);
     });
+    if(slot.gruposOcultos&&slot.gruposOcultos.length){
+      const gi=s.gruposItens||{};
+      slot.gruposOcultos.forEach(destId=>{
+        const key=chaveGrupoProduto(slot.id,destId);
+        const elNome=document.getElementById("produto-"+key);
+        if(!elNome)return;
+        const it=gi[destId]||{};
+        elNome.value=it.produto||"";
+        document.getElementById("bancoId-"+key).value=it.bancoId||"";
+        popularSelectProdutoBanco(key,it.bancoId);
+        document.getElementById("link-"+key).value=it.link||"";
+        if(it.foto){
+          document.getElementById("foto-valor-"+key).value=it.foto;
+        }
+        atualizarDisplayItemSlot(key);
+        if(it.produto){
+          document.getElementById("item-edit-"+key).style.display="none";
+          document.getElementById("item-display-"+key).style.display="flex";
+        }else{
+          mostrarItemEdicao(key);
+        }
+      });
+    }
     if(!slot.vitrine){
       // dados antigos (de antes dos posts com vários produtos) vinham num formato só, sem array "itens"
       const itensSalvos=s.itens||(s.produto!==undefined?[{produto:s.produto,link:s.link,foto:s.foto}]:[]);
