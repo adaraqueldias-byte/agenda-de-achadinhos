@@ -26,14 +26,6 @@
       --warn-soft:#fdf0dc;
       --danger:#c62828;
       --danger-soft:#fbe4e4;
-      --pagina-garimpo:#ffb37a;
-      --pagina-garimpo-bg:#fff8f3;
-      --pagina-dashein:#f0a3c7;
-      --pagina-dashein-bg:#fff1f8;
-      --pagina-cleverfinds:#5b9bd9;
-      --pagina-cleverfinds-bg:#eef5fc;
-      --pagina-casamix:#7fd4e0;
-      --pagina-casamix-bg:#eefbfd;
     }
     *{box-sizing:border-box}
     body{
@@ -65,15 +57,7 @@
       margin-bottom:13px;
       box-shadow:0 6px 18px rgba(139,92,246,.08)
     }
-    .card.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
-    .card.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
-    .card.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
-    .card.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
     .relatorio-pagina-bloco{border-radius:12px;margin-bottom:8px;padding:2px 8px}
-    .relatorio-pagina-bloco.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
-    .relatorio-pagina-bloco.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
-    .relatorio-pagina-bloco.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
-    .relatorio-pagina-bloco.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
     label{display:block;font-size:13px;font-weight:700;margin-bottom:6px}
     input,textarea{
       width:100%;
@@ -179,10 +163,6 @@
     .simulador-lucro{color:#166534;font-weight:700}
     .simulador-prejuizo{color:#991b1b;font-weight:700}
     .relatorio-post-item{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 12px;border:1px solid var(--line);border-radius:12px;margin-bottom:0;font-size:13px;background:#fffafb}
-    .relatorio-post-item.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
-    .relatorio-post-item.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
-    .relatorio-post-item.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
-    .relatorio-post-item.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
     .relatorio-post-item-wrap{margin-bottom:7px}
     .relatorio-post-metricas{background:#fdf2f4;border:1px solid var(--line);border-top:none;border-radius:0 0 12px 12px;padding:10px 12px;margin-top:-1px}
     .relatorio-post-texto{display:flex;flex-direction:column;gap:3px;min-width:0}
@@ -199,11 +179,7 @@
     .relatorio-contador-cols{display:flex;gap:16px}
     .relatorio-contador-cols>div{flex:1;min-width:0}
     .relatorio-contador-linha{display:flex;justify-content:space-between;align-items:center;gap:6px;font-size:13px;padding:5px 0;border-bottom:1px solid var(--line)}
-    .relatorio-contador-linha.pagina-garimpo,.relatorio-contador-linha.pagina-dashein,.relatorio-contador-linha.pagina-cleverfinds,.relatorio-contador-linha.pagina-casamix{border-bottom:none;border-radius:10px;padding:7px 9px;margin-bottom:6px}
-    .relatorio-contador-linha.pagina-garimpo{border:2px solid var(--pagina-garimpo);background:var(--pagina-garimpo-bg)}
-    .relatorio-contador-linha.pagina-dashein{border:2px solid var(--pagina-dashein);background:var(--pagina-dashein-bg)}
-    .relatorio-contador-linha.pagina-cleverfinds{border:2px solid var(--pagina-cleverfinds);background:var(--pagina-cleverfinds-bg)}
-    .relatorio-contador-linha.pagina-casamix{border:2px solid var(--pagina-casamix);background:var(--pagina-casamix-bg)}
+    .relatorio-contador-linha.pagina-colorida{border-bottom:none;border-radius:10px;padding:7px 9px;margin-bottom:6px}
     .relatorio-contador-linha span{color:var(--muted);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
     .relatorio-contador-linha strong{color:var(--accent-dark);font-weight:800;flex:none}
     .pill-dias{flex:none;font-size:11px;font-weight:700;padding:4px 9px;border-radius:999px;white-space:nowrap}
@@ -350,6 +326,7 @@
     <div class="aba ativa" id="aba-semana" onclick="mostrarView('semana')">Semana</div>
     <div class="aba" id="aba-banco" onclick="mostrarView('banco')">🗂️ Banco de Produtos</div>
     <div class="aba" id="aba-relatorio" onclick="mostrarView('relatorio')">📋 Relatório</div>
+    <div class="aba" id="aba-config" onclick="mostrarView('config')">⚙️ Configuração</div>
   </div>
 
   <div class="backup-linha">
@@ -674,6 +651,17 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
     <h2>Anotações do Relatório — Painel do Afiliado</h2>
     <div id="anotacoes-imprimir-conteudo"></div>
   </div>
+
+  <div id="view-config" style="display:none">
+    <section class="card">
+      <strong>⚙️ Suas páginas e grupos</strong>
+      <p class="tip">Cadastre aqui as páginas que você administra, os grupos de cada uma e as outras redes onde você também posta (Instagram, TikTok, Pinterest, Shopee Video). O app usa isso pra montar a Semana e o Relatório automaticamente.</p>
+    </section>
+    <div id="config-lista-paginas"></div>
+    <button type="button" class="secondary" style="width:100%;margin-bottom:12px" onclick="configAdicionarPagina()">➕ Adicionar página</button>
+    <button type="button" class="primary" style="width:100%" onclick="configSalvar()">💾 Salvar configuração</button>
+    <div id="config-status" style="text-align:center;margin-top:8px;font-size:13px;font-weight:700"></div>
+  </div>
 </div>
 
 <script>
@@ -788,53 +776,160 @@ const PASSOS=[
    texto:"Vídeos publicados na SV, republicar nas redes sociais."}
 ];
 
-// ===== Suas páginas, contas e grupos reais =====
-const CONTAS={
-  face_garimpo:  {rede:"Facebook",  icone:"📘", nome:"Página Garimpo do Dia"},
-  face_dashein:  {rede:"Facebook",  icone:"📘", nome:"Página Dashein"},
-  face_cleverfinds: {rede:"Facebook", icone:"📘", nome:"CleverFinds"},
-  face_casamix:  {rede:"Facebook",  icone:"📘", nome:"CasaMix"},
-  insta_garimpo: {rede:"Instagram", icone:"📸", nome:"garimpodia"},
-  insta_dashein: {rede:"Instagram", icone:"📸", nome:"DaShein"},
-  grupo_garimpo: {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Garimpo"},
-  grupo_vende:   {rede:"Grupo Facebook", icone:"👥", nome:"Grupo Vende Barato"},
-  grupo_shop:    {rede:"Grupo Facebook", icone:"👥", nome:"Grupo ShopOnline"},
-  grupo_lucrando_shopee: {rede:"Grupo Facebook", icone:"👥", nome:"Lucrando na Shop"},
-  grupo_ofertas_boas: {rede:"Grupo Facebook", icone:"👥", nome:"Ofertas Boas"},
-  grupo_garimpo_kids: {rede:"Grupo Facebook", icone:"👥", nome:"Garimpo Kids"},
-  grupo_achadinhos_beleza: {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Beleza"},
-  grupo_shein:   {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos da Shein"},
-  grupo_cleverfinds: {rede:"Grupo Facebook", icone:"👥", nome:"Clever Finds USA"},
-  cleverfinds_extras: {rede:"Outros grupos", icone:"📤", nome:"Compartilhado (~10 grupos EUA)"},
-  garimpo_extras: {rede:"Outros grupos", icone:"📤", nome:"Compartilhado (Garimpo do Dia)"},
-  casamix_extras: {rede:"Outros grupos", icone:"📤", nome:"Compartilhado (CasaMix)"},
-  grupo_achadinhos_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Achadinhos pra Casa"},
-  grupo_ofertas_casa: {rede:"Grupo Facebook", icone:"👥", nome:"Ofertas pra Casa"},
-  shopee_video:  {rede:"Shopee Video", icone:"🎥", nome:"Garimpo do Dia"},
-  tiktok_garimpo:{rede:"TikTok", icone:"🎵", nome:"garimpodia"},
-  pinterest_garimpo:{rede:"Pinterest", icone:"📌", nome:"garimpododia"},
-};
+// ===== Configuração dinâmica: suas páginas, contas e grupos =====
+const CHAVE_CONFIG_PAGINAS="agenda-achadinhos-config-paginas";
+
+const REDES_EXTRAS_DISPONIVEIS=[
+  {chave:"instagram",rede:"Instagram",icone:"📸",sufixo:"insta"},
+  {chave:"tiktok",rede:"TikTok",icone:"🎵",sufixo:"tiktok"},
+  {chave:"pinterest",rede:"Pinterest",icone:"📌",sufixo:"pinterest"},
+  {chave:"shopeeVideo",rede:"Shopee Video",icone:"🎥",sufixo:"shopee"}
+];
+
+const PALETA_PAGINAS=["#ffb37a","#f0a3c7","#5b9bd9","#7fd4e0","#8bc48a","#e0c25b","#c9a8f5","#f5a37a"];
+
+function hexParaHsl(hex){
+  const r=parseInt(hex.slice(1,3),16)/255,g=parseInt(hex.slice(3,5),16)/255,b=parseInt(hex.slice(5,7),16)/255;
+  const max=Math.max(r,g,b),min=Math.min(r,g,b);
+  let h,s;const l=(max+min)/2;
+  if(max===min){h=s=0}
+  else{
+    const d=max-min;
+    s=l>0.5?d/(2-max-min):d/(max+min);
+    if(max===r)h=((g-b)/d+(g<b?6:0));
+    else if(max===g)h=(b-r)/d+2;
+    else h=(r-g)/d+4;
+    h/=6;
+  }
+  return [h*360,s*100,l*100];
+}
+function hslParaHex(h,s,l){
+  h/=360;s=Math.max(0,Math.min(100,s))/100;l=Math.max(0,Math.min(100,l))/100;
+  let r,g,b;
+  if(s===0){r=g=b=l}
+  else{
+    const hue2rgb=(p,q,t)=>{
+      if(t<0)t+=1;if(t>1)t-=1;
+      if(t<1/6)return p+(q-p)*6*t;
+      if(t<1/2)return q;
+      if(t<2/3)return p+(q-p)*(2/3-t)*6;
+      return p;
+    };
+    const q=l<0.5?l*(1+s):l+s-l*s;
+    const p=2*l-q;
+    r=hue2rgb(p,q,h+1/3);g=hue2rgb(p,q,h);b=hue2rgb(p,q,h-1/3);
+  }
+  const toHex=x=>Math.round(x*255).toString(16).padStart(2,"0");
+  return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+}
+function tonsDaPagina(corBase,qtd){
+  const[h,s]=hexParaHsl(corBase);
+  const n=Math.max(1,qtd);
+  const tons=[];
+  for(let i=0;i<n;i++){
+    const l=Math.max(32,Math.min(78,55+(i-(n-1)/2)*8));
+    tons.push({
+      borda:hslParaHex(h,Math.max(25,s-i*3),l),
+      bg:hslParaHex(h,Math.max(12,s-30),Math.min(97,l+30)),
+      titulo:hslParaHex(h,Math.min(100,s+10),Math.max(16,l-32))
+    });
+  }
+  return tons;
+}
+
+function configPaginasPadrao(){
+  return [
+    {id:"p1",nome:"Minha Página",grupos:[{id:"g1",nome:"Grupo da Página"}],
+      redes:{instagram:{ativo:false,nome:""},tiktok:{ativo:false,nome:""},pinterest:{ativo:false,nome:""},shopeeVideo:{ativo:false,nome:""}}}
+  ];
+}
+function carregarConfigPaginas(){
+  try{
+    const salvo=localStorage.getItem(CHAVE_CONFIG_PAGINAS);
+    if(!salvo)return configPaginasPadrao();
+    const dados=JSON.parse(salvo);
+    return Array.isArray(dados)&&dados.length?dados:configPaginasPadrao();
+  }catch(e){
+    return configPaginasPadrao();
+  }
+}
+function salvarConfigPaginas(paginas){
+  try{
+    localStorage.setItem(CHAVE_CONFIG_PAGINAS,JSON.stringify(paginas));
+    return true;
+  }catch(e){
+    return false;
+  }
+}
+
+// Gera CONTAS/LINHAS_CONTEUDO/etc a partir da configuração de páginas — mesmo formato que o resto do app já espera.
+function gerarEstruturaDeConfig(paginas){
+  const CONTAS={};
+  const LINHAS_CONTEUDO=[];
+  const PAGINA_PREFIXO_LINHA={};
+  const CANAIS_FOCO_RELATORIO=[];
+  const PAGINA_GRUPOS_RELATORIO={};
+  const PAGINA_COR={};
+  const TIPO_PARA_PAGINA={};
+  const CONTA_PAGINA={};
+
+  paginas.forEach((pagina,idx)=>{
+    const pid=pagina.id;
+    const corBase=PALETA_PAGINAS[idx%PALETA_PAGINAS.length];
+    const[h,s]=hexParaHsl(corBase);
+    PAGINA_COR[pid]={cor:corBase,bg:hslParaHex(h,Math.max(12,s-30),96),titulo:hslParaHex(h,Math.min(100,s+10),26)};
+
+    const faceId=`face_${pid}`;
+    CONTAS[faceId]={rede:"Facebook",icone:"📘",nome:`Página ${pagina.nome}`};
+    const grupoIds=(pagina.grupos||[]).map(g=>{
+      const gid=`grupo_${pid}_${g.id}`;
+      CONTAS[gid]={rede:"Grupo Facebook",icone:"👥",nome:g.nome};
+      return gid;
+    });
+    PAGINA_GRUPOS_RELATORIO[faceId]=grupoIds;
+    CONTA_PAGINA[faceId]=pid;
+    grupoIds.forEach(gid=>CONTA_PAGINA[gid]=pid);
+
+    const destinos=[faceId,...grupoIds];
+    const tipoBase=`${pagina.nome} — Página`;
+    LINHAS_CONTEUDO.push({prefixo:pid,tipo:tipoBase,destinos,gruposOcultos:grupoIds});
+    PAGINA_PREFIXO_LINHA[faceId]=pid;
+    TIPO_PARA_PAGINA[tipoBase]=pid;
+    CANAIS_FOCO_RELATORIO.push(faceId,...grupoIds);
+
+    const redes=pagina.redes||{};
+    REDES_EXTRAS_DISPONIVEIS.forEach(ex=>{
+      const cfg=redes[ex.chave];
+      if(!cfg||!cfg.ativo)return;
+      const contaId=`${ex.sufixo}_${pid}`;
+      CONTAS[contaId]={rede:ex.rede,icone:ex.icone,nome:cfg.nome||pagina.nome};
+      const prefixoLinha=`${pid}_${ex.sufixo}`;
+      const tipoExtra=`${pagina.nome} — ${ex.rede}`;
+      LINHAS_CONTEUDO.push({prefixo:prefixoLinha,tipo:tipoExtra,destinos:[contaId],poolMax:10});
+      TIPO_PARA_PAGINA[tipoExtra]=pid;
+      CANAIS_FOCO_RELATORIO.push(contaId);
+      CONTA_PAGINA[contaId]=pid;
+    });
+  });
+
+  return{CONTAS,LINHAS_CONTEUDO,PAGINA_PREFIXO_LINHA,CANAIS_FOCO_RELATORIO,PAGINA_GRUPOS_RELATORIO,PAGINA_COR,TIPO_PARA_PAGINA,CONTA_PAGINA};
+}
+
+let CONFIG_PAGINAS=carregarConfigPaginas();
+let ESTRUTURA_ATUAL=gerarEstruturaDeConfig(CONFIG_PAGINAS);
+const CONTAS=ESTRUTURA_ATUAL.CONTAS;
+const PAGINA_COR=ESTRUTURA_ATUAL.PAGINA_COR;
+
 function chaveConta(c){return `${c.rede} - ${c.nome}`}
 function chaveContaPorCanal(canalTexto){
   const [id]=Object.entries(CONTAS).find(([,c])=>chaveConta(c)===canalTexto)||[null];
   return id;
 }
-const TODOS_OS_GRUPOS=["grupo_garimpo","grupo_vende","grupo_shop"];
 
 function slotTemInstagram(slot){return slot.destinos.some(destId=>CONTAS[destId].rede==="Instagram")}
 
 // ===== Linhas de conteúdo: cada uma tem, todo dia, 1 post sempre visível + um pool de extras revelados com "+" =====
-const LINHAS_CONTEUDO=[
-  {prefixo:"garimpo",tipo:"Garimpo do Dia — Página",destinos:["face_garimpo","grupo_garimpo","grupo_lucrando_shopee","grupo_ofertas_boas","grupo_garimpo_kids","grupo_achadinhos_beleza"],gruposOcultos:["grupo_garimpo","grupo_lucrando_shopee","grupo_ofertas_boas","grupo_garimpo_kids","grupo_achadinhos_beleza"]},
-  {prefixo:"garimpo_insta",tipo:"Garimpo do Dia — Instagram",destinos:["insta_garimpo"],poolMax:10},
-  {prefixo:"garimpo_shopee",tipo:"Garimpo do Dia — Shopee Video",destinos:["shopee_video"],poolMax:10},
-  {prefixo:"garimpo_tiktok",tipo:"Garimpo do Dia — TikTok",destinos:["tiktok_garimpo"],poolMax:10},
-  {prefixo:"garimpo_pinterest",tipo:"Garimpo do Dia — Pinterest",destinos:["pinterest_garimpo"],poolMax:10},
-  {prefixo:"dashein",tipo:"Shein — Página",destinos:["face_dashein","grupo_shein"],gruposOcultos:["grupo_shein"]},
-  {prefixo:"dashein_insta",tipo:"Shein — Instagram",destinos:["insta_dashein"]},
-  {prefixo:"cleverfinds",tipo:"Clever Finds USA — Página",destinos:["face_cleverfinds","grupo_cleverfinds","cleverfinds_extras"],gruposOcultos:["grupo_cleverfinds","cleverfinds_extras"],poolMax:8},
-  {prefixo:"casamix",tipo:"CasaMix — Página",destinos:["face_casamix","grupo_achadinhos_casa","grupo_ofertas_casa"],gruposOcultos:["grupo_achadinhos_casa","grupo_ofertas_casa"]}
-];
+const LINHAS_CONTEUDO=ESTRUTURA_ATUAL.LINHAS_CONTEUDO;
 const POOL_MAX=4; // 1 post sempre visível + até 3 extras revelados com o "+"
 const DIAS_SEMANA=[["segunda","Segunda"],["terca","Terça"],["quarta","Quarta"],["quinta","Quinta"],["sexta","Sexta"],["sabado","Sábado"],["domingo","Domingo"]];
 
@@ -1204,28 +1299,6 @@ function salvarItemGrupo(slotId,destId){
   salvarSemana();
 }
 
-const PALETA_GRUPOS_POR_PAGINA={
-  garimpo:[
-    {bg:"#fff8f3",borda:"#ffb37a",titulo:"#c2611a"},
-    {bg:"#fff7e6",borda:"#f5a623",titulo:"#92400e"},
-    {bg:"#fff2e8",borda:"#ff8c42",titulo:"#c2410c"},
-    {bg:"#fdeee5",borda:"#e2672a",titulo:"#9a3412"},
-    {bg:"#fdf6e3",borda:"#d9a441",titulo:"#854d0e"}
-  ],
-  dashein:[
-    {bg:"#fff1f8",borda:"#f0a3c7",titulo:"#be185d"},
-    {bg:"#ffe3f0",borda:"#e8639f",titulo:"#9d174d"}
-  ],
-  cleverfinds:[
-    {bg:"#eef5fc",borda:"#5b9bd9",titulo:"#1e40af"},
-    {bg:"#e3eefc",borda:"#3b78c4",titulo:"#1e3a8a"}
-  ],
-  casamix:[
-    {bg:"#eefbfd",borda:"#7fd4e0",titulo:"#0e7490"},
-    {bg:"#e3f7fa",borda:"#4db8c9",titulo:"#155e63"}
-  ]
-};
-
 function destinosChipsHtml(slot){
   const ocultos=slot.gruposOcultos||[];
   const visiveis=slot.destinos.filter(d=>!ocultos.includes(d));
@@ -1233,7 +1306,8 @@ function destinosChipsHtml(slot){
   let html=visiveis.map(d=>destinoChipHtml(slot,d)).join("");
   if(escondidos.length){
     const paginaKey=paginaKeyPeloTipo(slot.tipo);
-    const paleta=PALETA_GRUPOS_POR_PAGINA[paginaKey]||PALETA_GRUPOS_POR_PAGINA.garimpo;
+    const corBase=(PAGINA_COR[paginaKey]&&PAGINA_COR[paginaKey].cor)||PALETA_PAGINAS[0];
+    const paleta=tonsDaPagina(corBase,escondidos.length);
     html+=`<button type="button" class="grupos-toggle" id="grupos-toggle-${slot.id}" onclick="toggleGruposOcultos('${slot.id}')">
       <span id="grupos-toggle-label-${slot.id}">👥 Grupos (${escondidos.length})</span>
       <span id="grupos-toggle-seta-${slot.id}">▾</span>
@@ -1311,11 +1385,11 @@ function adicionarExtraPool(parentId){
 
 function paginaKeyPeloTipo(tipo){
   if(!tipo)return"";
-  if(tipo.startsWith("Garimpo do Dia"))return"garimpo";
-  if(tipo.startsWith("Shein"))return"dashein";
-  if(tipo.startsWith("Clever Finds"))return"cleverfinds";
-  if(tipo.startsWith("CasaMix"))return"casamix";
-  return"";
+  return ESTRUTURA_ATUAL.TIPO_PARA_PAGINA[tipo]||"";
+}
+function estiloPagina(paginaKey){
+  const cor=PAGINA_COR[paginaKey];
+  return cor?`border:2px solid ${cor.cor};background:${cor.bg}`:"";
 }
 
 function slotTemplate(slot,extraHtml){
@@ -1332,7 +1406,7 @@ function slotTemplate(slot,extraHtml){
       ${slot.tipo?`<span class="badge">${slot.tipo}</span>`:""}
     </div>`;
   const paginaKey=paginaKeyPeloTipo(slot.tipo);
-  const cardHtml=`<section class="card${paginaKey?` pagina-${paginaKey}`:""}">
+  const cardHtml=`<section class="card" style="${estiloPagina(paginaKey)}">
     ${cabecalhoHtml}
     <div class="slot-destinos-linha">
       <div class="slot-destinos">${destinosChipsHtml(slot)}</div>
@@ -2010,15 +2084,108 @@ function mostrarView(nome){
   document.getElementById("view-semana").style.display=nome==="semana"?"block":"none";
   document.getElementById("view-banco").style.display=nome==="banco"?"block":"none";
   document.getElementById("view-relatorio").style.display=nome==="relatorio"?"block":"none";
+  document.getElementById("view-config").style.display=nome==="config"?"block":"none";
   document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
   document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
   document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
+  document.getElementById("aba-config").classList.toggle("ativa",nome==="config");
   if(nome==="banco")renderizarBanco();
   if(nome==="relatorio")renderizarRelatorio();
+  if(nome==="config")renderizarConfig();
   if(nome==="semana"&&diaAtualISO){
     abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
     atualizarTodosSelectsProdutoBanco();
   }
+}
+
+let RASCUNHO_CONFIG=null;
+let CONFIG_CONTADOR_ID=0;
+function configNovoId(prefixo){CONFIG_CONTADOR_ID++;return `${prefixo}${Date.now().toString(36)}${CONFIG_CONTADOR_ID}`}
+
+function configRedesPadrao(){
+  return{instagram:{ativo:false,nome:""},tiktok:{ativo:false,nome:""},pinterest:{ativo:false,nome:""},shopeeVideo:{ativo:false,nome:""}};
+}
+
+function renderizarConfig(){
+  if(!RASCUNHO_CONFIG)RASCUNHO_CONFIG=JSON.parse(JSON.stringify(CONFIG_PAGINAS));
+  document.getElementById("config-lista-paginas").innerHTML=RASCUNHO_CONFIG.map((pagina,pi)=>configPaginaHtml(pagina,pi)).join("");
+  document.getElementById("config-status").textContent="";
+}
+
+function configPaginaHtml(pagina,pi){
+  const grupos=pagina.grupos||[];
+  const gruposHtml=grupos.map((g,gi)=>`
+    <div class="field" style="display:flex;gap:8px;align-items:center;margin-bottom:8px">
+      <input value="${escaparBanco(g.nome)}" style="flex:1" onchange="configEditarGrupo(${pi},${gi},this.value)">
+      <button type="button" class="item-produto-icone item-produto-lixeira" onclick="configRemoverGrupo(${pi},${gi})">🗑️</button>
+    </div>`).join("");
+  const redes=pagina.redes||configRedesPadrao();
+  const redesHtml=REDES_EXTRAS_DISPONIVEIS.map(ex=>{
+    const cfg=redes[ex.chave]||{ativo:false,nome:""};
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:6px">
+      <label style="display:flex;align-items:center;gap:6px;margin:0;font-weight:600;flex:none;white-space:nowrap">
+        <input type="checkbox" style="width:auto" ${cfg.ativo?"checked":""} onchange="configToggleRede(${pi},'${ex.chave}',this.checked)">
+        ${ex.icone} ${ex.rede}
+      </label>
+      <input placeholder="Nome/usuário nessa rede" value="${escaparBanco(cfg.nome)}" style="flex:1" ${cfg.ativo?"":"disabled"} onchange="configEditarRedeNome(${pi},'${ex.chave}',this.value)">
+    </div>`;
+  }).join("");
+  return `<section class="card">
+    <div style="display:flex;gap:8px;align-items:flex-end;margin-bottom:10px">
+      <div class="field" style="flex:1;margin-bottom:0"><label>Nome da página</label><input value="${escaparBanco(pagina.nome)}" onchange="configEditarNomePagina(${pi},this.value)"></div>
+      <button type="button" class="item-produto-icone item-produto-lixeira" onclick="configRemoverPagina(${pi})">🗑️</button>
+    </div>
+    <label>Grupos dessa página</label>
+    ${gruposHtml||'<p class="tip">Nenhum grupo ainda.</p>'}
+    <button type="button" class="secondary" style="width:100%;margin-bottom:12px" onclick="configAdicionarGrupo(${pi})">➕ Adicionar grupo</button>
+    <label>Outras redes dessa página</label>
+    ${redesHtml}
+  </section>`;
+}
+
+function configAdicionarPagina(){
+  if(!RASCUNHO_CONFIG)RASCUNHO_CONFIG=JSON.parse(JSON.stringify(CONFIG_PAGINAS));
+  RASCUNHO_CONFIG.push({id:configNovoId("p"),nome:"Nova página",grupos:[],redes:configRedesPadrao()});
+  renderizarConfig();
+}
+function configRemoverPagina(pi){
+  if(!confirm("Remover essa página da configuração?"))return;
+  RASCUNHO_CONFIG.splice(pi,1);
+  renderizarConfig();
+}
+function configEditarNomePagina(pi,valor){RASCUNHO_CONFIG[pi].nome=valor.trim()||"Página"}
+function configAdicionarGrupo(pi){
+  RASCUNHO_CONFIG[pi].grupos.push({id:configNovoId("g"),nome:"Novo grupo"});
+  renderizarConfig();
+}
+function configRemoverGrupo(pi,gi){
+  RASCUNHO_CONFIG[pi].grupos.splice(gi,1);
+  renderizarConfig();
+}
+function configEditarGrupo(pi,gi,valor){RASCUNHO_CONFIG[pi].grupos[gi].nome=valor.trim()||"Grupo"}
+function configToggleRede(pi,chave,ativo){
+  if(!RASCUNHO_CONFIG[pi].redes)RASCUNHO_CONFIG[pi].redes=configRedesPadrao();
+  if(!RASCUNHO_CONFIG[pi].redes[chave])RASCUNHO_CONFIG[pi].redes[chave]={ativo:false,nome:""};
+  RASCUNHO_CONFIG[pi].redes[chave].ativo=ativo;
+  renderizarConfig();
+}
+function configEditarRedeNome(pi,chave,valor){
+  RASCUNHO_CONFIG[pi].redes[chave].nome=valor;
+}
+
+function configSalvar(){
+  const paginasValidas=RASCUNHO_CONFIG.filter(p=>p.nome&&p.nome.trim());
+  if(!paginasValidas.length){
+    document.getElementById("config-status").textContent="⚠️ Cadastre pelo menos uma página.";
+    return;
+  }
+  const salvou=salvarConfigPaginas(paginasValidas);
+  if(!salvou){
+    document.getElementById("config-status").textContent="⚠️ Não deu pra salvar: a memória do navegador está cheia.";
+    return;
+  }
+  document.getElementById("config-status").textContent="✅ Salvo! Recarregando...";
+  setTimeout(()=>location.reload(),600);
 }
 
 function carregarRelatorios(){return JSON.parse(localStorage.getItem("agenda-achadinhos-relatorios")||"{}")}
@@ -2184,7 +2351,7 @@ function diasSemPostarNumero(dataIso){
   return Math.round((isoParaData(hojeIso)-isoParaData(dataIso))/86400000);
 }
 
-const PAGINA_PREFIXO_LINHA={face_garimpo:"garimpo",face_dashein:"dashein",face_cleverfinds:"cleverfinds",face_casamix:"casamix"};
+const PAGINA_PREFIXO_LINHA=ESTRUTURA_ATUAL.PAGINA_PREFIXO_LINHA;
 
 function irParaSemanaDoBloco(paginaId){
   mostrarView("semana");
@@ -2199,30 +2366,11 @@ function irParaSemanaDoBloco(paginaId){
   }
 }
 
-const CANAIS_FOCO_RELATORIO=["face_garimpo","face_dashein","face_cleverfinds","face_casamix","grupo_garimpo","grupo_garimpo_kids","grupo_achadinhos_beleza","grupo_ofertas_boas","grupo_lucrando_shopee","grupo_shein","grupo_cleverfinds","grupo_achadinhos_casa","grupo_ofertas_casa","insta_garimpo","shopee_video","tiktok_garimpo","pinterest_garimpo"];
+const CANAIS_FOCO_RELATORIO=ESTRUTURA_ATUAL.CANAIS_FOCO_RELATORIO;
 
-const PAGINA_GRUPOS_RELATORIO={
-  face_garimpo:["grupo_garimpo","grupo_garimpo_kids","grupo_achadinhos_beleza","grupo_ofertas_boas","grupo_lucrando_shopee"],
-  face_dashein:["grupo_shein"],
-  face_cleverfinds:["grupo_cleverfinds"],
-  face_casamix:["grupo_achadinhos_casa","grupo_ofertas_casa"],
-};
+const PAGINA_GRUPOS_RELATORIO=ESTRUTURA_ATUAL.PAGINA_GRUPOS_RELATORIO;
 
-const CONTA_PAGINA_EXTRA={insta_garimpo:"garimpo",shopee_video:"garimpo",tiktok_garimpo:"garimpo",pinterest_garimpo:"garimpo",insta_dashein:"dashein"};
-
-const CONTA_PAGINA=(()=>{
-  const mapa={};
-  Object.entries(PAGINA_GRUPOS_RELATORIO).forEach(([paginaId,grupoIds])=>{
-    const key=paginaId.replace(/^face_/,"");
-    mapa[paginaId]=key;
-    grupoIds.forEach(gid=>mapa[gid]=key);
-  });
-  Object.assign(mapa,CONTA_PAGINA_EXTRA);
-  mapa.garimpo_extras="garimpo";
-  mapa.casamix_extras="casamix";
-  mapa.cleverfinds_extras="cleverfinds";
-  return mapa;
-})();
+const CONTA_PAGINA=ESTRUTURA_ATUAL.CONTA_PAGINA;
 
 function resolverContaIdPeloCanal(canalTexto){
   const norm=normalizarTexto(canalTexto);
@@ -2259,7 +2407,7 @@ function renderizarContadorCanais(){
     const c=CONTAS[id];
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
     const paginaKey=CONTA_PAGINA[id]||"";
-    return `<div class="relatorio-contador-linha${paginaKey?` pagina-${paginaKey}`:""}"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
+    return `<div class="relatorio-contador-linha${paginaKey?" pagina-colorida":""}" style="${estiloPagina(paginaKey)}"><span>${escaparBanco(nomeOverride||c.nome)}</span><span class="pill-dias ${classe}">${texto}</span></div>`;
   };
   const paginasIds=Object.keys(PAGINA_GRUPOS_RELATORIO);
 
@@ -2283,8 +2431,8 @@ function renderizarContadorCanais(){
     const{classe,texto}=pillDiasSemPostar(ultimas[chaveConta(c)]);
     const grupoIds=PAGINA_GRUPOS_RELATORIO[paginaId];
     const gruposHtml=grupoIds.map(id=>linha(id)).join("");
-    const paginaKey=paginaId.replace(/^face_/,"");
-    return `<div class="relatorio-pagina-bloco pagina-${paginaKey}">
+    const paginaKey=CONTA_PAGINA[paginaId]||"";
+    return `<div class="relatorio-pagina-bloco" style="${estiloPagina(paginaKey)}">
       <div class="relatorio-pagina-header-row">
         <button type="button" class="relatorio-pagina-header" onclick="toggleContadorPagina('${paginaId}')">
           <span>${escaparBanco(c.nome.replace(/^Página\s*/,""))}</span>
@@ -2327,7 +2475,7 @@ function renderizarRelatorio(){
       const linkHtml=p.link?`<a class="relatorio-post-meta" href="${escaparBanco(p.link)}" target="_blank" rel="noopener" style="display:block">🔗 ${escaparBanco(p.link)}</a>`:"";
       const paginaKey=paginaKeyPeloCanalRelatorio(p.canal);
       return `<div class="relatorio-post-item-wrap">
-        <div class="relatorio-post-item${paginaKey?` pagina-${paginaKey}`:""}">
+        <div class="relatorio-post-item" style="${estiloPagina(paginaKey)}">
           <div class="relatorio-post-texto">${p.canal?`<span class="relatorio-post-canal">${escaparBanco(p.canal)}</span>`:""}<span>${escaparBanco(p.texto)}</span>${linkHtml}${meta?`<span class="relatorio-post-meta">${meta}</span>`:""}${atualizacao}</div>
           <div style="display:flex;gap:4px;flex:none">
             <button type="button" class="relatorio-post-remover" onclick="toggleMetricasPostRelatorio(${i})" title="Editar métricas">✏️</button>
