@@ -654,8 +654,8 @@ Vídeo do produto | GrupoGarimpododia | 17/07/2026 | 10:05 | 16 | Reels"></texta
 
   <div id="view-config" style="display:none">
     <section class="card">
-      <strong>⚙️ Suas páginas e grupos</strong>
-      <p class="tip">Cadastre aqui as páginas que você administra, os grupos de cada uma e as outras redes onde você também posta (Instagram, TikTok, Pinterest, Shopee Video). O app usa isso pra montar a Semana e o Relatório automaticamente.</p>
+      <strong id="config-titulo-intro">⚙️ Suas páginas e grupos</strong>
+      <p class="tip" id="config-texto-intro">Cadastre aqui as páginas que você administra, os grupos de cada uma e as outras redes onde você também posta (Instagram, TikTok, Pinterest, Shopee Video). O app usa isso pra montar a Semana e o Relatório automaticamente.</p>
     </section>
     <div id="config-lista-paginas"></div>
     <button type="button" class="secondary" style="width:100%;margin-bottom:12px" onclick="configAdicionarPagina()">➕ Adicionar página</button>
@@ -2110,6 +2110,11 @@ function renderizarConfig(){
   if(!RASCUNHO_CONFIG)RASCUNHO_CONFIG=JSON.parse(JSON.stringify(CONFIG_PAGINAS));
   document.getElementById("config-lista-paginas").innerHTML=RASCUNHO_CONFIG.map((pagina,pi)=>configPaginaHtml(pagina,pi)).join("");
   document.getElementById("config-status").textContent="";
+  const primeiroUso=!localStorage.getItem(CHAVE_CONFIG_PAGINAS);
+  if(primeiroUso){
+    document.getElementById("config-titulo-intro").textContent="👋 Vamos configurar seu painel";
+    document.getElementById("config-texto-intro").textContent="Antes de usar o app, cadastre pelo menos 1 página sua: o nome dela, os grupos onde você também posta, e se você usa Instagram, TikTok, Pinterest ou Shopee Video. Depois toque em \"Salvar configuração\".";
+  }
 }
 
 function configPaginaHtml(pagina,pi){
@@ -3763,6 +3768,7 @@ document.getElementById("view-banco").addEventListener("change",e=>{
 });
 
 montarTela();
+if(!localStorage.getItem(CHAVE_CONFIG_PAGINAS))mostrarView("config");
 diaAtualISO=dataParaIso(new Date());
 date.value=segundaFeiraDeHoje();
 atualizarNavDia();
