@@ -3128,7 +3128,7 @@ function rotuloCategoriaBanco(p){
 
 
 function renderizarOrdenacaoBanco(){
-  const opcoes=[{chave:"recentes",rotulo:"Recentes"},{chave:"naopostado",rotulo:"Não postado"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"categoria",rotulo:"Categoria"},{chave:"preco",rotulo:"Preço"},{chave:"nome",rotulo:"Nome"}];
+  const opcoes=[{chave:"recentes",rotulo:"Recentes"},{chave:"naopostado",rotulo:"Não postado"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"redesocial",rotulo:"Rede Social"},{chave:"categoria",rotulo:"Categoria"},{chave:"preco",rotulo:"Preço"},{chave:"nome",rotulo:"Nome"}];
   const html='<span class="banco-ordenacao-label">Ordenar por:</span>'
     +opcoes.map(o=>{
       const ativo=ordenacaoAtual===o.chave;
@@ -3355,6 +3355,30 @@ function aplicarOrdenacao(lista){
     comStatus.forEach((x,i)=>{
       const grupo=x.publicado?"__sim__":"__nao__";
       if(grupo!==ultimoGrupo){grupos.push({indice:i,rotulo:x.publicado?"✅ Já publicado":"🔴 Ainda não postado em nenhum canal"});ultimoGrupo=grupo;}
+    });
+    return{itens:sorted,grupos};
+  }
+  if(ordenacaoAtual==="redesocial"){
+    const ordemRedes=["Facebook","Instagram","Shopee Video","TikTok","Pinterest"];
+    const redeDoProduto=p=>{
+      const publicacoes=publicacoesDoProdutoBanco(p.id);
+      if(!publicacoes.length)return"__naopostado__";
+      let rede=publicacoes[0].canal.split(" - ")[0];
+      if(rede==="Grupo Facebook"||rede==="Outros grupos")rede="Facebook";
+      return rede;
+    };
+    const comRede=lista.map(p=>({p,rede:redeDoProduto(p)}));
+    comRede.sort((a,b)=>{
+      const ia=a.rede==="__naopostado__"?9999:ordemRedes.indexOf(a.rede);
+      const ib=b.rede==="__naopostado__"?9999:ordemRedes.indexOf(b.rede);
+      const fa=ia===-1?999:ia;
+      const fb=ib===-1?999:ib;
+      return fa-fb;
+    });
+    const sorted=comRede.map(x=>x.p);
+    const grupos=[];let ultimaRede=null;
+    comRede.forEach((x,i)=>{
+      if(x.rede!==ultimaRede){grupos.push({indice:i,rotulo:x.rede==="__naopostado__"?"🔴 Ainda não postado":x.rede});ultimaRede=x.rede;}
     });
     return{itens:sorted,grupos};
   }
