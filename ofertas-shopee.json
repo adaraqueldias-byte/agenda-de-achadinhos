@@ -1,5 +1,5 @@
 {
- "atualizadoEm": "2026-10-20T12:49:05.113Z",
+ "atualizadoEm": "2026-10-20T12:54:00.596Z",
  "grupos": [
   {
    "id": "vip",
@@ -172,159 +172,165 @@
    "nome": "Natal",
    "ofertas": [
     {
-     "itemId": "18924037152",
-     "nome": "decoração de natal/Decorações De Árvore De Natal/natal decoração/enfeites de natal e decoração/decoração casa natal/ árvores natal/decoraçao de natal/christmas decorations/decorações de Natal/caixa de natal/ presente natal/caixa presente natal\n",
-     "link": "https://s.shopee.com.br/6fiCyVg4qp",
+     "itemId": "27123077441",
+     "nome": "Fio De Fada De 2M Com Luzes De Fadas Led Para Decoração De Casa E Festa De Natal",
+     "link": "https://s.shopee.com.br/5AtPBOLTVx",
      "loja": "shopee",
-     "preco": 100,
-     "comissao": 7,
-     "valorComissao": 7,
-     "vendas": 0,
+     "preco": 4.99,
+     "comissao": 23,
+     "valorComissao": 1.1477,
+     "vendas": 8408,
      "nota": 4.8,
-     "foto": "https://cf.shopee.com.br/file/6794047371fcc4dab7b847839538a2dd",
-     "loja_nome": "moondayworld.br"
+     "desconto": 71,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-7ra1c-m4sgiysdbniif0",
+     "loja_nome": "SZFG1.br"
     },
     {
-     "itemId": "14493669828",
-     "nome": "Decoração De Natal/Decorações De Árvore De Natal/Natal Decoração/Enfeites De Natal E Decoração/Decoração Casa Natal/ árvores Natal/Decoraçao De Natal/Decorações De Natal/Caixa De Natal",
-     "link": "https://s.shopee.com.br/7puAMebdU4",
-     "loja": "shopee",
-     "preco": 100,
-     "comissao": 7,
-     "valorComissao": 7,
-     "vendas": 0,
-     "nota": 4.9,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbko-lm43j041e5axc6",
-     "loja_nome": "moondayworld.br"
-    },
-    {
-     "itemId": "45768449139",
-     "nome": "Decorações de natal decorações de natal porta de natal pendurado decorações de natal papai noel boneco de neve decoração",
-     "link": "https://s.shopee.com.br/7fakALcGp3",
+     "itemId": "21898858579",
+     "nome": "1/2/5 Pcs Colorido Fio Fada 2M Com Luzes Led Fada Para Decoração De Casa e Natal Festa",
+     "link": "https://s.shopee.com.br/4qGYmmMkBv",
      "loja": "shopee",
      "preco": {
-      "min": 36.47,
-      "max": 42.54
+      "min": 7.69,
+      "max": 12.3
      },
-     "comissao": 3,
-     "valorComissao": 1.0941,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825al-mtjhsx2aae4id7",
-     "loja_nome": "wuhanyodexeson2"
+     "comissao": 23,
+     "valorComissao": 1.7687,
+     "vendas": 6868,
+     "nota": 4.8,
+     "desconto": 75,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-825ao-mu7dow70hmgw59",
+     "loja_nome": "INFINITY COMERCIO DE VARIEDADES"
     },
     {
-     "itemId": "41935131697",
-     "nome": "Decoração de Natal Decorações de Natal Decorações de Natal Luzes solares de decoração de Natal Luzes de corda Led Velho ",
-     "link": "https://s.shopee.com.br/7VHJy2cuA2",
+     "itemId": "49300976525",
+     "nome": "Enfeites De Natal 43CM Glitter Berry Haste Ramo Flores Falsas Para Decoração De Árvore Casa",
+     "link": "https://s.shopee.com.br/40hRnFPuso",
      "loja": "shopee",
      "preco": {
-      "min": 35.88,
-      "max": 125.42
-     },
-     "comissao": 3,
-     "valorComissao": 1.0764,
-     "vendas": 0,
-     "nota": 0,
-     "desconto": 50,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825b9-mu8w23lj9r0k6e",
-     "loja_nome": "yang22b.br"
-    },
-    {
-     "itemId": "18886755458",
-     "nome": "[Chapéu De Natal Chapéu de Natal Chapéu de Natal Tecido Não Tecido Comum Chapéu de Natal Decorações de Natal Decorações de Natal para Crianças Adultas",
-     "link": "https://s.shopee.com.br/7KxtljdXV1",
-     "loja": "shopee",
-     "preco": {
-      "min": 71.5,
-      "max": 76.5
-     },
-     "comissao": 3,
-     "valorComissao": 2.145,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/tw-11134201-7r98o-lowd6fxv2pfb07",
-     "loja_nome": "halou082.br"
-    },
-    {
-     "itemId": "56617977674",
-     "nome": "Decoração de natal decoração da árvore de natal decoração de mesa 2026 novo estilo natal Origami decoração cena decoraçã",
-     "link": "https://s.shopee.com.br/4fx8apnguW",
-     "loja": "shopee",
-     "preco": {
-      "min": 41.62,
-      "max": 59.84
-     },
-     "comissao": 3,
-     "valorComissao": 1.2486,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825bc-mt8mvy91f47ef5",
-     "loja_nome": "wangdongtingqijiandian585"
-    },
-    {
-     "itemId": "18699864242",
-     "nome": "Topo de Bolo Natal • Topper de bolo Natalino•decoração de natal▪️coisas de natal▪️natal decoração▪️Itens de natal",
-     "link": "https://s.shopee.com.br/4qGYn8n3ZZ",
-     "loja": "shopee",
-     "preco": {
-      "min": 21.99,
-      "max": 22
+      "min": 5.99,
+      "max": 6.59
      },
      "comissao": 13,
-     "valorComissao": 2.8587,
-     "vendas": 0,
-     "nota": 5,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-81z1k-mhh018cqh69vf6",
-     "loja_nome": "Artte Digital Papelaria"
+     "valorComissao": 0.7787,
+     "vendas": 2901,
+     "nota": 4.4,
+     "desconto": 71,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-821dt-mgrfr68t6dql96",
+     "loja_nome": "Papel de parede e floricultura arti"
     },
     {
-     "itemId": "55117859369",
-     "nome": "Decorações de natal retrátil Elk boneca cena decoração natal burro decoração boneca decorações da árvore de natal",
-     "link": "https://s.shopee.com.br/50ZyzRmQEc",
+     "itemId": "20097733711",
+     "nome": "Cortina de Luz LED Multicolorida 3x3m ou 4x3m USB com Controle Remoto, 8 Modos para Festa e Decoração",
+     "link": "https://s.shopee.com.br/4B0rzYPHXr",
      "loja": "shopee",
      "preco": {
-      "min": 79.71,
-      "max": 129.8
+      "min": 29.88,
+      "max": 32.88
      },
      "comissao": 3,
-     "valorComissao": 2.3913,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825aq-mt562b1hkdu247",
-     "loja_nome": "hishizixiuzhuanyingdian446"
+     "valorComissao": 0.8964,
+     "vendas": 3356,
+     "nota": 4.8,
+     "desconto": 49,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lm-mt5crbng84cm72",
+     "loja_nome": "PICOMERCE"
     },
     {
-     "itemId": "47218828329",
-     "nome": "Decoração de natal decoração decoração atmosfera decoração véspera de natal presente garrafa de vinho de natal conjunto ",
-     "link": "https://s.shopee.com.br/5AtPBklmtf",
+     "itemId": "21998858555",
+     "nome": "1/2/5 Pcs Colorido Fio Fada 2M Com Luzes Led Fada Para Decoração De Casa e Natal Festa",
+     "link": "https://s.shopee.com.br/113qDjbKyG",
      "loja": "shopee",
      "preco": {
-      "min": 98.8,
-      "max": 141.81
+      "min": 7.99,
+      "max": 12.59
      },
-     "comissao": 3,
-     "valorComissao": 2.964,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-8259m-mtz9e09293i838",
-     "loja_nome": "licaoyancaizhuanmaidian667"
+     "comissao": 23,
+     "valorComissao": 1.8377,
+     "vendas": 2859,
+     "nota": 4.6,
+     "desconto": 75,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-7r98o-lknc2jcks6ab26",
+     "loja_nome": "1000 Coisas Variedades"
     },
     {
-     "itemId": "45668847137",
-     "nome": "Decoração de natal decoração decoração atmosfera decoração véspera de natal presente garrafa de vinho de natal conjunto ",
-     "link": "https://s.shopee.com.br/40hRnbqEGS",
+     "itemId": "23399175232",
+     "nome": "Presépio De Natal Manjedoura Decoração Enfeite Natalino Mdf",
+     "link": "https://s.shopee.com.br/1BNGQ2ahdJ",
+     "loja": "shopee",
+     "preco": 29.9,
+     "comissao": 12,
+     "valorComissao": 3.588,
+     "vendas": 3798,
+     "nota": 4.5,
+     "desconto": 40,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-821e1-mgzrq0k1qtceba",
+     "loja_nome": "Envoyé Oficial"
+    },
+    {
+     "itemId": "20099498532",
+     "nome": "Pisca Pisca Natal Cordão 100 Leds 10m 8 Funções Varias Cores 110v / 220v ANJIN",
+     "link": "https://s.shopee.com.br/gQzp7cbeE",
      "loja": "shopee",
      "preco": {
-      "min": 98.8,
-      "max": 148.69
+      "min": 13.9,
+      "max": 16.9
      },
      "comissao": 3,
-     "valorComissao": 2.964,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-8257v-mtz9dy04s8w5a5",
-     "loja_nome": "licaoyancaizhuanmaidian667"
+     "valorComissao": 0.417,
+     "vendas": 4207,
+     "nota": 4.9,
+     "desconto": 54,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rdyh-m0yj94qxv1hjb2",
+     "loja_nome": "ANJIN IMPORTS"
+    },
+    {
+     "itemId": "26673082121",
+     "nome": "Fio De Fada De 2M Com Luzes De Fadas Led Para Decoração De Casa E Festa De Natal",
+     "link": "https://s.shopee.com.br/qkQ1QbyJH",
+     "loja": "shopee",
+     "preco": 4.99,
+     "comissao": 19,
+     "valorComissao": 0.9481,
+     "vendas": 2760,
+     "nota": 4.8,
+     "desconto": 71,
+     "foto": "https://cf.shopee.com.br/file/cn-11134207-7ras8-m4sgd4jf2pep7f",
+     "loja_nome": "HONG11.br"
+    },
+    {
+     "itemId": "40661495346",
+     "nome": "Mini Decorações De Natal Papai Noel Bonecos De Neve Meias Sinos Paisagens Em Miniatura Resina Artesanato Casa Mesa",
+     "link": "https://s.shopee.com.br/Lo9QVdsKC",
+     "loja": "shopee",
+     "preco": {
+      "min": 3.5,
+      "max": 12
+     },
+     "comissao": 8,
+     "valorComissao": 0.28,
+     "vendas": 3262,
+     "nota": 4.9,
+     "desconto": 83,
+     "foto": "https://cf.shopee.com.br/file/cn-11134207-820l4-mt91o08rz0g45b",
+     "loja_nome": "unicornfashionstore.br"
+    },
+    {
+     "itemId": "58212669834",
+     "nome": "Kit Manta Decorativa P + 4 Capas de Almofadas Natalinas Estampa Digital Decoração Natal",
+     "link": "https://s.shopee.com.br/W7ZcodEzF",
+     "loja": "shopee",
+     "preco": {
+      "min": 64.9,
+      "max": 69.9
+     },
+     "comissao": 13,
+     "valorComissao": 8.437,
+     "vendas": 3636,
+     "nota": 4.7,
+     "desconto": 35,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820mh-mt9x47a76p6p03",
+     "loja_nome": "Luana Home"
     }
    ]
   },
@@ -333,143 +339,158 @@
    "nome": "Beleza e acessórios",
    "ofertas": [
     {
-     "itemId": "56866348684",
-     "nome": "Tianyi beleza biológica beleza beleza beleza bebê 20 g/saco tianyi beleza beleza creme de dia do bebê creme nutricional ",
-     "link": "https://s.shopee.com.br/5fpfmfsgJd",
+     "itemId": "55865986117",
+     "nome": "JBSARA Revive Spicule Shot 102 Ampoule Serum 1g 1ea",
+     "link": "https://s.shopee.com.br/1LgfwFpy82",
      "loja": "shopee",
-     "preco": 40.85,
-     "comissao": 3,
-     "valorComissao": 1.2255,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-8258b-ms4gh5k5ydxe27",
-     "loja_nome": "zuimeihongchunnvrenjie217"
+     "preco": 3.49,
+     "comissao": 13,
+     "valorComissao": 0.4537,
+     "vendas": 2826,
+     "nota": 5,
+     "desconto": 63,
+     "foto": "https://cf.shopee.com.br/file/sg-11134207-8258w-mrv26l1j53igaa",
+     "loja_nome": "koksara.kbeauty"
     },
     {
-     "itemId": "52262097869",
-     "nome": "Beleza beleza beleza beleza beleza produtos de cuidados com a pele reparação embotamento delicado limpeza limpador sem r",
-     "link": "https://s.shopee.com.br/5VWFaMtJec",
+     "itemId": "58214668571",
+     "nome": "Hidrabene Protetor Solar Clareador Facial 70 FPS",
+     "link": "https://s.shopee.com.br/1W068YpKn5",
      "loja": "shopee",
      "preco": {
-      "min": 83.19,
-      "max": 239.8
+      "min": 36.9,
+      "max": 146.9
      },
-     "comissao": 3,
-     "valorComissao": 2.4957,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-823pk-mpci5ca3ghl75d",
-     "loja_nome": "Linlinmeim546"
+     "comissao": 13,
+     "valorComissao": 4.797,
+     "vendas": 54969,
+     "nota": 4.9,
+     "desconto": 38,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820ld-mswt16eywd1h35",
+     "loja_nome": "Hidrabene "
     },
     {
-     "itemId": "57817805104",
-     "nome": "Famosa beleza beleza beleza pele beleza creme de beleza luz delicado preguiçoso festa creme facial 30709.13",
-     "link": "https://s.shopee.com.br/5LCpO3twzb",
+     "itemId": "25946709329",
+     "nome": "ULTRA HIDRATAÇÃO EFEITO TEIA COM ÓLEOS MARROQUINOS - OURO MARROQUINO - FINA MARIA PROFISSIONAL",
+     "link": "https://s.shopee.com.br/20wMjTnQmE",
      "loja": "shopee",
-     "preco": 58.85,
-     "comissao": 3,
-     "valorComissao": 1.7655,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825a2-mt3bqqe7ompz04",
-     "loja_nome": "changhen523.br"
+     "preco": 38.9,
+     "comissao": 13,
+     "valorComissao": 5.057,
+     "vendas": 25627,
+     "nota": 4.9,
+     "desconto": 51,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-8258h-mr1ynaykoao016",
+     "loja_nome": "Distribuidora Oficial Fina Maria"
     },
     {
-     "itemId": "41934679638",
-     "nome": "Instrumento de beleza instrumento de beleza suprimentos domésticos instrumento de beleza instrumento de beleza supriment",
-     "link": "https://s.shopee.com.br/6VOmmCpVcq",
-     "loja": "shopee",
-     "preco": 46.9,
-     "comissao": 3,
-     "valorComissao": 1.407,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/cn-11134207-820l4-mtewwk16acjpf0",
-     "loja_nome": "Aetherviva"
-    },
-    {
-     "itemId": "54066276190",
-     "nome": "Hábitos de beleza Beleza Beleza Beleza Aloe Vera Gel Calmante Reparação Remover Marcas de Acne Tamanho Único Marcas de A",
-     "link": "https://s.shopee.com.br/6L5MZtq8xp",
+     "itemId": "28583751267",
+     "nome": "Adesivos hidrocolóides anti-acne para espinhas; cuidado inverno; presente ideal Natal/Ano Novo",
+     "link": "https://s.shopee.com.br/5q95IWYq0G",
      "loja": "shopee",
      "preco": {
-      "min": 64.24,
-      "max": 89.05
+      "min": 5.76,
+      "max": 11.46
      },
-     "comissao": 3,
-     "valorComissao": 1.9272,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825a7-ms2mfq7rihhkb4",
-     "loja_nome": "hanmiaomeizhuangguan798"
+     "comissao": 7,
+     "valorComissao": 0.4032,
+     "vendas": 24665,
+     "nota": 4.8,
+     "desconto": 48,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-823qq-mp4me4j9r9xq17",
+     "loja_nome": "Choice Oficial"
     },
     {
-     "itemId": "48218308819",
-     "nome": "Instrumento Facial instrumento importado salão de beleza beleza instrumento de pulso beleza levantamento de beleza apert",
-     "link": "https://s.shopee.com.br/6AlwNaqmIo",
-     "loja": "shopee",
-     "preco": 967.43,
-     "comissao": 3,
-     "valorComissao": 29.0229,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-82595-mtf5q4rb9xc667",
-     "loja_nome": "rba0403.br"
-    },
-    {
-     "itemId": "46810993891",
-     "nome": "BELEZA BELEZA BELEZA BELEZA",
-     "link": "https://s.shopee.com.br/60SWBHrPdn",
-     "loja": "shopee",
-     "preco": 239.43,
-     "comissao": 3,
-     "valorComissao": 7.1829,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-823qf-mok0mn7jj6rmba",
-     "loja_nome": "ISVCosmeti652"
-    },
-    {
-     "itemId": "46710993908",
-     "nome": "BELEZA BELEZA BELEZA BELEZA",
-     "link": "https://s.shopee.com.br/9pfEkKcorY",
-     "loja": "shopee",
-     "preco": 163.53,
-     "comissao": 3,
-     "valorComissao": 4.9059,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-823p3-mok0mke62497df",
-     "loja_nome": "ISVCosmeti652"
-    },
-    {
-     "itemId": "57962099048",
-     "nome": "Beleza beleza beleza beleza",
-     "link": "https://s.shopee.com.br/9fLoY1dSCX",
-     "loja": "shopee",
-     "preco": 73.5,
-     "comissao": 3,
-     "valorComissao": 2.205,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-824ho-mpdo79xifrpq5c",
-     "loja_nome": "5460Meilig585"
-    },
-    {
-     "itemId": "40081142018",
-     "nome": "Salão de beleza dedicado beleza bola de gelo instrumento de beleza onda de gelo bola de beleza ferramenta de cristal Fac",
-     "link": "https://s.shopee.com.br/9V2OLie5XW",
+     "itemId": "21235699753",
+     "nome": "Fadvan 5D W Extensões De Cílios Em Forma De 0.07 C/D Faux Mink Natural Lashes Profissionais Suaves",
+     "link": "https://s.shopee.com.br/5fpf6DZTLF",
      "loja": "shopee",
      "preco": {
-      "min": 65.03,
-      "max": 99.3
+      "min": 22.25,
+      "max": 27.06
      },
-     "comissao": 3,
-     "valorComissao": 1.9509,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-823od-molk8k6gm96zeb",
-     "loja_nome": "SinoAmeric875"
+     "comissao": 13,
+     "valorComissao": 2.8925,
+     "vendas": 14907,
+     "nota": 4.8,
+     "desconto": 62,
+     "foto": "https://cf.shopee.com.br/file/cn-11134207-820l4-mlr6x8dggpa8d1",
+     "loja_nome": "fadvan.br"
+    },
+    {
+     "itemId": "58212716558",
+     "nome": "Óleo Finalizador Óleo Extraordinário, Anti Frizz, Protetor Térmico, L'Oréal Paris Elseve 100ml",
+     "link": "https://s.shopee.com.br/3LRl01Wmmm",
+     "loja": "shopee",
+     "preco": 36.99,
+     "comissao": 6,
+     "valorComissao": 2.2194,
+     "vendas": 17473,
+     "nota": 4.9,
+     "desconto": 39,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lt-msof4dg2rnyc07",
+     "loja_nome": "L'Oréal Paris - Loja Oficial"
+    },
+    {
+     "itemId": "58264684239",
+     "nome": "Kit Hidrabene Clareador Skincare Clareador Facial: Sabonete, Protetor 70 FPS e Sérum Multicorretivo",
+     "link": "https://s.shopee.com.br/3VlBCKW9Rp",
+     "loja": "shopee",
+     "preco": {
+      "min": 79.9,
+      "max": 194.9
+     },
+     "comissao": 13,
+     "valorComissao": 10.387,
+     "vendas": 21360,
+     "nota": 4.9,
+     "desconto": 50,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lx-mt45q21kcvt09d",
+     "loja_nome": "Hidrabene "
+    },
+    {
+     "itemId": "58213504334",
+     "nome": "Adesivo Detox Para os Pés Kit 10 a 50 Foot Patch Natural Relaxamento Bem Estar Uso Noturno Pés Cansa",
+     "link": "https://s.shopee.com.br/3g4bOdVW6s",
+     "loja": "shopee",
+     "preco": {
+      "min": 10.99,
+      "max": 38.99
+     },
+     "comissao": 14,
+     "valorComissao": 1.5386,
+     "vendas": 16604,
+     "nota": 4.8,
+     "desconto": 73,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820ll-mq54ng7pfj7mf3",
+     "loja_nome": "UTILIDADES INLUKA 💁🏼‍♀️"
+    },
+    {
+     "itemId": "23692240341",
+     "nome": "Alicate de Cutícula Mundial 522C: Precisão e Durabilidade",
+     "link": "https://s.shopee.com.br/3qO1awUslv",
+     "loja": "shopee",
+     "preco": 32.37,
+     "comissao": 11,
+     "valorComissao": 3.5607,
+     "vendas": 16156,
+     "nota": 4.9,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbk0-lktyq6753ip22a",
+     "loja_nome": "Perfumaria Sumirê"
+    },
+    {
+     "itemId": "27487505152",
+     "nome": "Novo Delineador Líquido Cool Black-Maquiagem À Prova D'água E De Manchas",
+     "link": "https://s.shopee.com.br/2gC4CnZK8i",
+     "loja": "shopee",
+     "preco": 8.83,
+     "comissao": 9,
+     "valorComissao": 0.7947,
+     "vendas": 10959,
+     "nota": 4.9,
+     "desconto": 12,
+     "foto": "https://cf.shopee.com.br/file/sg-11134301-7rati-mb3tfn8u2lw132",
+     "loja_nome": "Choice Oficial"
     }
    ]
   },
@@ -478,154 +499,165 @@
    "nome": "Kids",
    "ofertas": [
     {
-     "itemId": "21095140489",
-     "nome": "Cueca Infantil 4 Peças Cueca Infantil de Algodão Puro Cueca Infantil Meninos Cueca Infantil Boxer Meninos Cueca Infantil Médio Grande Cueca Infantil Bebê Estudantes de Roupa Infantil",
-     "link": "https://s.shopee.com.br/5q95yywJEa",
-     "loja": "shopee",
-     "preco": 59.82,
-     "comissao": 12,
-     "valorComissao": 7.1784,
-     "vendas": 59,
-     "nota": 4.9,
-     "desconto": 32,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbln-lnkw8ih7996wf5",
-     "loja_nome": "as673355.br"
-    },
-    {
-     "itemId": "24811885277",
-     "nome": "Relógio Infantil Hello Kitty Relógio Infantil Hello Kitty Relógio Infantil Hello Kitty Relógio Infantil Hello Kitty Relógio Infantil Hello Kitty Relógio Infantil Hello Kitty Relógio Infantil de Luxo Impressão em Silicone Fofo",
-     "link": "https://s.shopee.com.br/5fpfmfwwZZ",
+     "itemId": "22498844695",
+     "nome": "Lança Bolhas Sabão Automático Brinquedo Infantil Menino Menina Festa Aniversário Presente Elétrico",
+     "link": "https://s.shopee.com.br/70L3MlN9oL",
      "loja": "shopee",
      "preco": {
-      "min": 39.55,
-      "max": 48.9
+      "min": 21.89,
+      "max": 69.9
      },
-     "comissao": 7,
-     "valorComissao": 2.7685,
-     "vendas": 0,
-     "nota": 4.6,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rcf2-lr78aivc1da0a6",
-     "loja_nome": "funnytoys.br"
-    },
-    {
-     "itemId": "22991783447",
-     "nome": "Cueca Infantil 5 Peças Cueca Infantil de Algodão Puro Cueca Infantil de Algodão Puro Cueca Infantil de Boxer Confortável Cueca Infantil de Boxer Confortável Cueca Infantil de Boxer Confortável",
-     "link": "https://s.shopee.com.br/5VWFaMxZuY",
-     "loja": "shopee",
-     "preco": 63.48,
-     "comissao": 12,
-     "valorComissao": 7.6176,
-     "vendas": 16,
-     "nota": 5,
-     "desconto": 32,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7qvew-lj7x1oipguml38",
-     "loja_nome": "as673355.br"
-    },
-    {
-     "itemId": "27153897100",
-     "nome": "[ZY] 2-12y Roupas íntimas infantis de algodão puro Roupas íntimas infantis Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infan",
-     "link": "https://s.shopee.com.br/5LCpO3yDFX",
-     "loja": "shopee",
-     "preco": 11.59,
-     "comissao": 7,
-     "valorComissao": 0.8113,
-     "vendas": 13,
-     "nota": 4.3,
-     "desconto": 1,
-     "foto": "https://cf.shopee.com.br/file/cn-11134207-7ras8-m4swzyetnttna3",
-     "loja_nome": "ZeYang👕👖Vestuário infantil"
-    },
-    {
-     "itemId": "26153897127",
-     "nome": "[ZY] 2-14y Estoque Pronto Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de algodão puro Roupas íntimas infantis de al",
-     "link": "https://s.shopee.com.br/7puAMeohB2",
-     "loja": "shopee",
-     "preco": {
-      "min": 11.14,
-      "max": 13.37
-     },
-     "comissao": 7,
-     "valorComissao": 0.7798,
-     "vendas": 6,
-     "nota": 4.3,
-     "desconto": 1,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rd3m-lx169lj0lg9201",
-     "loja_nome": "ZeYang👕👖Vestuário infantil"
-    },
-    {
-     "itemId": "18697347615",
-     "nome": "Bolsa escolar infantil à prova d'água de grande capacidade/bolsa escolar infantil astronauta/mochila infantil mochila infantil bolsa escolar infantil bolsa escolar masculina bolsa escolar Cri/Kit mochila escolar infantil/Kit mochila",
-     "link": "https://s.shopee.com.br/7fakALpKW1",
-     "loja": "shopee",
-     "preco": {
-      "min": 110.86,
-      "max": 117.61
-     },
-     "comissao": 17,
-     "valorComissao": 18.8462,
-     "vendas": 0,
-     "nota": 4.9,
-     "desconto": 43,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbl9-ll4pedk605iz28",
-     "loja_nome": "A loja do Milo"
-    },
-    {
-     "itemId": "22499359896",
-     "nome": "conjunto infantil saia,saia mídi infantil,roupa infantil colorida,T-shirt infantil,saia infantil,roupa infantil,moda inf",
-     "link": "https://s.shopee.com.br/7VHJy2pxr0",
-     "loja": "shopee",
-     "preco": 79.99,
      "comissao": 14,
-     "valorComissao": 11.1986,
-     "vendas": 0,
-     "nota": 0,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-81zu2-mknr5ltnso3ka7",
-     "loja_nome": "Modablogueirinha"
-    },
-    {
-     "itemId": "22692919660",
-     "nome": "botinha infantil feminina, bota infantil menina, calçado infantil feminino, bota escolar infantil, botinha leve infantil",
-     "link": "https://s.shopee.com.br/7KxtljqbBz",
-     "loja": "shopee",
-     "preco": 59.94,
-     "comissao": 7,
-     "valorComissao": 4.1958,
-     "vendas": 2,
+     "valorComissao": 3.0646,
+     "vendas": 11548,
      "nota": 4.9,
-     "desconto": 40,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-7r98o-lt5cl0mqzkfzbc",
-     "loja_nome": "Azix Outlet"
+     "desconto": 27,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820me-mowqrc9hs6bpfa",
+     "loja_nome": "TMZ UTILIDADES"
     },
     {
-     "itemId": "23994268919",
-     "nome": "Blusa Moletom Infantil Moleton Infantil Casaco Infantil Moletons Infantil Moletom Blusa Infantil",
-     "link": "https://s.shopee.com.br/7AeTZQrEWy",
-     "loja": "shopee",
-     "preco": 49.63,
-     "comissao": 3,
-     "valorComissao": 1.4889,
-     "vendas": 0,
-     "nota": 0,
-     "desconto": 29,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-7r98o-mcv3k9hmt4ox3e",
-     "loja_nome": "BibyBukids"
-    },
-    {
-     "itemId": "22292342026",
-     "nome": "((4 Peças) Cueca Infantil de Algodão Puro Cueca Infantil de Algodão Puro Cueca Infantil de Boxer Boy Boxer Briefs Confortáveis Cueca Infantil de Boxer Calções Estudantis Cueca Infantil de Menino",
-     "link": "https://s.shopee.com.br/70L3N7rrrx",
+     "itemId": "23899381883",
+     "nome": "Kit 1/2/3 Pares Meias 3D Infantis Personagens Divertidos Conforto Macio Sortidos Criança Festa",
+     "link": "https://s.shopee.com.br/6q1dASNn9K",
      "loja": "shopee",
      "preco": {
-      "min": 67.98,
-      "max": 99.96
+      "min": 19.99,
+      "max": 62.99
      },
-     "comissao": 12,
-     "valorComissao": 8.1576,
-     "vendas": 5,
+     "comissao": 8,
+     "valorComissao": 1.5992,
+     "vendas": 11583,
      "nota": 4.9,
-     "desconto": 32,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-7r9ak-ll62wwnp97cx4b",
-     "loja_nome": "as673355.br"
+     "desconto": 55,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-825zn-mm62a3k8epdtd3",
+     "loja_nome": "Spotlight 82"
+    },
+    {
+     "itemId": "44515668088",
+     "nome": "Meias Malucas 25 ao 40 Dos Desenhos Animados Longas Das Crianças Adulto De Meia Panturrilha",
+     "link": "https://s.shopee.com.br/6fiCy9OQUJ",
+     "loja": "shopee",
+     "preco": {
+      "min": 18.99,
+      "max": 39.9
+     },
+     "comissao": 15,
+     "valorComissao": 2.8485,
+     "vendas": 11139,
+     "nota": 4.9,
+     "desconto": 59,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820l7-msk5jtlk8zye92",
+     "loja_nome": "GR MARKET EXPRESS"
+    },
+    {
+     "itemId": "58259649647",
+     "nome": "Sandália Babuche Infantil Juvenil Leve Macio",
+     "link": "https://s.shopee.com.br/9APXwkEuPo",
+     "loja": "shopee",
+     "preco": 19.49,
+     "comissao": 3,
+     "valorComissao": 0.5847,
+     "vendas": 9797,
+     "nota": 4.9,
+     "desconto": 30,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-820nx-mnk3ngz0nojl72",
+     "loja_nome": "Felícia Calçados"
+    },
+    {
+     "itemId": "23194042103",
+     "nome": "Celular Infantil Telefone Interativo Musical Unicórnio Bebê ou celular Dinossauro",
+     "link": "https://s.shopee.com.br/9067kRFXkn",
+     "loja": "shopee",
+     "preco": {
+      "min": 14.88,
+      "max": 16.99
+     },
+     "comissao": 3,
+     "valorComissao": 0.4464,
+     "vendas": 9277,
+     "nota": 4.9,
+     "desconto": 29,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820l4-mnzr4z29w5c4af",
+     "loja_nome": "Tom - Toys e Acessorios"
+    },
+    {
+     "itemId": "58261933498",
+     "nome": "KIT 50/100/200/300 Fio Dental Infantil em Formato de Arco Ultra Fino para uma Limpeza Eficaz",
+     "link": "https://s.shopee.com.br/8pmhY8GB5m",
+     "loja": "shopee",
+     "preco": {
+      "min": 9.48,
+      "max": 28.48
+     },
+     "comissao": 7,
+     "valorComissao": 0.6636,
+     "vendas": 8645,
+     "nota": 4.9,
+     "desconto": 81,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-823qf-mp1oi9wl1rtbab",
+     "loja_nome": "lojamegas"
+    },
+    {
+     "itemId": "19499892618",
+     "nome": "KIT COM 10 Grampos Presilha de Patinhos Pato Clip AmareloL",
+     "link": "https://s.shopee.com.br/8fTHLpGoQl",
+     "loja": "shopee",
+     "preco": 10,
+     "comissao": 7,
+     "valorComissao": 0.7,
+     "vendas": 9256,
+     "nota": 4.7,
+     "desconto": 50,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-824gm-meq18wrw29du45",
+     "loja_nome": "MY FLORES DECORAÇÕES"
+    },
+    {
+     "itemId": "43417844488",
+     "nome": "Fantasia Infantil Masculina Herói com Máscara Roupa Curta para Festa",
+     "link": "https://s.shopee.com.br/8V9r9WHRlk",
+     "loja": "shopee",
+     "preco": 34.99,
+     "comissao": 3,
+     "valorComissao": 1.0497,
+     "vendas": 8523,
+     "nota": 4.9,
+     "desconto": 50,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-81z1k-meeurxzmjl6oad",
+     "loja_nome": "FANTASTIC.KIDS"
+    },
+    {
+     "itemId": "56260449744",
+     "nome": "Cozinha Infantil Grande Com Geladeira Completa 92 CM Sai Água de Verdade Fruteira Forno Fogão Rosa",
+     "link": "https://s.shopee.com.br/8KqQxDI56j",
+     "loja": "shopee",
+     "preco": {
+      "min": 139.9,
+      "max": 179.9
+     },
+     "comissao": 7,
+     "valorComissao": 9.793,
+     "vendas": 4960,
+     "nota": 4.7,
+     "desconto": 42,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820md-moio6hr8l8uea9",
+     "loja_nome": "RV-ECOMMERCE"
+    },
+    {
+     "itemId": "58213022908",
+     "nome": "Kit 1/2/3 Pares Meias 3D Infantis Personagens Divertidos Conforto Macio Sortido Criança Festa Escola",
+     "link": "https://s.shopee.com.br/8AX0kuIiRi",
+     "loja": "shopee",
+     "preco": {
+      "min": 19.99,
+      "max": 62.99
+     },
+     "comissao": 8,
+     "valorComissao": 1.5992,
+     "vendas": 8561,
+     "nota": 4.9,
+     "desconto": 55,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-825zn-mm62a3k8epdtd3",
+     "loja_nome": "Sunshine82"
     }
    ]
   }
