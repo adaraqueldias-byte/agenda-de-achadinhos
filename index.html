@@ -3609,10 +3609,24 @@ function mensagemWhatsApp({nome,link,loja,preco}){
   return linhas.join("\n");
 }
 
+// Fotos da Shopee (cf.shopee.com.br) bloqueiam download direto pelo navegador, então tenta de novo por um proxy de imagens
+// (com limite de tempo: se demorar, o celular não deixa mais abrir o menu de compartilhar)
+async function buscarComLimite(url,ms){
+  const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),ms);
+  try{const r=await fetch(url,{signal:ctrl.signal});return r.ok?await r.blob():null}
+  catch{return null}finally{clearTimeout(t)}
+}
+async function baixarFoto(foto){
+  const direto=await buscarComLimite(foto,1500);
+  if(direto||!/^https?:/.test(foto))return direto;
+  return buscarComLimite("https://images.weserv.nl/?url="+encodeURIComponent(foto.replace(/^https?:\/\//,"")),2500);
+}
+
 async function fotoParaArquivo(foto){
   if(!foto)return null;
   try{
-    const blob=await (await fetch(foto)).blob();
+    const blob=await baixarFoto(foto);
+    if(!blob)return null;
     const ext=(blob.type.split("/")[1]||"jpg").replace("jpeg","jpg");
     return new File([blob],`oferta.${ext}`,{type:blob.type||"image/jpeg"});
   }catch{return null}
@@ -3633,11 +3647,13 @@ async function enviarOfertaWhatsApp(oferta){
   const texto=mensagemWhatsApp(oferta);
   try{await navigator.clipboard.writeText(texto)}catch{}
   const arquivo=await fotoParaArquivo(oferta.foto);
-  if(arquivo&&navigator.canShare&&navigator.canShare({files:[arquivo],text:texto})){
-    try{await navigator.share({files:[arquivo],text:texto});lembrarCanalWhatsApp();return}
+  const dados=arquivo&&navigator.canShare&&navigator.canShare({files:[arquivo],text:texto})?{files:[arquivo],text:texto}:{text:texto};
+  if(navigator.share){
+    try{await navigator.share(dados);lembrarCanalWhatsApp();return}
     catch(e){if(e&&e.name==="AbortError")return}
   }
-  window.open("https://wa.me/?text="+encodeURIComponent(texto),"_blank");
+  // Sem o menu de compartilhar: abre o app do WhatsApp direto (o wa.me abria a página do site e travava)
+  location.href="whatsapp://send?text="+encodeURIComponent(texto);
   lembrarCanalWhatsApp();
 }
 

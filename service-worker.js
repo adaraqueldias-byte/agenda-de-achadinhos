@@ -1,4 +1,4 @@
-const CACHE='agenda-achadinhos-v6';
+const CACHE='agenda-achadinhos-v7';
 const ASSETS=['./','./index.html','./manifest.json','./icon-192.png','./icon-512.png'];
 
 self.addEventListener('install',e=>{
@@ -16,6 +16,8 @@ self.addEventListener('activate',e=>{
 
 // Busca sempre a versão mais nova quando tem internet; só usa a cópia salva se estiver offline.
 self.addEventListener('fetch',e=>{
+  // Fotos de lojas e outros sites passam direto, sem encher a memória do celular
+  if(new URL(e.request.url).origin!==self.location.origin)return;
   e.respondWith(
     fetch(e.request)
       .then(res=>{
