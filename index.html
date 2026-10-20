@@ -320,6 +320,7 @@
     .item-produto-lixeira{background:#ffd1d1;color:var(--danger)}
     .item-produto-editar{background:#ffd1e6;color:#7d214f}
     .item-produto-copiar{background:#c7e8ff;color:#1d6fa5}
+    .item-produto-whatsapp{background:#c9f2d4;color:#128c4a}
     .item-produto-copiar-nome{background:#ffe8b3;color:#8a6100}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
@@ -1103,6 +1104,7 @@ function itemDisplayHTML(key){
     <div class="item-produto-acoes">
       <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeItemSlot('${key}')">📋</button>
       ${link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkItemSlot('${key}')">🔗</button>`:""}
+      ${link?`<button class="item-produto-icone item-produto-whatsapp" onclick="enviarWhatsAppItemSlot('${key}')" title="Enviar no WhatsApp">📲</button>`:""}
       <button class="item-produto-icone item-produto-editar" onclick="mostrarItemEdicao('${key}')">✏️</button>
       <button class="item-produto-icone item-produto-lixeira" onclick="limparItemSlot('${key}')">🗑️</button>
     </div>
@@ -3540,6 +3542,7 @@ function cardProdutoBanco(p){
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-copiar-nome" onclick="copiarNomeBanco(${p.id})">📋</button>
           ${p.link?`<button class="item-produto-icone item-produto-copiar" onclick="copiarLinkBanco(${p.id})">🔗</button>`:""}
+          ${p.link?`<button class="item-produto-icone item-produto-whatsapp" onclick="enviarWhatsAppBanco(${p.id})" title="Enviar no WhatsApp">📲</button>`:""}
           <button class="item-produto-icone item-produto-editar" onclick="editarProdutoBanco(${p.id})">✏️</button>
           <button class="item-produto-icone item-produto-lixeira" onclick="removerProdutoBanco(${p.id})">🗑️</button>
         </div>
@@ -3584,6 +3587,54 @@ async function copiarLinkBanco(id){
   if(!item||!item.link)return;
   try{await navigator.clipboard.writeText(item.link);alert("Link copiado!")}
   catch{alert("Não foi possível copiar.")}
+}
+
+// ===== Enviar oferta no WhatsApp: abre o WhatsApp com a mensagem pronta (e a foto, se tiver); ela escolhe o grupo e envia =====
+function mensagemWhatsApp({nome,link,loja,preco}){
+  const linhas=[`🔥 *${nome||"Achadinho do dia"}*`];
+  if(preco!==undefined&&preco!==null&&preco!=="")linhas.push(`💰 Por ${formatarPrecoBancoComMoeda(preco,loja)}`);
+  if(loja&&LOJAS_BANCO[loja])linhas.push(`🛒 ${LOJAS_BANCO[loja]}`);
+  linhas.push("",`👉 ${link}`,"","_Preço e estoque podem mudar a qualquer momento._");
+  return linhas.join("\n");
+}
+
+async function fotoParaArquivo(foto){
+  if(!foto)return null;
+  try{
+    const blob=await (await fetch(foto)).blob();
+    const ext=(blob.type.split("/")[1]||"jpg").replace("jpeg","jpg");
+    return new File([blob],`oferta.${ext}`,{type:blob.type||"image/jpeg"});
+  }catch{return null}
+}
+
+async function enviarOfertaWhatsApp(oferta){
+  if(!oferta.link){alert("Esse produto não tem link de afiliado.");return}
+  const texto=mensagemWhatsApp(oferta);
+  const arquivo=await fotoParaArquivo(oferta.foto);
+  if(arquivo&&navigator.canShare&&navigator.canShare({files:[arquivo],text:texto})){
+    try{await navigator.share({files:[arquivo],text:texto});return}
+    catch(e){if(e&&e.name==="AbortError")return}
+  }
+  window.open("https://wa.me/?text="+encodeURIComponent(texto),"_blank");
+}
+
+function enviarWhatsAppBanco(id){
+  const p=carregarBanco().find(p=>p.id===id);
+  if(!p)return;
+  enviarOfertaWhatsApp({nome:p.nome,link:p.link,loja:p.loja,preco:p.preco,foto:p.foto});
+}
+
+function enviarWhatsAppItemSlot(key){
+  const linkEl=document.getElementById("link-"+key);
+  const bancoId=(document.getElementById("bancoId-"+key)||{}).value;
+  const doBanco=bancoId?carregarBanco().find(p=>String(p.id)===String(bancoId)):null;
+  enviarOfertaWhatsApp({
+    nome:document.getElementById("produto-"+key).value,
+    link:linkEl?linkEl.value:"",
+    loja:doBanco?doBanco.loja:undefined,
+    preco:doBanco?doBanco.preco:undefined,
+    foto:document.getElementById("foto-valor-"+key).value||(doBanco&&doBanco.foto)
+  });
 }
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
