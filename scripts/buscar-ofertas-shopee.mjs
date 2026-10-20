@@ -68,7 +68,7 @@ export function converter(node) {
 
 async function main() {
   if (!APP_ID || !SECRET) {
-    console.error("Faltam SHOPEE_APP_ID e SHOPEE_SECRET nos Secrets do GitHub.");
+    console.error("Faltam os segredos SHOPEEID e SHOPEESENHA no GitHub.");
     process.exit(1);
   }
   const usados = new Set();
