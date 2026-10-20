@@ -328,7 +328,7 @@
     .item-produto-copiar-nome{background:#ffe8b3;color:#8a6100}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
-    .banco-contador-lojas{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:13px}
+    .banco-contador-lojas{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;font-size:13px;background:rgba(255,255,255,.96);border:1px solid var(--line);border-radius:14px;padding:11px 13px;margin-bottom:12px}
     .banco-contador-lojas span{color:var(--muted);font-weight:600}
     .banco-contador-lojas strong{color:var(--accent-dark);font-weight:800}
 
@@ -455,10 +455,6 @@
   </div>
 
   <div id="view-banco" style="display:none">
-    <section class="card">
-      <div class="banco-contador-lojas" id="banco-contador-lojas"></div>
-    </section>
-
     <section class="card" id="ofertas-shopee-card">
       <h2 style="margin:0">🛍️ Ofertas do dia da Shopee</h2>
       <p class="tip" id="ofertas-shopee-status" style="margin:4px 0 0;font-size:12px">Carregando...</p>
@@ -567,6 +563,7 @@
 
     <div class="semana-titulo" style="margin:4px 0 8px 4px">Produtos guardados <span id="banco-contador">(0)</span></div>
     <div class="banco-ordenacao" id="banco-ordenacao"></div>
+    <div class="banco-contador-lojas" id="banco-contador-lojas"></div>
     <div id="lista-banco"></div>
   </div>
 
