@@ -4,8 +4,14 @@
 import { createHash } from "node:crypto";
 import { writeFileSync } from "node:fs";
 
-const APP_ID = process.env.SHOPEE_APP_ID;
-const SECRET = process.env.SHOPEE_SECRET;
+// Os valores colados no GitHub pelo celular às vezes vêm com espaço, quebra de linha ou o rótulo junto
+// ("AppID: 123..."), então pega só o número do ID e o código da senha.
+const BRUTO_ID = process.env.SHOPEE_APP_ID || "";
+const BRUTO_SECRET = process.env.SHOPEE_SECRET || "";
+const codigoSenha = texto => (texto.match(/[A-Za-z0-9]{20,}/g) || []).find(t => /[A-Za-z]/.test(t));
+const APP_ID = (BRUTO_ID.match(/\d{6,}/) || [""])[0];
+const SECRET = codigoSenha(BRUTO_SECRET) || codigoSenha(BRUTO_ID) || BRUTO_SECRET.trim();
+export const chavesLidas = { APP_ID, SECRET };
 const URL_API = "https://open-api.affiliate.shopee.com.br/graphql";
 const POR_GRUPO = 10;
 
