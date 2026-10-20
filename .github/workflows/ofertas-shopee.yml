@@ -19,7 +19,7 @@ jobs:
       - name: Buscar ofertas na Shopee
         env:
           SHOPEE_APP_ID: ${{ secrets.SHOPEEID || secrets.SHOPEE_APP_ID || vars.SHOPEE_APP_ID }}
-          SHOPEE_SECRET: ${{ secrets.SHOPEESENHA || secrets.SHOPEE_SECRET || vars.SHOPEE_SECRET }}
+          SHOPEE_SECRET: ${{ secrets.SHOPEESENHA || secrets.SHOPEE_SENHA || secrets.SHOPEESECRET || secrets.SHOPEE_SECRET || secrets.SENHA || secrets.SECRET || vars.SHOPEE_SECRET }}
         run: node scripts/buscar-ofertas-shopee.mjs
       - name: Salvar no Painel
         run: |
