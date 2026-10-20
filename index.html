@@ -3618,15 +3618,27 @@ async function fotoParaArquivo(foto){
   }catch{return null}
 }
 
+const CANAL_WHATSAPP="https://whatsapp.com/channel/0029VbDXkm405MUgra5Rsl1m";
+
+// Depois de enviar no grupo, lembra de mandar também no Canal (a mensagem já fica copiada pra colar lá)
+function lembrarCanalWhatsApp(){
+  setTimeout(()=>{
+    if(confirm("📢 Mandar essa oferta também no Canal do Garimpo do Dia?\n\nA mensagem já está copiada: é só colar no canal (e anexar a foto, se quiser)."))
+      window.open(CANAL_WHATSAPP,"_blank");
+  },600);
+}
+
 async function enviarOfertaWhatsApp(oferta){
   if(!oferta.link){alert("Esse produto não tem link de afiliado.");return}
   const texto=mensagemWhatsApp(oferta);
+  try{await navigator.clipboard.writeText(texto)}catch{}
   const arquivo=await fotoParaArquivo(oferta.foto);
   if(arquivo&&navigator.canShare&&navigator.canShare({files:[arquivo],text:texto})){
-    try{await navigator.share({files:[arquivo],text:texto});return}
+    try{await navigator.share({files:[arquivo],text:texto});lembrarCanalWhatsApp();return}
     catch(e){if(e&&e.name==="AbortError")return}
   }
   window.open("https://wa.me/?text="+encodeURIComponent(texto),"_blank");
+  lembrarCanalWhatsApp();
 }
 
 function enviarWhatsAppBanco(id){
