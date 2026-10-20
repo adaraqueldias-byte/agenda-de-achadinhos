@@ -31,7 +31,7 @@ export function assinatura(appId, timestamp, payload, secret) {
 
 async function buscar(keyword) {
   const filtros = keyword
-    ? `keyword: ${JSON.stringify(keyword)}, sortType: 1, page: 1, limit: ${POR_GRUPO * 2}`
+    ? `keyword: ${JSON.stringify(keyword)}, sortType: 2, page: 1, limit: ${POR_GRUPO * 2}`
     : `listType: 2, sortType: 2, page: 1, limit: ${POR_GRUPO * 2}`;
   const payload = JSON.stringify({ query: `{ productOfferV2(${filtros}) { nodes { ${CAMPOS} } } }` });
   const timestamp = Math.floor(Date.now() / 1000);
