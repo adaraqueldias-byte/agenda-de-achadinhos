@@ -3225,7 +3225,7 @@ function rotuloCategoriaBanco(p){
 
 
 function renderizarOrdenacaoBanco(){
-  const opcoes=[{chave:"naopostado",rotulo:"Não postado"},{chave:"plataforma",rotulo:"Plataforma"}];
+  const opcoes=[{chave:"naopostado",rotulo:"Não postado"},{chave:"plataforma",rotulo:"Plataforma"},{chave:"preco",rotulo:"Preço"}];
   const html='<span class="banco-ordenacao-label">Ordenar por:</span>'
     +opcoes.map(o=>{
       const ativo=ordenacaoAtual===o.chave;
