@@ -1,5 +1,5 @@
 {
- "atualizadoEm": "2026-10-20T12:54:00.596Z",
+ "atualizadoEm": "2026-10-20T15:12:16.072Z",
  "grupos": [
   {
    "id": "vip",
@@ -157,8 +157,8 @@
      "link": "https://s.shopee.com.br/9fLoXf4Cqi",
      "loja": "shopee",
      "preco": 68,
-     "comissao": 18,
-     "valorComissao": 12.24,
+     "comissao": 3,
+     "valorComissao": 2.04,
      "vendas": 6,
      "nota": 5,
      "desconto": 26,
@@ -203,40 +203,6 @@
      "loja_nome": "INFINITY COMERCIO DE VARIEDADES"
     },
     {
-     "itemId": "49300976525",
-     "nome": "Enfeites De Natal 43CM Glitter Berry Haste Ramo Flores Falsas Para Decoração De Árvore Casa",
-     "link": "https://s.shopee.com.br/40hRnFPuso",
-     "loja": "shopee",
-     "preco": {
-      "min": 5.99,
-      "max": 6.59
-     },
-     "comissao": 13,
-     "valorComissao": 0.7787,
-     "vendas": 2901,
-     "nota": 4.4,
-     "desconto": 71,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-821dt-mgrfr68t6dql96",
-     "loja_nome": "Papel de parede e floricultura arti"
-    },
-    {
-     "itemId": "20097733711",
-     "nome": "Cortina de Luz LED Multicolorida 3x3m ou 4x3m USB com Controle Remoto, 8 Modos para Festa e Decoração",
-     "link": "https://s.shopee.com.br/4B0rzYPHXr",
-     "loja": "shopee",
-     "preco": {
-      "min": 29.88,
-      "max": 32.88
-     },
-     "comissao": 3,
-     "valorComissao": 0.8964,
-     "vendas": 3356,
-     "nota": 4.8,
-     "desconto": 49,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820lm-mt5crbng84cm72",
-     "loja_nome": "PICOMERCE"
-    },
-    {
      "itemId": "21998858555",
      "nome": "1/2/5 Pcs Colorido Fio Fada 2M Com Luzes Led Fada Para Decoração De Casa e Natal Festa",
      "link": "https://s.shopee.com.br/113qDjbKyG",
@@ -268,6 +234,40 @@
      "loja_nome": "Envoyé Oficial"
     },
     {
+     "itemId": "20097733711",
+     "nome": "Cortina de Luz LED Multicolorida 3x3m ou 4x3m USB com Controle Remoto, 8 Modos para Festa e Decoração",
+     "link": "https://s.shopee.com.br/4B0rzYPHXr",
+     "loja": "shopee",
+     "preco": {
+      "min": 29.88,
+      "max": 32.88
+     },
+     "comissao": 3,
+     "valorComissao": 0.8964,
+     "vendas": 3356,
+     "nota": 4.8,
+     "desconto": 49,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lm-mt5crbng84cm72",
+     "loja_nome": "PICOMERCE"
+    },
+    {
+     "itemId": "49300976525",
+     "nome": "Enfeites De Natal 43CM Glitter Berry Haste Ramo Flores Falsas Para Decoração De Árvore Casa",
+     "link": "https://s.shopee.com.br/40hRnFPuso",
+     "loja": "shopee",
+     "preco": {
+      "min": 5.99,
+      "max": 6.59
+     },
+     "comissao": 13,
+     "valorComissao": 0.7787,
+     "vendas": 2901,
+     "nota": 4.4,
+     "desconto": 71,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-821dt-mgrfr68t6dql96",
+     "loja_nome": "Papel de parede e floricultura arti"
+    },
+    {
      "itemId": "20099498532",
      "nome": "Pisca Pisca Natal Cordão 100 Leds 10m 8 Funções Varias Cores 110v / 220v ANJIN",
      "link": "https://s.shopee.com.br/gQzp7cbeE",
@@ -293,7 +293,7 @@
      "comissao": 19,
      "valorComissao": 0.9481,
      "vendas": 2760,
-     "nota": 4.8,
+     "nota": 4.9,
      "desconto": 71,
      "foto": "https://cf.shopee.com.br/file/cn-11134207-7ras8-m4sgd4jf2pep7f",
      "loja_nome": "HONG11.br"
@@ -384,23 +384,6 @@
      "loja_nome": "Distribuidora Oficial Fina Maria"
     },
     {
-     "itemId": "28583751267",
-     "nome": "Adesivos hidrocolóides anti-acne para espinhas; cuidado inverno; presente ideal Natal/Ano Novo",
-     "link": "https://s.shopee.com.br/5q95IWYq0G",
-     "loja": "shopee",
-     "preco": {
-      "min": 5.76,
-      "max": 11.46
-     },
-     "comissao": 7,
-     "valorComissao": 0.4032,
-     "vendas": 24665,
-     "nota": 4.8,
-     "desconto": 48,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-823qq-mp4me4j9r9xq17",
-     "loja_nome": "Choice Oficial"
-    },
-    {
      "itemId": "21235699753",
      "nome": "Fadvan 5D W Extensões De Cílios Em Forma De 0.07 C/D Faux Mink Natural Lashes Profissionais Suaves",
      "link": "https://s.shopee.com.br/5fpf6DZTLF",
@@ -432,6 +415,23 @@
      "loja_nome": "L'Oréal Paris - Loja Oficial"
     },
     {
+     "itemId": "28583751267",
+     "nome": "Adesivos hidrocolóides anti-acne para espinhas; cuidado inverno; presente ideal Natal/Ano Novo",
+     "link": "https://s.shopee.com.br/5q95IWYq0G",
+     "loja": "shopee",
+     "preco": {
+      "min": 5.76,
+      "max": 11.46
+     },
+     "comissao": 7,
+     "valorComissao": 0.4032,
+     "vendas": 24665,
+     "nota": 4.8,
+     "desconto": 48,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-823qq-mp4me4j9r9xq17",
+     "loja_nome": "Choice Oficial"
+    },
+    {
      "itemId": "58264684239",
      "nome": "Kit Hidrabene Clareador Skincare Clareador Facial: Sabonete, Protetor 70 FPS e Sérum Multicorretivo",
      "link": "https://s.shopee.com.br/3VlBCKW9Rp",
@@ -454,14 +454,14 @@
      "link": "https://s.shopee.com.br/3g4bOdVW6s",
      "loja": "shopee",
      "preco": {
-      "min": 10.99,
-      "max": 38.99
+      "min": 11.99,
+      "max": 39.99
      },
      "comissao": 14,
-     "valorComissao": 1.5386,
+     "valorComissao": 1.6786,
      "vendas": 16604,
      "nota": 4.8,
-     "desconto": 73,
+     "desconto": 70,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820ll-mq54ng7pfj7mf3",
      "loja_nome": "UTILIDADES INLUKA 💁🏼‍♀️"
     },
@@ -470,27 +470,28 @@
      "nome": "Alicate de Cutícula Mundial 522C: Precisão e Durabilidade",
      "link": "https://s.shopee.com.br/3qO1awUslv",
      "loja": "shopee",
-     "preco": 32.37,
+     "preco": 19.9,
      "comissao": 11,
-     "valorComissao": 3.5607,
+     "valorComissao": 2.189,
      "vendas": 16156,
      "nota": 4.9,
+     "desconto": 39,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbk0-lktyq6753ip22a",
      "loja_nome": "Perfumaria Sumirê"
     },
     {
-     "itemId": "27487505152",
-     "nome": "Novo Delineador Líquido Cool Black-Maquiagem À Prova D'água E De Manchas",
-     "link": "https://s.shopee.com.br/2gC4CnZK8i",
+     "itemId": "25293647491",
+     "nome": "Celimax The Vita A Retinal Shot Tightening Booster 15ml",
+     "link": "https://s.shopee.com.br/2qVUP6Ygnl",
      "loja": "shopee",
-     "preco": 8.83,
-     "comissao": 9,
-     "valorComissao": 0.7947,
-     "vendas": 10959,
-     "nota": 4.9,
-     "desconto": 12,
-     "foto": "https://cf.shopee.com.br/file/sg-11134301-7rati-mb3tfn8u2lw132",
-     "loja_nome": "Choice Oficial"
+     "preco": 135.99,
+     "comissao": 25,
+     "valorComissao": 33.9975,
+     "vendas": 17989,
+     "nota": 5,
+     "desconto": 38,
+     "foto": "https://cf.shopee.com.br/file/sg-11134207-825ai-mr9pynhmd43k22",
+     "loja_nome": "koksara.kbeauty"
     }
    ]
   },
@@ -643,21 +644,18 @@
      "loja_nome": "RV-ECOMMERCE"
     },
     {
-     "itemId": "58213022908",
-     "nome": "Kit 1/2/3 Pares Meias 3D Infantis Personagens Divertidos Conforto Macio Sortido Criança Festa Escola",
-     "link": "https://s.shopee.com.br/8AX0kuIiRi",
+     "itemId": "58254930910",
+     "nome": "Kit 400 Toalhas Umedecidas Chameguinho Baby Lenço Umedecido para Bebê Higiene Infantil",
+     "link": "https://s.shopee.com.br/80DaYbJLmh",
      "loja": "shopee",
-     "preco": {
-      "min": 19.99,
-      "max": 62.99
-     },
-     "comissao": 8,
-     "valorComissao": 1.5992,
-     "vendas": 8561,
+     "preco": 24.8,
+     "comissao": 3,
+     "valorComissao": 0.744,
+     "vendas": 6022,
      "nota": 4.9,
-     "desconto": 55,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825zn-mm62a3k8epdtd3",
-     "loja_nome": "Sunshine82"
+     "desconto": 50,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lf-msihol3qbu9z7c",
+     "loja_nome": "Kittes Store"
     }
    ]
   }
