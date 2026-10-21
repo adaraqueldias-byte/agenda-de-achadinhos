@@ -2,7 +2,7 @@ name: Ofertas do dia do Mercado Livre
 
 on:
   schedule:
-    - cron: "15 9 * * *" # 6h15 da manhã em Brasília (9h15 UTC) — logo depois da Shopee
+    - cron: "22 9 * * *" # ~6h20 da manhã em Brasília (9h22 UTC) — logo depois da Shopee, fora do minuto redondo
   workflow_dispatch: {}
 
 permissions:
@@ -23,4 +23,10 @@ jobs:
           git config user.name "ofertas-mercadolivre"
           git config user.email "actions@users.noreply.github.com"
           git add ofertas-mercadolivre.json
-          git diff --cached --quiet || (git commit -m "Atualiza ofertas do dia do Mercado Livre" && git push)
+          if git diff --cached --quiet; then
+            echo "Sem mudanças pra salvar."
+          else
+            git commit -m "Atualiza ofertas do dia do Mercado Livre"
+            git pull --rebase origin main
+            git push
+          fi

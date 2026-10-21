@@ -2,7 +2,7 @@ name: Ofertas do dia da Shopee
 
 on:
   schedule:
-    - cron: "0 9 * * *" # 6h da manhã em Brasília (9h UTC)
+    - cron: "7 9 * * *" # ~6h da manhã em Brasília (9h07 UTC — fora do minuto redondo, menos fila no GitHub)
   workflow_dispatch: {}
 
 permissions:
@@ -26,4 +26,10 @@ jobs:
           git config user.name "ofertas-shopee"
           git config user.email "actions@users.noreply.github.com"
           git add ofertas-shopee.json
-          git diff --cached --quiet || (git commit -m "Atualiza ofertas do dia da Shopee" && git push)
+          if git diff --cached --quiet; then
+            echo "Sem mudanças pra salvar."
+          else
+            git commit -m "Atualiza ofertas do dia da Shopee"
+            git pull --rebase origin main
+            git push
+          fi

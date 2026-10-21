@@ -21,7 +21,12 @@ const GRUPOS = [
 
 async function buscar(keyword) {
   const url = `${URL_API}?q=${encodeURIComponent(keyword)}&limit=${POR_GRUPO * 3}`;
-  const res = await fetch(url);
+  const res = await fetch(url, {
+    headers: {
+      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+      Accept: "application/json",
+    },
+  });
   if (!res.ok) throw new Error(`Mercado Livre respondeu ${res.status}`);
   const json = await res.json();
   return json.results || [];
