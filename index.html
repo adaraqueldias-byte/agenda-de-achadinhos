@@ -3693,6 +3693,18 @@ function marcarOfertaEnviada(chave){
   try{localStorage.setItem(CHAVE_OFERTAS_ENVIADAS,JSON.stringify([...set]))}catch(e){}
 }
 
+// ===== Apaga ofertas (Shopee/Mercado Livre) só da lista do dia — não mexe no Banco de Produtos =====
+const CHAVE_OFERTAS_APAGADAS="agenda-achadinhos-ofertas-apagadas";
+function carregarOfertasApagadas(){
+  try{return new Set(JSON.parse(localStorage.getItem(CHAVE_OFERTAS_APAGADAS)||"[]"))}
+  catch(e){return new Set()}
+}
+function apagarOfertaChave(chave){
+  const set=carregarOfertasApagadas();
+  set.add(chave);
+  try{localStorage.setItem(CHAVE_OFERTAS_APAGADAS,JSON.stringify([...set]))}catch(e){}
+}
+
 // ===== Ofertas do dia da Shopee: o GitHub busca todo dia (ofertas-shopee.json) e aqui ela envia ou guarda no Banco =====
 let ofertasShopee=null;
 let ofertasShopeeGrupo=null;
@@ -3717,10 +3729,14 @@ async function carregarOfertasShopee(){
   renderizarOfertasShopee();
 }
 
+let ofertasShopeeVisiveis=[];
+
 function renderizarOfertasShopee(){
-  const grupos=(ofertasShopee&&ofertasShopee.grupos)||[];
+  const apagadas=carregarOfertasApagadas();
+  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!apagadas.has(`shopee:${o.itemId}`))}));
   document.getElementById("ofertas-shopee-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasShopeeGrupo?" ativo":""}" onclick="ofertasShopeeGrupo='${g.id}';renderizarOfertasShopee()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasShopeeGrupo);
+  ofertasShopeeVisiveis=(grupo&&grupo.ofertas)||[];
   const links=new Set(carregarBanco().map(p=>p.link));
   const enviadas=carregarOfertasEnviadas();
   document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
@@ -3742,6 +3758,7 @@ function renderizarOfertasShopee(){
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaShopee(${i})" title="Enviar no WhatsApp">📲</button>
           ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>`}
+          <button class="item-produto-icone item-produto-lixeira" onclick="apagarOfertaShopee(${i})" title="Apagar da lista (não mexe no Banco)">🗑️</button>
         </div>
       </div>
     </div>`;
@@ -3749,8 +3766,7 @@ function renderizarOfertasShopee(){
 }
 
 function ofertaShopeeAtual(i){
-  const grupo=((ofertasShopee&&ofertasShopee.grupos)||[]).find(g=>g.id===ofertasShopeeGrupo);
-  return grupo&&grupo.ofertas[i];
+  return ofertasShopeeVisiveis[i];
 }
 
 function enviarOfertaShopee(i){
@@ -3758,6 +3774,13 @@ function enviarOfertaShopee(i){
   if(!o)return;
   enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,foto:o.foto});
   marcarOfertaEnviada(`shopee:${o.itemId}`);
+  renderizarOfertasShopee();
+}
+
+function apagarOfertaShopee(i){
+  const o=ofertaShopeeAtual(i);
+  if(!o)return;
+  apagarOfertaChave(`shopee:${o.itemId}`);
   renderizarOfertasShopee();
 }
 
@@ -3796,10 +3819,14 @@ async function carregarOfertasML(){
   renderizarOfertasML();
 }
 
+let ofertasMLVisiveis=[];
+
 function renderizarOfertasML(){
-  const grupos=(ofertasML&&ofertasML.grupos)||[];
+  const apagadas=carregarOfertasApagadas();
+  const grupos=((ofertasML&&ofertasML.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!apagadas.has(`mercadolivre:${o.itemId}`))}));
   document.getElementById("ofertas-ml-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasMLGrupo?" ativo":""}" onclick="ofertasMLGrupo='${g.id}';renderizarOfertasML()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasMLGrupo);
+  ofertasMLVisiveis=(grupo&&grupo.ofertas)||[];
   const links=new Set(carregarBanco().map(p=>p.link));
   const enviadas=carregarOfertasEnviadas();
   document.getElementById("ofertas-ml-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
@@ -3820,6 +3847,7 @@ function renderizarOfertasML(){
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaML(${i})" title="Enviar no WhatsApp">📲</button>
           ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaMLNoBanco(${i})" title="Guardar no Banco">➕</button>`}
+          <button class="item-produto-icone item-produto-lixeira" onclick="apagarOfertaML(${i})" title="Apagar da lista (não mexe no Banco)">🗑️</button>
         </div>
       </div>
     </div>`;
@@ -3827,8 +3855,7 @@ function renderizarOfertasML(){
 }
 
 function ofertaMLAtual(i){
-  const grupo=((ofertasML&&ofertasML.grupos)||[]).find(g=>g.id===ofertasMLGrupo);
-  return grupo&&grupo.ofertas[i];
+  return ofertasMLVisiveis[i];
 }
 
 function enviarOfertaML(i){
@@ -3836,6 +3863,13 @@ function enviarOfertaML(i){
   if(!o)return;
   enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"mercadolivre",preco:o.preco,foto:o.foto});
   marcarOfertaEnviada(`mercadolivre:${o.itemId}`);
+  renderizarOfertasML();
+}
+
+function apagarOfertaML(i){
+  const o=ofertaMLAtual(i);
+  if(!o)return;
+  apagarOfertaChave(`mercadolivre:${o.itemId}`);
   renderizarOfertasML();
 }
 
