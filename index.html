@@ -3725,14 +3725,13 @@ let ofertasShopeeVisiveis=[];
 
 function renderizarOfertasShopee(){
   const apagadas=carregarOfertasApagadas();
-  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!apagadas.has(`shopee:${o.itemId}`))}));
+  const links=new Set(carregarBanco().map(p=>p.link));
+  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!apagadas.has(`shopee:${o.itemId}`)&&!links.has(o.link))}));
   document.getElementById("ofertas-shopee-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasShopeeGrupo?" ativo":""}" onclick="ofertasShopeeGrupo='${g.id}';renderizarOfertasShopee()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasShopeeGrupo);
   ofertasShopeeVisiveis=(grupo&&grupo.ofertas)||[];
-  const links=new Set(carregarBanco().map(p=>p.link));
   const enviadas=carregarOfertasEnviadas();
-  document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
-    const noBanco=links.has(o.link);
+  document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nova nesse grupo hoje — ou já está tudo no seu Banco.</div>':grupo.ofertas.map((o,i)=>{
     const enviada=enviadas.has(`shopee:${o.itemId}`);
     return `<div class="item-produto">
       <div class="item-produto-linha">
@@ -3746,10 +3745,10 @@ function renderizarOfertasShopee(){
         </div>
       </div>
       <div class="item-produto-rodape">
-        <span class="item-produto-link">${[enviada?"✅ Enviado":"",noBanco?"📦 No Banco":""].filter(Boolean).join(" · ")}</span>
+        <span class="item-produto-link">${enviada?"✅ Enviado":""}</span>
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaShopee(${i})" title="Enviar no WhatsApp">📲</button>
-          ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>`}
+          <button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>
           <button class="item-produto-icone item-produto-lixeira" onclick="apagarOfertaShopee(${i})" title="Apagar da lista (não mexe no Banco)">🗑️</button>
         </div>
       </div>
