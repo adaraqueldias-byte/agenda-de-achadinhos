@@ -322,9 +322,6 @@
     .item-produto-copiar{background:#c7e8ff;color:#1d6fa5}
     .item-produto-whatsapp{background:#c9f2d4;color:#128c4a}
     .item-produto-adicionar{background:#e9ddff;color:#6b3fc4}
-    .ofertas-shopee-grupos{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0}
-    .ofertas-shopee-grupos button{flex:none;padding:6px 12px;font-size:13px}
-    .ofertas-shopee-grupos button.ativo{background:var(--accent,#ee4d2d);color:#fff}
     .item-produto-copiar-nome{background:#ffe8b3;color:#8a6100}
     .banco-vazio{text-align:center;color:var(--muted);font-size:13px;padding:20px 0}
 
@@ -455,25 +452,6 @@
   </div>
 
   <div id="view-banco" style="display:none">
-    <section class="card" id="ofertas-shopee-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <h2 style="margin:0">🛍️ Ofertas do dia da Shopee</h2>
-        <button type="button" class="backup-link" style="flex:none;font-size:11px" onclick="resetOfertasShopeeVistas()">🔄 Mostrar tudo de novo</button>
-      </div>
-      <p class="tip" id="ofertas-shopee-status" style="margin:4px 0 0;font-size:12px">Carregando...</p>
-      <div class="ofertas-shopee-grupos" id="ofertas-shopee-grupos"></div>
-      <div id="ofertas-shopee-lista"></div>
-    </section>
-
-    <section class="card" id="ofertas-em-alta-card">
-      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
-        <h2 style="margin:0">🔥 Produtos em Alta na Shopee</h2>
-        <button type="button" class="backup-link" style="flex:none;font-size:11px" onclick="resetOfertasEmAltaVistas()">🔄 Mostrar tudo de novo</button>
-      </div>
-      <p class="tip" style="margin:4px 0 0;font-size:12px">Os mais vendidos do momento, pra você monitorar — lista separada dos grupos acima.</p>
-      <div id="ofertas-em-alta-lista"></div>
-    </section>
-
     <section class="card">
       <div class="foto-linha">
         <img id="banco-foto-preview" class="foto-preview" alt="">
@@ -2035,7 +2013,7 @@ function mostrarView(nome){
   document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
   document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
   document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
-  if(nome==="banco"){renderizarBanco();carregarOfertasShopee();}
+  if(nome==="banco"){renderizarBanco();}
   if(nome==="relatorio")renderizarRelatorio();
   if(nome==="semana"&&diaAtualISO){
     abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
@@ -3683,208 +3661,6 @@ function enviarWhatsAppItemSlot(key){
     preco:doBanco?doBanco.preco:undefined,
     foto:document.getElementById("foto-valor-"+key).value||(doBanco&&doBanco.foto)
   });
-}
-
-// ===== Marca quais ofertas (Shopee/Mercado Livre) já foram enviadas no WhatsApp, pra distribuir aos poucos ao longo do dia =====
-const CHAVE_OFERTAS_ENVIADAS="agenda-achadinhos-ofertas-enviadas";
-function carregarOfertasEnviadas(){
-  try{return new Set(JSON.parse(localStorage.getItem(CHAVE_OFERTAS_ENVIADAS)||"[]"))}
-  catch(e){return new Set()}
-}
-function marcarOfertaEnviada(chave){
-  const set=carregarOfertasEnviadas();
-  set.add(chave);
-  try{localStorage.setItem(CHAVE_OFERTAS_ENVIADAS,JSON.stringify([...set]))}catch(e){}
-}
-
-// ===== Apaga ofertas (Shopee/Mercado Livre) só da lista do dia — não mexe no Banco de Produtos =====
-const CHAVE_OFERTAS_APAGADAS="agenda-achadinhos-ofertas-apagadas";
-function carregarOfertasApagadas(){
-  try{return new Set(JSON.parse(localStorage.getItem(CHAVE_OFERTAS_APAGADAS)||"[]"))}
-  catch(e){return new Set()}
-}
-function apagarOfertaChave(chave){
-  const set=carregarOfertasApagadas();
-  set.add(chave);
-  try{localStorage.setItem(CHAVE_OFERTAS_APAGADAS,JSON.stringify([...set]))}catch(e){}
-}
-
-// Esquece quais ofertas (Shopee/Em Alta) já foram vistas/apagadas/enviadas — útil se a lista ficar
-// vazia mas ainda tiver produto bom escondido (ex.: depois de apagar tudo sem querer).
-function limparOfertasComPrefixo(prefixo){
-  const limparPrefixo=(chaveStorage,prefixo)=>{
-    try{
-      const set=new Set(JSON.parse(localStorage.getItem(chaveStorage)||"[]"));
-      const restante=[...set].filter(c=>!c.startsWith(prefixo));
-      localStorage.setItem(chaveStorage,JSON.stringify(restante));
-    }catch(e){}
-  };
-  limparPrefixo(CHAVE_OFERTAS_APAGADAS,prefixo);
-  limparPrefixo(CHAVE_OFERTAS_ENVIADAS,prefixo);
-}
-function resetOfertasShopeeVistas(){
-  if(!confirm("Isso faz as ofertas da Shopee que você já apagou ou já marcou como enviada voltarem a aparecer na lista. Quer continuar?"))return;
-  limparOfertasComPrefixo("shopee:");
-  renderizarOfertasShopee();
-}
-function resetOfertasEmAltaVistas(){
-  if(!confirm("Isso faz os produtos em alta que você já apagou ou já marcou como enviado voltarem a aparecer na lista. Quer continuar?"))return;
-  limparOfertasComPrefixo("shopee-emalta:");
-  renderizarOfertasEmAlta();
-}
-
-// ===== Ofertas do dia da Shopee: o GitHub busca todo dia (ofertas-shopee.json) e aqui ela envia ou guarda no Banco =====
-let ofertasShopee=null;
-let ofertasShopeeGrupo=null;
-
-async function carregarOfertasShopee(){
-  const status=document.getElementById("ofertas-shopee-status");
-  try{
-    const res=await fetch("ofertas-shopee.json?v="+Date.now(),{cache:"no-store"});
-    if(!res.ok)throw new Error("sem arquivo");
-    ofertasShopee=await res.json();
-  }catch{
-    ofertasShopee=null;
-    status.textContent="Ainda não tem ofertas. Assim que a chave da Shopee for colocada no GitHub, elas aparecem aqui todo dia às 6h.";
-    document.getElementById("ofertas-shopee-grupos").innerHTML="";
-    document.getElementById("ofertas-shopee-lista").innerHTML="";
-    document.getElementById("ofertas-em-alta-lista").innerHTML="";
-    return;
-  }
-  const quando=new Date(ofertasShopee.atualizadoEm);
-  status.textContent=`Atualizado em ${quando.toLocaleDateString("pt-BR")} às ${quando.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}. Toque no 📲 para enviar ou no ➕ para guardar no Banco.`;
-  const grupos=ofertasShopee.grupos||[];
-  if(!grupos.some(g=>g.id===ofertasShopeeGrupo))ofertasShopeeGrupo=grupos[0]&&grupos[0].id;
-  renderizarOfertasShopee();
-  renderizarOfertasEmAlta();
-}
-
-let ofertasShopeeVisiveis=[];
-
-function renderizarOfertasShopee(){
-  const apagadas=carregarOfertasApagadas();
-  const enviadas=carregarOfertasEnviadas();
-  const links=new Set(carregarBanco().map(p=>p.link));
-  const jaVista=o=>apagadas.has(`shopee:${o.itemId}`)||enviadas.has(`shopee:${o.itemId}`)||links.has(o.link);
-  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!jaVista(o))}));
-  document.getElementById("ofertas-shopee-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasShopeeGrupo?" ativo":""}" onclick="ofertasShopeeGrupo='${g.id}';renderizarOfertasShopee()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
-  const grupo=grupos.find(g=>g.id===ofertasShopeeGrupo);
-  ofertasShopeeVisiveis=(grupo&&grupo.ofertas)||[];
-  document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nova nesse grupo hoje — o resto já foi enviado ou guardado antes.</div>':grupo.ofertas.map((o,i)=>{
-    return `<div class="item-produto">
-      <div class="item-produto-linha">
-        ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
-        <div class="item-produto-info">
-          <a class="item-produto-nome" href="${escaparBanco(o.link)}" target="_blank" rel="noopener">${escaparBanco(o.nome)}</a>
-          ${o.preco!==undefined&&o.preco!==null?`<span class="item-produto-preco">${formatarPrecoBancoComMoeda(o.preco,"shopee")}</span>`:""}
-          ${o.comissao!==undefined?`<span class="item-produto-comissao ${o.comissao<7?'baixa':''}">${String(o.comissao).replace(".",",")}%</span>`:""}
-          ${o.valorComissao!==undefined?`<span class="item-produto-comissao ${o.valorComissao<5?'baixa':''}">💰 ${formatarPrecoBancoComMoeda(o.valorComissao,"shopee")}</span>`:""}
-          ${o.vendas?`<span class="item-produto-link">🔥 ${formatarInteiroBR(o.vendas)} vendidos${o.nota?` · ⭐ ${String(o.nota).replace(".",",")}`:""}</span>`:""}
-        </div>
-      </div>
-      <div class="item-produto-rodape">
-        <span class="item-produto-link"></span>
-        <div class="item-produto-acoes">
-          <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaShopee(${i})" title="Enviar no WhatsApp">📲</button>
-          <button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>
-          <button class="item-produto-icone item-produto-lixeira" onclick="apagarOfertaShopee(${i})" title="Apagar da lista (não mexe no Banco)">🗑️</button>
-        </div>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-function ofertaShopeeAtual(i){
-  return ofertasShopeeVisiveis[i];
-}
-
-function enviarOfertaShopee(i){
-  const o=ofertaShopeeAtual(i);
-  if(!o)return;
-  enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,foto:o.foto});
-  marcarOfertaEnviada(`shopee:${o.itemId}`);
-  renderizarOfertasShopee();
-}
-
-function apagarOfertaShopee(i){
-  const o=ofertaShopeeAtual(i);
-  if(!o)return;
-  apagarOfertaChave(`shopee:${o.itemId}`);
-  renderizarOfertasShopee();
-}
-
-function guardarOfertaShopeeNoBanco(i){
-  const o=ofertaShopeeAtual(i);
-  if(!o)return;
-  const lista=carregarBanco();
-  if(lista.some(p=>p.link===o.link)){alert("Esse produto já está no Banco.");return}
-  lista.unshift({id:Date.now(),nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,comissao:o.comissao,valorComissao:o.valorComissao,dataAdicionado:hojeIsoBanco(),foto:o.foto||undefined});
-  if(!salvarBanco(lista)){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
-  renderizarBanco();
-  renderizarOfertasShopee();
-}
-
-let ofertasEmAltaVisiveis=[];
-
-function renderizarOfertasEmAlta(){
-  const apagadas=carregarOfertasApagadas();
-  const enviadas=carregarOfertasEnviadas();
-  const links=new Set(carregarBanco().map(p=>p.link));
-  const jaVista=o=>apagadas.has(`shopee-emalta:${o.itemId}`)||enviadas.has(`shopee-emalta:${o.itemId}`)||links.has(o.link);
-  const lista=((ofertasShopee&&ofertasShopee.emAlta)||[]).filter(o=>!jaVista(o));
-  ofertasEmAltaVisiveis=lista;
-  document.getElementById("ofertas-em-alta-lista").innerHTML=!lista.length?'<div class="banco-vazio">Nada novo em alta agora — o resto já foi enviado ou guardado antes.</div>':lista.map((o,i)=>{
-    return `<div class="item-produto">
-      <div class="item-produto-linha">
-        ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
-        <div class="item-produto-info">
-          <a class="item-produto-nome" href="${escaparBanco(o.link)}" target="_blank" rel="noopener">${escaparBanco(o.nome)}</a>
-          ${o.preco!==undefined&&o.preco!==null?`<span class="item-produto-preco">${formatarPrecoBancoComMoeda(o.preco,"shopee")}</span>`:""}
-          ${o.comissao!==undefined?`<span class="item-produto-comissao ${o.comissao<7?'baixa':''}">${String(o.comissao).replace(".",",")}%</span>`:""}
-          ${o.valorComissao!==undefined?`<span class="item-produto-comissao ${o.valorComissao<5?'baixa':''}">💰 ${formatarPrecoBancoComMoeda(o.valorComissao,"shopee")}</span>`:""}
-          ${o.vendas?`<span class="item-produto-link">🔥 ${formatarInteiroBR(o.vendas)} vendidos${o.nota?` · ⭐ ${String(o.nota).replace(".",",")}`:""}</span>`:""}
-        </div>
-      </div>
-      <div class="item-produto-rodape">
-        <span class="item-produto-link"></span>
-        <div class="item-produto-acoes">
-          <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaEmAlta(${i})" title="Enviar no WhatsApp">📲</button>
-          <button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaEmAltaNoBanco(${i})" title="Guardar no Banco">➕</button>
-          <button class="item-produto-icone item-produto-lixeira" onclick="apagarOfertaEmAlta(${i})" title="Apagar da lista (não mexe no Banco)">🗑️</button>
-        </div>
-      </div>
-    </div>`;
-  }).join("");
-}
-
-function ofertaEmAltaAtual(i){
-  return ofertasEmAltaVisiveis[i];
-}
-
-function enviarOfertaEmAlta(i){
-  const o=ofertaEmAltaAtual(i);
-  if(!o)return;
-  enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,foto:o.foto});
-  marcarOfertaEnviada(`shopee-emalta:${o.itemId}`);
-  renderizarOfertasEmAlta();
-}
-
-function apagarOfertaEmAlta(i){
-  const o=ofertaEmAltaAtual(i);
-  if(!o)return;
-  apagarOfertaChave(`shopee-emalta:${o.itemId}`);
-  renderizarOfertasEmAlta();
-}
-
-function guardarOfertaEmAltaNoBanco(i){
-  const o=ofertaEmAltaAtual(i);
-  if(!o)return;
-  const lista=carregarBanco();
-  if(lista.some(p=>p.link===o.link)){alert("Esse produto já está no Banco.");return}
-  lista.unshift({id:Date.now(),nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,comissao:o.comissao,valorComissao:o.valorComissao,dataAdicionado:hojeIsoBanco(),foto:o.foto||undefined});
-  if(!salvarBanco(lista)){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
-  renderizarBanco();
-  renderizarOfertasEmAlta();
 }
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
