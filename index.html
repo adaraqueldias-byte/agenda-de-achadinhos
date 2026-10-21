@@ -3725,14 +3725,14 @@ let ofertasShopeeVisiveis=[];
 
 function renderizarOfertasShopee(){
   const apagadas=carregarOfertasApagadas();
+  const enviadas=carregarOfertasEnviadas();
   const links=new Set(carregarBanco().map(p=>p.link));
-  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!apagadas.has(`shopee:${o.itemId}`)&&!links.has(o.link))}));
+  const jaVista=o=>apagadas.has(`shopee:${o.itemId}`)||enviadas.has(`shopee:${o.itemId}`)||links.has(o.link);
+  const grupos=((ofertasShopee&&ofertasShopee.grupos)||[]).map(g=>({...g,ofertas:g.ofertas.filter(o=>!jaVista(o))}));
   document.getElementById("ofertas-shopee-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasShopeeGrupo?" ativo":""}" onclick="ofertasShopeeGrupo='${g.id}';renderizarOfertasShopee()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasShopeeGrupo);
   ofertasShopeeVisiveis=(grupo&&grupo.ofertas)||[];
-  const enviadas=carregarOfertasEnviadas();
-  document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nova nesse grupo hoje — ou já está tudo no seu Banco.</div>':grupo.ofertas.map((o,i)=>{
-    const enviada=enviadas.has(`shopee:${o.itemId}`);
+  document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nova nesse grupo hoje — o resto já foi enviado ou guardado antes.</div>':grupo.ofertas.map((o,i)=>{
     return `<div class="item-produto">
       <div class="item-produto-linha">
         ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
@@ -3745,7 +3745,7 @@ function renderizarOfertasShopee(){
         </div>
       </div>
       <div class="item-produto-rodape">
-        <span class="item-produto-link">${enviada?"✅ Enviado":""}</span>
+        <span class="item-produto-link"></span>
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaShopee(${i})" title="Enviar no WhatsApp">📲</button>
           <button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>
