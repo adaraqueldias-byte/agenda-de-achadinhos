@@ -14,6 +14,7 @@ const SECRET = codigoSenha(BRUTO_SECRET) || codigoSenha(BRUTO_ID) || BRUTO_SECRE
 export const chavesLidas = { APP_ID, SECRET };
 const URL_API = "https://open-api.affiliate.shopee.com.br/graphql";
 const POR_GRUPO = 10;
+const POR_EM_ALTA = 15; // "🔥 Em Alta" é uma lista de monitoramento separada dos grupos — não disputa produto com eles
 
 // Um bloco por grupo do WhatsApp. keyword vazia = mais vendidos da Shopee em geral.
 const GRUPOS = [
@@ -29,10 +30,10 @@ export function assinatura(appId, timestamp, payload, secret) {
   return createHash("sha256").update(`${appId}${timestamp}${payload}${secret}`).digest("hex");
 }
 
-async function buscar(keyword) {
+async function buscar(keyword, limitePedido = POR_GRUPO * 2) {
   const filtros = keyword
-    ? `keyword: ${JSON.stringify(keyword)}, sortType: 2, page: 1, limit: ${POR_GRUPO * 2}`
-    : `listType: 2, sortType: 2, page: 1, limit: ${POR_GRUPO * 2}`;
+    ? `keyword: ${JSON.stringify(keyword)}, sortType: 2, page: 1, limit: ${limitePedido}`
+    : `listType: 2, sortType: 2, page: 1, limit: ${limitePedido}`;
   const payload = JSON.stringify({ query: `{ productOfferV2(${filtros}) { nodes { ${CAMPOS} } } }` });
   const timestamp = Math.floor(Date.now() / 1000);
   const res = await fetch(URL_API, {
@@ -89,7 +90,18 @@ async function main() {
     grupos.push({ id: g.id, nome: g.nome, ofertas });
     console.log(`${g.nome}: ${ofertas.length} ofertas`);
   }
-  writeFileSync("ofertas-shopee.json", JSON.stringify({ atualizadoEm: new Date().toISOString(), grupos }, null, 1) + "\n");
+
+  // "🔥 Em Alta": os mais vendidos no geral, como lista própria de monitoramento (não tira produto dos grupos acima)
+  let emAlta = [];
+  try {
+    const nodesEmAlta = await buscar("", POR_EM_ALTA * 2);
+    emAlta = nodesEmAlta.filter(n => n.offerLink).slice(0, POR_EM_ALTA).map(converter);
+    console.log(`Em Alta: ${emAlta.length} produtos`);
+  } catch (e) {
+    console.error(`Em Alta: falhou ao buscar (${e.message})`);
+  }
+
+  writeFileSync("ofertas-shopee.json", JSON.stringify({ atualizadoEm: new Date().toISOString(), grupos, emAlta }, null, 1) + "\n");
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main().catch(e => { console.error(e.message); process.exit(1); });
