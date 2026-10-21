@@ -28,14 +28,13 @@ async function consultar(query) {
 }
 
 async function main() {
-  console.log("=== Campos de ProductOfferV2 ===");
-  const r1 = await consultar(`{ __type(name: "ProductOfferV2") { fields { name } } }`);
-  console.log(JSON.stringify(r1, null, 2));
+  console.log("=== Todas as queries disponíveis ===");
+  const r3 = await consultar(`{ __schema { queryType { fields { name } } } }`);
+  console.log(JSON.stringify(r3, null, 2));
 
-  console.log("=== Argumentos de productOfferV2 ===");
-  const r2 = await consultar(`{ __schema { queryType { fields { name args { name type { name kind ofType { name kind } } } } } } }`);
-  const campo = r2?.data?.__schema?.queryType?.fields?.find(f => f.name === "productOfferV2");
-  console.log(JSON.stringify(campo, null, 2));
+  console.log("=== Testando productOfferV2 com productCatIds e categoryName ===");
+  const r4 = await consultar(`{ productOfferV2(listType: 2, sortType: 2, page: 1, limit: 3) { nodes { itemId productName productCatIds } } }`);
+  console.log(JSON.stringify(r4, null, 2));
 }
 
 main().catch(e => { console.error(e.message); process.exit(1); });
