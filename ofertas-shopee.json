@@ -1,78 +1,14 @@
 {
- "atualizadoEm": "2026-10-20T15:12:16.072Z",
+ "atualizadoEm": "2026-10-21T12:26:20.286Z",
  "grupos": [
   {
    "id": "vip",
    "nome": "Grupo VIP",
    "ofertas": [
     {
-     "itemId": "22799682291",
-     "nome": "Anjo de Natal em Malha com Vela de LED – Decoração Natalina",
-     "link": "https://s.shopee.com.br/gQzp7cT6p",
-     "loja": "shopee",
-     "preco": {
-      "min": 28.78,
-      "max": 92.12
-     },
-     "comissao": 13,
-     "valorComissao": 3.7414,
-     "vendas": 60,
-     "nota": 4.8,
-     "desconto": 4,
-     "foto": "https://cf.shopee.com.br/file/br-11134201-820lq-mt5wolmwg4qt51",
-     "loja_nome": "Belladecor3D_"
-    },
-    {
-     "itemId": "58218195463",
-     "nome": "Potes de Vidro Natalino 300/550 ml - Porta Biscoito- Porta Doces Decorativo",
-     "link": "https://s.shopee.com.br/W7Zcod6Ro",
-     "loja": "shopee",
-     "preco": {
-      "min": 34.9,
-      "max": 85.9
-     },
-     "comissao": 13,
-     "valorComissao": 4.537,
-     "vendas": 59,
-     "nota": 4.7,
-     "foto": "https://cf.shopee.com.br/file/sg-11134201-825a2-mt5tefo46k942d",
-     "loja_nome": "BrincaMix"
-    },
-    {
-     "itemId": "58262778181",
-     "nome": "Bandeja para Café da Manhã Suporte Suco Petiscos Cerveja Copo Sofá Long Neck 30x20x6 Madeira Rústico",
-     "link": "https://s.shopee.com.br/Lo9QVdjmn",
-     "loja": "shopee",
-     "preco": 35.69,
-     "comissao": 13,
-     "valorComissao": 4.6397,
-     "vendas": 75,
-     "nota": 4.6,
-     "desconto": 35,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820l5-mpxt1310dyiqc0",
-     "loja_nome": "Líder Arte Home"
-    },
-    {
-     "itemId": "41584717212",
-     "nome": "Kit Sousplast Jogo Americano Caminho De Mesa Natalino Natal Mesa Posta Sofisticação Sublimação Digital Tecido Premium",
-     "link": "https://s.shopee.com.br/BUjECeN7m",
-     "loja": "shopee",
-     "preco": {
-      "min": 27.9,
-      "max": 66.9
-     },
-     "comissao": 18,
-     "valorComissao": 5.022,
-     "vendas": 25,
-     "nota": 5,
-     "desconto": 32,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820m9-mttmiteg9dds35",
-     "loja_nome": "ARTE DIGITAL EM TECIDOS"
-    },
-    {
      "itemId": "54266461318",
      "nome": "Papel Toalha de Natal Tripla folha Decoração 8 metros 40 guardanapos Natalinos Papai noel Bolachas",
-     "link": "https://s.shopee.com.br/1BJ1tf0Sl",
+     "link": "https://s.shopee.com.br/7AeV8l4Wf3",
      "loja": "shopee",
      "preco": {
       "min": 27,
@@ -80,33 +16,30 @@
      },
      "comissao": 11,
      "valorComissao": 2.97,
-     "vendas": 448,
+     "vendas": 471,
      "nota": 4.9,
      "desconto": 10,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820ll-ms6x427cf9504d",
      "loja_nome": "Videira del Sur"
     },
     {
-     "itemId": "58215597944",
-     "nome": "Manta para Sofá 3,00m x 1,80m Cores de Natal Verde e Vermelha Proteção e Decoração",
-     "link": "https://s.shopee.com.br/AKbVKt1fUm",
+     "itemId": "22797745923",
+     "nome": "Geladeira Portátil Para Caminhão Van Portátil 20 Litros Quadrivolt",
+     "link": "https://s.shopee.com.br/6fiEXq6Qfy",
      "loja": "shopee",
-     "preco": {
-      "min": 47.9,
-      "max": 59.9
-     },
-     "comissao": 18,
-     "valorComissao": 8.622,
-     "vendas": 31,
+     "preco": 1140,
+     "comissao": 13,
+     "valorComissao": 148.2,
+     "vendas": 74,
      "nota": 5,
-     "desconto": 40,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820m2-mrh972ccqk1xd4",
-     "loja_nome": "Varal Brasil"
+     "desconto": 12,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-7rdvg-lzjl0hf838ko19",
+     "loja_nome": "BEESHOP E-COMMERCE"
     },
     {
      "itemId": "48166460578",
      "nome": "Forma Retangular Cerâmica Antiaderente p/ Forno 2L 2,8L ou 4L Assadeira c/ Alça Oferta Envio Rápido!",
-     "link": "https://s.shopee.com.br/AUuvXC129p",
+     "link": "https://s.shopee.com.br/6q1ek95nL1",
      "loja": "shopee",
      "preco": {
       "min": 108.7,
@@ -114,7 +47,7 @@
      },
      "comissao": 8,
      "valorComissao": 8.696,
-     "vendas": 69,
+     "vendas": 76,
      "nota": 4.9,
      "desconto": 58,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820lr-ms614mgkozyd6d",
@@ -123,38 +56,85 @@
     {
      "itemId": "58217124390",
      "nome": "Petisqueira de Vidro 6 Peças com Bandeja de Bambu Tigelas Coração e Flor para Petiscos Doces e Frutas",
-     "link": "https://s.shopee.com.br/9zyewH2wAk",
+     "link": "https://s.shopee.com.br/7faljg2ceC",
      "loja": "shopee",
-     "preco": 69.95,
+     "preco": 66,
      "comissao": 16,
-     "valorComissao": 11.192,
-     "vendas": 68,
+     "valorComissao": 10.56,
+     "vendas": 73,
      "nota": 4.9,
-     "desconto": 59,
+     "desconto": 61,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820me-msfa8f66spvqa4",
      "loja_nome": "Casa Encanto_"
     },
     {
-     "itemId": "46560301686",
-     "nome": "Comedouro e Bebedouro Automático para Gatos e Cães Premium 1L Jelplast",
-     "link": "https://s.shopee.com.br/AAI58a2Ipn",
+     "itemId": "58215597944",
+     "nome": "Manta para Sofá 3,00m x 1,80m Cores de Natal Verde e Vermelha Proteção e Decoração",
+     "link": "https://s.shopee.com.br/7puBvz1zJF",
      "loja": "shopee",
      "preco": {
-      "min": 60.9,
-      "max": 61.9
+      "min": 47.9,
+      "max": 59.9
      },
      "comissao": 18,
-     "valorComissao": 10.962,
-     "vendas": 71,
+     "valorComissao": 8.622,
+     "vendas": 35,
      "nota": 5,
-     "desconto": 6,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820ma-mo396acb8ttwdd",
-     "loja_nome": "Select Life"
+     "desconto": 40,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820m2-mrh972ccqk1xd4",
+     "loja_nome": "Varal Brasil"
+    },
+    {
+     "itemId": "58218195463",
+     "nome": "Potes de Vidro Natalino 300/550 ml - Porta Biscoito- Porta Doces Decorativo",
+     "link": "https://s.shopee.com.br/7KxvL43tKA",
+     "loja": "shopee",
+     "preco": {
+      "min": 34.9,
+      "max": 85.9
+     },
+     "comissao": 13,
+     "valorComissao": 4.537,
+     "vendas": 74,
+     "nota": 4.7,
+     "foto": "https://cf.shopee.com.br/file/sg-11134201-825a2-mt5tefo46k942d",
+     "loja_nome": "BrincaMix"
+    },
+    {
+     "itemId": "58262778181",
+     "nome": "Bandeja para Café da Manhã Suporte Suco Petiscos Cerveja Copo Sofá Long Neck 30x20x6 Madeira Rústico",
+     "link": "https://s.shopee.com.br/7VHLXN3FzD",
+     "loja": "shopee",
+     "preco": 35.69,
+     "comissao": 13,
+     "valorComissao": 4.6397,
+     "vendas": 76,
+     "nota": 4.6,
+     "desconto": 35,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820l5-mpxt1310dyiqc0",
+     "loja_nome": "Líder Arte Home"
+    },
+    {
+     "itemId": "41584717212",
+     "nome": "Kit Sousplast Jogo Americano Caminho De Mesa Natalino Natal Mesa Posta Sofisticação Sublimação Digital Tecido Premium",
+     "link": "https://s.shopee.com.br/5fphM0AEhs",
+     "loja": "shopee",
+     "preco": {
+      "min": 27.9,
+      "max": 66.9
+     },
+     "comissao": 18,
+     "valorComissao": 5.022,
+     "vendas": 28,
+     "nota": 4.9,
+     "desconto": 32,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820m9-mttmiteg9dds35",
+     "loja_nome": "ARTE DIGITAL EM TECIDOS"
     },
     {
      "itemId": "52718098361",
      "nome": "Capa de Almofada de Natal 45x45cm Bordado 3D c/ Pompons - Pronta Entrega (s/ enchimento)",
-     "link": "https://s.shopee.com.br/9fLoXf4Cqi",
+     "link": "https://s.shopee.com.br/5q97YJ9bMv",
      "loja": "shopee",
      "preco": 68,
      "comissao": 3,
@@ -164,6 +144,23 @@
      "desconto": 26,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-8259y-mtcj0v1kw35zd9",
      "loja_nome": "hometreehd.br"
+    },
+    {
+     "itemId": "22799682291",
+     "nome": "Anjo de Natal em Malha com Vela de LED – Decoração Natalina",
+     "link": "https://s.shopee.com.br/5LCqxOBVNq",
+     "loja": "shopee",
+     "preco": {
+      "min": 28.78,
+      "max": 92.12
+     },
+     "comissao": 13,
+     "valorComissao": 3.7414,
+     "vendas": 63,
+     "nota": 4.8,
+     "desconto": 4,
+     "foto": "https://cf.shopee.com.br/file/br-11134201-820lq-mt5wolmwg4qt51",
+     "loja_nome": "Belladecor3D_"
     }
    ]
   },
@@ -174,12 +171,12 @@
     {
      "itemId": "27123077441",
      "nome": "Fio De Fada De 2M Com Luzes De Fadas Led Para Decoração De Casa E Festa De Natal",
-     "link": "https://s.shopee.com.br/5AtPBOLTVx",
+     "link": "https://s.shopee.com.br/2LZFNsMvat",
      "loja": "shopee",
      "preco": 4.99,
      "comissao": 23,
      "valorComissao": 1.1477,
-     "vendas": 8408,
+     "vendas": 8877,
      "nota": 4.8,
      "desconto": 71,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-7ra1c-m4sgiysdbniif0",
@@ -188,7 +185,7 @@
     {
      "itemId": "21898858579",
      "nome": "1/2/5 Pcs Colorido Fio Fada 2M Com Luzes Led Fada Para Decoração De Casa e Natal Festa",
-     "link": "https://s.shopee.com.br/4qGYmmMkBv",
+     "link": "https://s.shopee.com.br/1W08OLQ6Hk",
      "loja": "shopee",
      "preco": {
       "min": 7.69,
@@ -196,7 +193,7 @@
      },
      "comissao": 23,
      "valorComissao": 1.7687,
-     "vendas": 6868,
+     "vendas": 6974,
      "nota": 4.8,
      "desconto": 75,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-825ao-mu7dow70hmgw59",
@@ -205,7 +202,7 @@
     {
      "itemId": "21998858555",
      "nome": "1/2/5 Pcs Colorido Fio Fada 2M Com Luzes Led Fada Para Decoração De Casa e Natal Festa",
-     "link": "https://s.shopee.com.br/113qDjbKyG",
+     "link": "https://s.shopee.com.br/1LgiC2Qjcj",
      "loja": "shopee",
      "preco": {
       "min": 7.99,
@@ -213,7 +210,7 @@
      },
      "comissao": 23,
      "valorComissao": 1.8377,
-     "vendas": 2859,
+     "vendas": 3198,
      "nota": 4.6,
      "desconto": 75,
      "foto": "https://cf.shopee.com.br/file/br-11134207-7r98o-lknc2jcks6ab26",
@@ -222,12 +219,12 @@
     {
      "itemId": "23399175232",
      "nome": "Presépio De Natal Manjedoura Decoração Enfeite Natalino Mdf",
-     "link": "https://s.shopee.com.br/1BNGQ2ahdJ",
+     "link": "https://s.shopee.com.br/1qcymxOpbq",
      "loja": "shopee",
      "preco": 29.9,
      "comissao": 12,
      "valorComissao": 3.588,
-     "vendas": 3798,
+     "vendas": 3978,
      "nota": 4.5,
      "desconto": 40,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-821e1-mgzrq0k1qtceba",
@@ -236,7 +233,7 @@
     {
      "itemId": "20097733711",
      "nome": "Cortina de Luz LED Multicolorida 3x3m ou 4x3m USB com Controle Remoto, 8 Modos para Festa e Decoração",
-     "link": "https://s.shopee.com.br/4B0rzYPHXr",
+     "link": "https://s.shopee.com.br/1gJYaePSwp",
      "loja": "shopee",
      "preco": {
       "min": 29.88,
@@ -244,7 +241,7 @@
      },
      "comissao": 3,
      "valorComissao": 0.8964,
-     "vendas": 3356,
+     "vendas": 3591,
      "nota": 4.8,
      "desconto": 49,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820lm-mt5crbng84cm72",
@@ -253,7 +250,7 @@
     {
      "itemId": "49300976525",
      "nome": "Enfeites De Natal 43CM Glitter Berry Haste Ramo Flores Falsas Para Decoração De Árvore Casa",
-     "link": "https://s.shopee.com.br/40hRnFPuso",
+     "link": "https://s.shopee.com.br/qkRb7Sddg",
      "loja": "shopee",
      "preco": {
       "min": 5.99,
@@ -261,7 +258,7 @@
      },
      "comissao": 13,
      "valorComissao": 0.7787,
-     "vendas": 2901,
+     "vendas": 2893,
      "nota": 4.4,
      "desconto": 71,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-821dt-mgrfr68t6dql96",
@@ -270,7 +267,7 @@
     {
      "itemId": "20099498532",
      "nome": "Pisca Pisca Natal Cordão 100 Leds 10m 8 Funções Varias Cores 110v / 220v ANJIN",
-     "link": "https://s.shopee.com.br/gQzp7cbeE",
+     "link": "https://s.shopee.com.br/gR1OoTGyf",
      "loja": "shopee",
      "preco": {
       "min": 13.9,
@@ -278,7 +275,7 @@
      },
      "comissao": 3,
      "valorComissao": 0.417,
-     "vendas": 4207,
+     "vendas": 4392,
      "nota": 4.9,
      "desconto": 54,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-7rdyh-m0yj94qxv1hjb2",
@@ -287,13 +284,13 @@
     {
      "itemId": "26673082121",
      "nome": "Fio De Fada De 2M Com Luzes De Fadas Led Para Decoração De Casa E Festa De Natal",
-     "link": "https://s.shopee.com.br/qkQ1QbyJH",
+     "link": "https://s.shopee.com.br/1BNHzjRMxm",
      "loja": "shopee",
      "preco": 4.99,
      "comissao": 19,
      "valorComissao": 0.9481,
-     "vendas": 2760,
-     "nota": 4.9,
+     "vendas": 2920,
+     "nota": 4.8,
      "desconto": 71,
      "foto": "https://cf.shopee.com.br/file/cn-11134207-7ras8-m4sgd4jf2pep7f",
      "loja_nome": "HONG11.br"
@@ -301,7 +298,7 @@
     {
      "itemId": "40661495346",
      "nome": "Mini Decorações De Natal Papai Noel Bonecos De Neve Meias Sinos Paisagens Em Miniatura Resina Artesanato Casa Mesa",
-     "link": "https://s.shopee.com.br/Lo9QVdsKC",
+     "link": "https://s.shopee.com.br/113rnQS0Il",
      "loja": "shopee",
      "preco": {
       "min": 3.5,
@@ -309,7 +306,7 @@
      },
      "comissao": 8,
      "valorComissao": 0.28,
-     "vendas": 3262,
+     "vendas": 3252,
      "nota": 4.9,
      "desconto": 83,
      "foto": "https://cf.shopee.com.br/file/cn-11134207-820l4-mt91o08rz0g45b",
@@ -318,7 +315,7 @@
     {
      "itemId": "58212669834",
      "nome": "Kit Manta Decorativa P + 4 Capas de Almofadas Natalinas Estampa Digital Decoração Natal",
-     "link": "https://s.shopee.com.br/W7ZcodEzF",
+     "link": "https://s.shopee.com.br/BUkntVAzc",
      "loja": "shopee",
      "preco": {
       "min": 64.9,
@@ -326,7 +323,7 @@
      },
      "comissao": 13,
      "valorComissao": 8.437,
-     "vendas": 3636,
+     "vendas": 3648,
      "nota": 4.7,
      "desconto": 35,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820mh-mt9x47a76p6p03",
@@ -341,12 +338,12 @@
     {
      "itemId": "55865986117",
      "nome": "JBSARA Revive Spicule Shot 102 Ampoule Serum 1g 1ea",
-     "link": "https://s.shopee.com.br/1LgfwFpy82",
+     "link": "https://s.shopee.com.br/9V2Pv302jO",
      "loja": "shopee",
      "preco": 3.49,
      "comissao": 13,
      "valorComissao": 0.4537,
-     "vendas": 2826,
+     "vendas": 3381,
      "nota": 5,
      "desconto": 63,
      "foto": "https://cf.shopee.com.br/file/sg-11134207-8258w-mrv26l1j53igaa",
@@ -355,7 +352,7 @@
     {
      "itemId": "58214668571",
      "nome": "Hidrabene Protetor Solar Clareador Facial 70 FPS",
-     "link": "https://s.shopee.com.br/1W068YpKn5",
+     "link": "https://s.shopee.com.br/9Kizik0g4N",
      "loja": "shopee",
      "preco": {
       "min": 36.9,
@@ -363,7 +360,7 @@
      },
      "comissao": 13,
      "valorComissao": 4.797,
-     "vendas": 54969,
+     "vendas": 54046,
      "nota": 4.9,
      "desconto": 38,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820ld-mswt16eywd1h35",
@@ -372,12 +369,12 @@
     {
      "itemId": "25946709329",
      "nome": "ULTRA HIDRATAÇÃO EFEITO TEIA COM ÓLEOS MARROQUINOS - OURO MARROQUINO - FINA MARIA PROFISSIONAL",
-     "link": "https://s.shopee.com.br/20wMjTnQmE",
+     "link": "https://s.shopee.com.br/9APZWR1JPM",
      "loja": "shopee",
      "preco": 38.9,
      "comissao": 13,
      "valorComissao": 5.057,
-     "vendas": 25627,
+     "vendas": 26364,
      "nota": 4.9,
      "desconto": 51,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-8258h-mr1ynaykoao016",
@@ -386,7 +383,7 @@
     {
      "itemId": "21235699753",
      "nome": "Fadvan 5D W Extensões De Cílios Em Forma De 0.07 C/D Faux Mink Natural Lashes Profissionais Suaves",
-     "link": "https://s.shopee.com.br/5fpf6DZTLF",
+     "link": "https://s.shopee.com.br/9069K81wkL",
      "loja": "shopee",
      "preco": {
       "min": 22.25,
@@ -394,7 +391,7 @@
      },
      "comissao": 13,
      "valorComissao": 2.8925,
-     "vendas": 14907,
+     "vendas": 14686,
      "nota": 4.8,
      "desconto": 62,
      "foto": "https://cf.shopee.com.br/file/cn-11134207-820l4-mlr6x8dggpa8d1",
@@ -403,12 +400,12 @@
     {
      "itemId": "58212716558",
      "nome": "Óleo Finalizador Óleo Extraordinário, Anti Frizz, Protetor Térmico, L'Oréal Paris Elseve 100ml",
-     "link": "https://s.shopee.com.br/3LRl01Wmmm",
+     "link": "https://s.shopee.com.br/8pmj7p2a5K",
      "loja": "shopee",
      "preco": 36.99,
-     "comissao": 6,
-     "valorComissao": 2.2194,
-     "vendas": 17473,
+     "comissao": 18,
+     "valorComissao": 6.6582,
+     "vendas": 17906,
      "nota": 4.9,
      "desconto": 39,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820lt-msof4dg2rnyc07",
@@ -417,24 +414,24 @@
     {
      "itemId": "28583751267",
      "nome": "Adesivos hidrocolóides anti-acne para espinhas; cuidado inverno; presente ideal Natal/Ano Novo",
-     "link": "https://s.shopee.com.br/5q95IWYq0G",
+     "link": "https://s.shopee.com.br/8fTIvW3DQJ",
      "loja": "shopee",
      "preco": {
-      "min": 5.76,
+      "min": 6.53,
       "max": 11.46
      },
      "comissao": 7,
-     "valorComissao": 0.4032,
-     "vendas": 24665,
+     "valorComissao": 0.4571,
+     "vendas": 24069,
      "nota": 4.8,
-     "desconto": 48,
+     "desconto": 40,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-823qq-mp4me4j9r9xq17",
      "loja_nome": "Choice Oficial"
     },
     {
      "itemId": "58264684239",
      "nome": "Kit Hidrabene Clareador Skincare Clareador Facial: Sabonete, Protetor 70 FPS e Sérum Multicorretivo",
-     "link": "https://s.shopee.com.br/3VlBCKW9Rp",
+     "link": "https://s.shopee.com.br/8V9sjD3qlI",
      "loja": "shopee",
      "preco": {
       "min": 79.9,
@@ -442,7 +439,7 @@
      },
      "comissao": 13,
      "valorComissao": 10.387,
-     "vendas": 21360,
+     "vendas": 21235,
      "nota": 4.9,
      "desconto": 50,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820lx-mt45q21kcvt09d",
@@ -451,7 +448,7 @@
     {
      "itemId": "58213504334",
      "nome": "Adesivo Detox Para os Pés Kit 10 a 50 Foot Patch Natural Relaxamento Bem Estar Uso Noturno Pés Cansa",
-     "link": "https://s.shopee.com.br/3g4bOdVW6s",
+     "link": "https://s.shopee.com.br/8KqSWu4U6H",
      "loja": "shopee",
      "preco": {
       "min": 11.99,
@@ -459,7 +456,7 @@
      },
      "comissao": 14,
      "valorComissao": 1.6786,
-     "vendas": 16604,
+     "vendas": 16590,
      "nota": 4.8,
      "desconto": 70,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820ll-mq54ng7pfj7mf3",
@@ -468,12 +465,12 @@
     {
      "itemId": "23692240341",
      "nome": "Alicate de Cutícula Mundial 522C: Precisão e Durabilidade",
-     "link": "https://s.shopee.com.br/3qO1awUslv",
+     "link": "https://s.shopee.com.br/8AX2Kb57RG",
      "loja": "shopee",
      "preco": 19.9,
      "comissao": 11,
      "valorComissao": 2.189,
-     "vendas": 16156,
+     "vendas": 16280,
      "nota": 4.9,
      "desconto": 39,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-7rbk0-lktyq6753ip22a",
@@ -482,12 +479,12 @@
     {
      "itemId": "25293647491",
      "nome": "Celimax The Vita A Retinal Shot Tightening Booster 15ml",
-     "link": "https://s.shopee.com.br/2qVUP6Ygnl",
+     "link": "https://s.shopee.com.br/80Dc8I5kmF",
      "loja": "shopee",
      "preco": 135.99,
      "comissao": 25,
      "valorComissao": 33.9975,
-     "vendas": 17989,
+     "vendas": 18125,
      "nota": 5,
      "desconto": 38,
      "foto": "https://cf.shopee.com.br/file/sg-11134207-825ai-mr9pynhmd43k22",
@@ -502,15 +499,15 @@
     {
      "itemId": "22498844695",
      "nome": "Lança Bolhas Sabão Automático Brinquedo Infantil Menino Menina Festa Aniversário Presente Elétrico",
-     "link": "https://s.shopee.com.br/70L3MlN9oL",
+     "link": "https://s.shopee.com.br/LoB0CdPNt",
      "loja": "shopee",
      "preco": {
       "min": 21.89,
-      "max": 69.9
+      "max": 64.9
      },
      "comissao": 14,
      "valorComissao": 3.0646,
-     "vendas": 11548,
+     "vendas": 11835,
      "nota": 4.9,
      "desconto": 27,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820me-mowqrc9hs6bpfa",
@@ -519,7 +516,7 @@
     {
      "itemId": "23899381883",
      "nome": "Kit 1/2/3 Pares Meias 3D Infantis Personagens Divertidos Conforto Macio Sortidos Criança Festa",
-     "link": "https://s.shopee.com.br/6q1dASNn9K",
+     "link": "https://s.shopee.com.br/BUknte2is",
      "loja": "shopee",
      "preco": {
       "min": 19.99,
@@ -527,7 +524,7 @@
      },
      "comissao": 8,
      "valorComissao": 1.5992,
-     "vendas": 11583,
+     "vendas": 11560,
      "nota": 4.9,
      "desconto": 55,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-825zn-mm62a3k8epdtd3",
@@ -536,15 +533,15 @@
     {
      "itemId": "44515668088",
      "nome": "Meias Malucas 25 ao 40 Dos Desenhos Animados Longas Das Crianças Adulto De Meia Panturrilha",
-     "link": "https://s.shopee.com.br/6fiCy9OQUJ",
+     "link": "https://s.shopee.com.br/1BKbaeg3r",
      "loja": "shopee",
      "preco": {
-      "min": 18.99,
+      "min": 17.99,
       "max": 39.9
      },
      "comissao": 15,
-     "valorComissao": 2.8485,
-     "vendas": 11139,
+     "valorComissao": 2.6985,
+     "vendas": 11125,
      "nota": 4.9,
      "desconto": 59,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820l7-msk5jtlk8zye92",
@@ -553,12 +550,12 @@
     {
      "itemId": "58259649647",
      "nome": "Sandália Babuche Infantil Juvenil Leve Macio",
-     "link": "https://s.shopee.com.br/9APXwkEuPo",
+     "link": "https://s.shopee.com.br/2VsfaBV9zM",
      "loja": "shopee",
      "preco": 19.49,
      "comissao": 3,
      "valorComissao": 0.5847,
-     "vendas": 9797,
+     "vendas": 9744,
      "nota": 4.9,
      "desconto": 30,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-820nx-mnk3ngz0nojl72",
@@ -567,7 +564,7 @@
     {
      "itemId": "23194042103",
      "nome": "Celular Infantil Telefone Interativo Musical Unicórnio Bebê ou celular Dinossauro",
-     "link": "https://s.shopee.com.br/9067kRFXkn",
+     "link": "https://s.shopee.com.br/2LZFNsVnKL",
      "loja": "shopee",
      "preco": {
       "min": 14.88,
@@ -575,7 +572,7 @@
      },
      "comissao": 3,
      "valorComissao": 0.4464,
-     "vendas": 9277,
+     "vendas": 9256,
      "nota": 4.9,
      "desconto": 29,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820l4-mnzr4z29w5c4af",
@@ -584,7 +581,7 @@
     {
      "itemId": "58261933498",
      "nome": "KIT 50/100/200/300 Fio Dental Infantil em Formato de Arco Ultra Fino para uma Limpeza Eficaz",
-     "link": "https://s.shopee.com.br/8pmhY8GB5m",
+     "link": "https://s.shopee.com.br/2BFpBZWQfK",
      "loja": "shopee",
      "preco": {
       "min": 9.48,
@@ -592,7 +589,7 @@
      },
      "comissao": 7,
      "valorComissao": 0.6636,
-     "vendas": 8645,
+     "vendas": 8814,
      "nota": 4.9,
      "desconto": 81,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-823qf-mp1oi9wl1rtbab",
@@ -601,12 +598,12 @@
     {
      "itemId": "19499892618",
      "nome": "KIT COM 10 Grampos Presilha de Patinhos Pato Clip AmareloL",
-     "link": "https://s.shopee.com.br/8fTHLpGoQl",
+     "link": "https://s.shopee.com.br/20wOzGX40J",
      "loja": "shopee",
      "preco": 10,
      "comissao": 7,
      "valorComissao": 0.7,
-     "vendas": 9256,
+     "vendas": 9236,
      "nota": 4.7,
      "desconto": 50,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-824gm-meq18wrw29du45",
@@ -615,12 +612,12 @@
     {
      "itemId": "43417844488",
      "nome": "Fantasia Infantil Masculina Herói com Máscara Roupa Curta para Festa",
-     "link": "https://s.shopee.com.br/8V9r9WHRlk",
+     "link": "https://s.shopee.com.br/1qcymxXhLI",
      "loja": "shopee",
      "preco": 34.99,
      "comissao": 3,
      "valorComissao": 1.0497,
-     "vendas": 8523,
+     "vendas": 8587,
      "nota": 4.9,
      "desconto": 50,
      "foto": "https://cf.shopee.com.br/file/br-11134207-81z1k-meeurxzmjl6oad",
@@ -629,15 +626,15 @@
     {
      "itemId": "56260449744",
      "nome": "Cozinha Infantil Grande Com Geladeira Completa 92 CM Sai Água de Verdade Fruteira Forno Fogão Rosa",
-     "link": "https://s.shopee.com.br/8KqQxDI56j",
+     "link": "https://s.shopee.com.br/1gJYaeYKgH",
      "loja": "shopee",
      "preco": {
-      "min": 139.9,
-      "max": 179.9
+      "min": 139.95,
+      "max": 179.95
      },
      "comissao": 7,
-     "valorComissao": 9.793,
-     "vendas": 4960,
+     "valorComissao": 9.7965,
+     "vendas": 5148,
      "nota": 4.7,
      "desconto": 42,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820md-moio6hr8l8uea9",
@@ -646,12 +643,12 @@
     {
      "itemId": "58254930910",
      "nome": "Kit 400 Toalhas Umedecidas Chameguinho Baby Lenço Umedecido para Bebê Higiene Infantil",
-     "link": "https://s.shopee.com.br/80DaYbJLmh",
+     "link": "https://s.shopee.com.br/1W08OLYy1G",
      "loja": "shopee",
      "preco": 24.8,
      "comissao": 3,
      "valorComissao": 0.744,
-     "vendas": 6022,
+     "vendas": 6152,
      "nota": 4.9,
      "desconto": 50,
      "foto": "https://cf.shopee.com.br/file/br-11134207-820lf-msihol3qbu9z7c",
