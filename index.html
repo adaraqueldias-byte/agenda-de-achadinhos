@@ -456,7 +456,10 @@
 
   <div id="view-banco" style="display:none">
     <section class="card" id="ofertas-shopee-card">
-      <h2 style="margin:0">🛍️ Ofertas do dia da Shopee</h2>
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+        <h2 style="margin:0">🛍️ Ofertas do dia da Shopee</h2>
+        <button type="button" class="backup-link" style="flex:none;font-size:11px" onclick="resetOfertasShopeeVistas()">🔄 Mostrar tudo de novo</button>
+      </div>
       <p class="tip" id="ofertas-shopee-status" style="margin:4px 0 0;font-size:12px">Carregando...</p>
       <div class="ofertas-shopee-grupos" id="ofertas-shopee-grupos"></div>
       <div id="ofertas-shopee-lista"></div>
@@ -3695,6 +3698,22 @@ function apagarOfertaChave(chave){
   const set=carregarOfertasApagadas();
   set.add(chave);
   try{localStorage.setItem(CHAVE_OFERTAS_APAGADAS,JSON.stringify([...set]))}catch(e){}
+}
+
+// Esquece quais ofertas da Shopee já foram vistas/apagadas/enviadas — útil se a lista ficar vazia
+// mas ainda tiver produto bom escondido (ex.: depois de apagar tudo sem querer).
+function resetOfertasShopeeVistas(){
+  if(!confirm("Isso faz as ofertas da Shopee que você já apagou ou já marcou como enviada voltarem a aparecer na lista. Quer continuar?"))return;
+  const limparPrefixo=(chaveStorage,prefixo)=>{
+    try{
+      const set=new Set(JSON.parse(localStorage.getItem(chaveStorage)||"[]"));
+      const restante=[...set].filter(c=>!c.startsWith(prefixo));
+      localStorage.setItem(chaveStorage,JSON.stringify(restante));
+    }catch(e){}
+  };
+  limparPrefixo(CHAVE_OFERTAS_APAGADAS,"shopee:");
+  limparPrefixo(CHAVE_OFERTAS_ENVIADAS,"shopee:");
+  renderizarOfertasShopee();
 }
 
 // ===== Ofertas do dia da Shopee: o GitHub busca todo dia (ofertas-shopee.json) e aqui ela envia ou guarda no Banco =====
