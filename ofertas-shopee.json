@@ -1,5 +1,5 @@
 {
- "atualizadoEm": "2026-10-21T12:26:20.286Z",
+ "atualizadoEm": "2026-10-21T15:06:21.936Z",
  "grupos": [
   {
    "id": "vip",
@@ -38,7 +38,7 @@
     },
     {
      "itemId": "48166460578",
-     "nome": "Forma Retangular Cerâmica Antiaderente p/ Forno 2L 2,8L ou 4L Assadeira c/ Alça Oferta Envio Rápido!",
+     "nome": "Forma Retangular Cerâmico Antiaderente p/ Forno 2L 2,8L ou 4L Assadeira c/ Alça Oferta Envio Rápido!",
      "link": "https://s.shopee.com.br/6q1ek95nL1",
      "loja": "shopee",
      "preco": {
@@ -101,18 +101,20 @@
      "loja_nome": "BrincaMix"
     },
     {
-     "itemId": "58262778181",
-     "nome": "Bandeja para Café da Manhã Suporte Suco Petiscos Cerveja Copo Sofá Long Neck 30x20x6 Madeira Rústico",
-     "link": "https://s.shopee.com.br/7VHLXN3FzD",
+     "itemId": "22199064905",
+     "nome": "Jogo de Potes de Vidro Redondo cristal organizador armazenamentos de cozinha cantinho do café Tampa de Bambu",
+     "link": "https://s.shopee.com.br/6Alxwv8Kh5",
      "loja": "shopee",
-     "preco": 35.69,
-     "comissao": 13,
-     "valorComissao": 4.6397,
-     "vendas": 76,
-     "nota": 4.6,
-     "desconto": 35,
-     "foto": "https://cf.shopee.com.br/file/br-11134207-820l5-mpxt1310dyiqc0",
-     "loja_nome": "Líder Arte Home"
+     "preco": {
+      "min": 39.95,
+      "max": 164.95
+     },
+     "comissao": 15,
+     "valorComissao": 5.9925,
+     "vendas": 174,
+     "nota": 4.9,
+     "foto": "https://cf.shopee.com.br/file/br-11134207-820lt-mlhxul7mi3gm61",
+     "loja_nome": "Carmem Imports"
     },
     {
      "itemId": "41584717212",
@@ -225,7 +227,7 @@
      "comissao": 12,
      "valorComissao": 3.588,
      "vendas": 3978,
-     "nota": 4.5,
+     "nota": 4.4,
      "desconto": 40,
      "foto": "https://cf.shopee.com.br/file/sg-11134201-821e1-mgzrq0k1qtceba",
      "loja_nome": "Envoyé Oficial"
@@ -481,9 +483,9 @@
      "nome": "Celimax The Vita A Retinal Shot Tightening Booster 15ml",
      "link": "https://s.shopee.com.br/80Dc8I5kmF",
      "loja": "shopee",
-     "preco": 135.99,
+     "preco": 136,
      "comissao": 25,
-     "valorComissao": 33.9975,
+     "valorComissao": 34,
      "vendas": 18125,
      "nota": 5,
      "desconto": 38,
