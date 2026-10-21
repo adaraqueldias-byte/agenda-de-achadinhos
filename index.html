@@ -3665,7 +3665,19 @@ function enviarWhatsAppItemSlot(key){
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
 installBtn?.addEventListener("click",async()=>{if(!deferredPrompt)return;deferredPrompt.prompt();await deferredPrompt.userChoice;deferredPrompt=null;installBox.style.display="none"});
-if("serviceWorker"in navigator){navigator.serviceWorker.register("service-worker.js")}
+if("serviceWorker"in navigator){
+  navigator.serviceWorker.register("service-worker.js").then(reg=>{
+    reg.update();
+    setInterval(()=>reg.update(),30*60*1000);
+  });
+  // Assim que uma versão nova assumir o controle, recarrega sozinho — sem precisar fechar/abrir o app.
+  let jaRecarregou=false;
+  navigator.serviceWorker.addEventListener("controllerchange",()=>{
+    if(jaRecarregou)return;
+    jaRecarregou=true;
+    location.reload();
+  });
+}
 
 // Salva sozinho enquanto a pessoa digita nos campos da semana (produto, link)
 let autoSalvarTimeout=null;
