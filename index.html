@@ -3915,6 +3915,30 @@ document.getElementById("view-banco").addEventListener("change",e=>{
   if(e.target.id==="banco-loja")salvarRascunhoBanco();
 });
 
+// ===== Recebe produto compartilhado de outro app (ex.: botão de compartilhar da Shopee) =====
+// Preenche o link (e o nome, se vier) direto no formulário do Banco, sem precisar copiar/colar.
+function tratarCompartilhamentoRecebido(){
+  const params=new URLSearchParams(location.search);
+  const link=(params.get("link_compartilhado")||"").trim();
+  const texto=(params.get("texto_compartilhado")||"").trim();
+  const titulo=(params.get("titulo_compartilhado")||"").trim();
+  if(!link&&!texto&&!titulo)return;
+  // Alguns apps mandam tudo junto em "texto" (nome + link), sem separar — pega o link de dentro dele.
+  const linkDoTexto=(texto.match(/https?:\/\/\S+/)||[])[0]||"";
+  const linkFinal=link||linkDoTexto;
+  history.replaceState(null,"",location.pathname);
+  if(!linkFinal)return;
+  mostrarView("banco");
+  document.getElementById("banco-link").value=linkFinal;
+  detectarProdutoPeloLink();
+  const nomeCompartilhado=titulo||texto.replace(linkDoTexto,"").trim();
+  if(nomeCompartilhado&&nomeCompartilhado.length>=3){
+    document.getElementById("banco-nome").value=nomeCompartilhado.slice(0,80);
+    bancoNomeAutoPreenchido=false;
+  }
+  setTimeout(()=>document.getElementById("banco-link").scrollIntoView({behavior:"smooth",block:"center"}),300);
+}
+
 montarTela();
 diaAtualISO=dataParaIso(new Date());
 date.value=segundaFeiraDeHoje();
@@ -3928,6 +3952,7 @@ renderizarLinhasLote();
 popularSelectsFormatoRelatorio();
 popularSelectDestinoExternos();
 migrarOrigensAntigasRelatorio();
+tratarCompartilhamentoRecebido();
 </script>
 </body>
 </html>

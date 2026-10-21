@@ -19,5 +19,14 @@
       "sizes": "512x512",
       "type": "image/png"
     }
-  ]
+  ],
+  "share_target": {
+    "action": "./index.html",
+    "method": "GET",
+    "params": {
+      "title": "titulo_compartilhado",
+      "text": "texto_compartilhado",
+      "url": "link_compartilhado"
+    }
+  }
 }
