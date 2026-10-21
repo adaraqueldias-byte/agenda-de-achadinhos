@@ -1,0 +1,26 @@
+name: Ofertas do dia do Mercado Livre
+
+on:
+  schedule:
+    - cron: "15 9 * * *" # 6h15 da manhã em Brasília (9h15 UTC) — logo depois da Shopee
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  buscar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Buscar ofertas no Mercado Livre
+        run: node scripts/buscar-ofertas-mercadolivre.mjs
+      - name: Salvar no Painel
+        run: |
+          git config user.name "ofertas-mercadolivre"
+          git config user.email "actions@users.noreply.github.com"
+          git add ofertas-mercadolivre.json
+          git diff --cached --quiet || (git commit -m "Atualiza ofertas do dia do Mercado Livre" && git push)

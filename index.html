@@ -462,6 +462,14 @@
       <div id="ofertas-shopee-lista"></div>
     </section>
 
+    <section class="card" id="ofertas-ml-card">
+      <h2 style="margin:0">🛒 Ofertas do dia do Mercado Livre</h2>
+      <p class="tip" id="ofertas-ml-status" style="margin:4px 0 0;font-size:12px">Carregando...</p>
+      <p class="tip" style="margin:4px 0 0;font-size:11px;color:var(--warn)">⚠️ O Mercado Livre não tem API de afiliado — esses são links normais de produto. Antes de postar, gere o link de afiliado no painel de Afiliados do Mercado Livre e troque o link no Banco.</p>
+      <div class="ofertas-shopee-grupos" id="ofertas-ml-grupos"></div>
+      <div id="ofertas-ml-lista"></div>
+    </section>
+
     <section class="card">
       <div class="foto-linha">
         <img id="banco-foto-preview" class="foto-preview" alt="">
@@ -2023,7 +2031,7 @@ function mostrarView(nome){
   document.getElementById("aba-semana").classList.toggle("ativa",nome==="semana");
   document.getElementById("aba-banco").classList.toggle("ativa",nome==="banco");
   document.getElementById("aba-relatorio").classList.toggle("ativa",nome==="relatorio");
-  if(nome==="banco"){renderizarBanco();carregarOfertasShopee();}
+  if(nome==="banco"){renderizarBanco();carregarOfertasShopee();carregarOfertasML();}
   if(nome==="relatorio")renderizarRelatorio();
   if(nome==="semana"&&diaAtualISO){
     abrirApenasDia(CHAVE_DIA_POR_INDICE[isoParaData(diaAtualISO).getDay()]);
@@ -3745,6 +3753,79 @@ function guardarOfertaShopeeNoBanco(i){
   if(!salvarBanco(lista)){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
   renderizarBanco();
   renderizarOfertasShopee();
+}
+
+// ===== Ofertas do dia do Mercado Livre: busca pública (sem API de afiliado) — links precisam ser trocados pelo de afiliado antes de postar =====
+let ofertasML=null;
+let ofertasMLGrupo=null;
+
+async function carregarOfertasML(){
+  const status=document.getElementById("ofertas-ml-status");
+  try{
+    const res=await fetch("ofertas-mercadolivre.json?v="+Date.now(),{cache:"no-store"});
+    if(!res.ok)throw new Error("sem arquivo");
+    ofertasML=await res.json();
+  }catch{
+    ofertasML=null;
+    status.textContent="Ainda não tem ofertas. Elas aparecem aqui todo dia, buscadas automaticamente no Mercado Livre.";
+    document.getElementById("ofertas-ml-grupos").innerHTML="";
+    document.getElementById("ofertas-ml-lista").innerHTML="";
+    return;
+  }
+  const quando=new Date(ofertasML.atualizadoEm);
+  status.textContent=`Atualizado em ${quando.toLocaleDateString("pt-BR")} às ${quando.toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}. Toque no 📲 para enviar ou no ➕ para guardar no Banco.`;
+  const grupos=ofertasML.grupos||[];
+  if(!grupos.some(g=>g.id===ofertasMLGrupo))ofertasMLGrupo=grupos[0]&&grupos[0].id;
+  renderizarOfertasML();
+}
+
+function renderizarOfertasML(){
+  const grupos=(ofertasML&&ofertasML.grupos)||[];
+  document.getElementById("ofertas-ml-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasMLGrupo?" ativo":""}" onclick="ofertasMLGrupo='${g.id}';renderizarOfertasML()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
+  const grupo=grupos.find(g=>g.id===ofertasMLGrupo);
+  const links=new Set(carregarBanco().map(p=>p.link));
+  document.getElementById("ofertas-ml-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
+    const noBanco=links.has(o.link);
+    return `<div class="item-produto">
+      <div class="item-produto-linha">
+        ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
+        <div class="item-produto-info">
+          <a class="item-produto-nome" href="${escaparBanco(o.link)}" target="_blank" rel="noopener">${escaparBanco(o.nome)}</a>
+          ${o.preco!==undefined&&o.preco!==null?`<span class="item-produto-preco">${formatarPrecoBancoComMoeda(o.preco,"mercadolivre")}</span>`:""}
+          ${o.desconto?`<span class="item-produto-comissao">🔻 ${o.desconto}% off</span>`:""}
+          ${o.vendas?`<span class="item-produto-link">🔥 ${formatarInteiroBR(o.vendas)} vendidos</span>`:""}
+        </div>
+      </div>
+      <div class="item-produto-rodape">
+        <span class="item-produto-link">${noBanco?"✅ Já está no Banco":""}</span>
+        <div class="item-produto-acoes">
+          <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaML(${i})" title="Enviar no WhatsApp">📲</button>
+          ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaMLNoBanco(${i})" title="Guardar no Banco">➕</button>`}
+        </div>
+      </div>
+    </div>`;
+  }).join("");
+}
+
+function ofertaMLAtual(i){
+  const grupo=((ofertasML&&ofertasML.grupos)||[]).find(g=>g.id===ofertasMLGrupo);
+  return grupo&&grupo.ofertas[i];
+}
+
+function enviarOfertaML(i){
+  const o=ofertaMLAtual(i);
+  if(o)enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"mercadolivre",preco:o.preco,foto:o.foto});
+}
+
+function guardarOfertaMLNoBanco(i){
+  const o=ofertaMLAtual(i);
+  if(!o)return;
+  const lista=carregarBanco();
+  if(lista.some(p=>p.link===o.link)){alert("Esse produto já está no Banco.");return}
+  lista.unshift({id:Date.now(),nome:o.nome,link:o.link,loja:"mercadolivre",preco:o.preco,dataAdicionado:hojeIsoBanco(),foto:o.foto||undefined});
+  if(!salvarBanco(lista)){alert("⚠️ Não deu pra salvar: a memória do navegador está cheia.");return}
+  renderizarBanco();
+  renderizarOfertasML();
 }
 
 window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();deferredPrompt=e;installBox.style.display="block"});
