@@ -3681,6 +3681,18 @@ function enviarWhatsAppItemSlot(key){
   });
 }
 
+// ===== Marca quais ofertas (Shopee/Mercado Livre) já foram enviadas no WhatsApp, pra distribuir aos poucos ao longo do dia =====
+const CHAVE_OFERTAS_ENVIADAS="agenda-achadinhos-ofertas-enviadas";
+function carregarOfertasEnviadas(){
+  try{return new Set(JSON.parse(localStorage.getItem(CHAVE_OFERTAS_ENVIADAS)||"[]"))}
+  catch(e){return new Set()}
+}
+function marcarOfertaEnviada(chave){
+  const set=carregarOfertasEnviadas();
+  set.add(chave);
+  try{localStorage.setItem(CHAVE_OFERTAS_ENVIADAS,JSON.stringify([...set]))}catch(e){}
+}
+
 // ===== Ofertas do dia da Shopee: o GitHub busca todo dia (ofertas-shopee.json) e aqui ela envia ou guarda no Banco =====
 let ofertasShopee=null;
 let ofertasShopeeGrupo=null;
@@ -3710,8 +3722,10 @@ function renderizarOfertasShopee(){
   document.getElementById("ofertas-shopee-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasShopeeGrupo?" ativo":""}" onclick="ofertasShopeeGrupo='${g.id}';renderizarOfertasShopee()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasShopeeGrupo);
   const links=new Set(carregarBanco().map(p=>p.link));
+  const enviadas=carregarOfertasEnviadas();
   document.getElementById("ofertas-shopee-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
     const noBanco=links.has(o.link);
+    const enviada=enviadas.has(`shopee:${o.itemId}`);
     return `<div class="item-produto">
       <div class="item-produto-linha">
         ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
@@ -3724,7 +3738,7 @@ function renderizarOfertasShopee(){
         </div>
       </div>
       <div class="item-produto-rodape">
-        <span class="item-produto-link">${noBanco?"✅ Já está no Banco":""}</span>
+        <span class="item-produto-link">${[enviada?"✅ Enviado":"",noBanco?"📦 No Banco":""].filter(Boolean).join(" · ")}</span>
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaShopee(${i})" title="Enviar no WhatsApp">📲</button>
           ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaShopeeNoBanco(${i})" title="Guardar no Banco">➕</button>`}
@@ -3741,7 +3755,10 @@ function ofertaShopeeAtual(i){
 
 function enviarOfertaShopee(i){
   const o=ofertaShopeeAtual(i);
-  if(o)enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,foto:o.foto});
+  if(!o)return;
+  enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"shopee",preco:o.preco,foto:o.foto});
+  marcarOfertaEnviada(`shopee:${o.itemId}`);
+  renderizarOfertasShopee();
 }
 
 function guardarOfertaShopeeNoBanco(i){
@@ -3784,8 +3801,10 @@ function renderizarOfertasML(){
   document.getElementById("ofertas-ml-grupos").innerHTML=grupos.map(g=>`<button type="button" class="secondary${g.id===ofertasMLGrupo?" ativo":""}" onclick="ofertasMLGrupo='${g.id}';renderizarOfertasML()">${escaparBanco(g.nome)} (${g.ofertas.length})</button>`).join("");
   const grupo=grupos.find(g=>g.id===ofertasMLGrupo);
   const links=new Set(carregarBanco().map(p=>p.link));
+  const enviadas=carregarOfertasEnviadas();
   document.getElementById("ofertas-ml-lista").innerHTML=!grupo||!grupo.ofertas.length?'<div class="banco-vazio">Nenhuma oferta nesse grupo hoje.</div>':grupo.ofertas.map((o,i)=>{
     const noBanco=links.has(o.link);
+    const enviada=enviadas.has(`mercadolivre:${o.itemId}`);
     return `<div class="item-produto">
       <div class="item-produto-linha">
         ${o.foto?`<img class="item-produto-foto" src="${escaparBanco(o.foto)}" loading="lazy">`:`<div class="item-produto-foto vazio">🛍️</div>`}
@@ -3797,7 +3816,7 @@ function renderizarOfertasML(){
         </div>
       </div>
       <div class="item-produto-rodape">
-        <span class="item-produto-link">${noBanco?"✅ Já está no Banco":""}</span>
+        <span class="item-produto-link">${[enviada?"✅ Enviado":"",noBanco?"📦 No Banco":""].filter(Boolean).join(" · ")}</span>
         <div class="item-produto-acoes">
           <button class="item-produto-icone item-produto-whatsapp" onclick="enviarOfertaML(${i})" title="Enviar no WhatsApp">📲</button>
           ${noBanco?"":`<button class="item-produto-icone item-produto-adicionar" onclick="guardarOfertaMLNoBanco(${i})" title="Guardar no Banco">➕</button>`}
@@ -3814,7 +3833,10 @@ function ofertaMLAtual(i){
 
 function enviarOfertaML(i){
   const o=ofertaMLAtual(i);
-  if(o)enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"mercadolivre",preco:o.preco,foto:o.foto});
+  if(!o)return;
+  enviarOfertaWhatsApp({nome:o.nome,link:o.link,loja:"mercadolivre",preco:o.preco,foto:o.foto});
+  marcarOfertaEnviada(`mercadolivre:${o.itemId}`);
+  renderizarOfertasML();
 }
 
 function guardarOfertaMLNoBanco(i){
