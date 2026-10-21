@@ -3160,10 +3160,10 @@ function pillConcorrencia(concorrencia,afiliados){
 function detectarLojaPeloLink(url){
   try{
     const host=new URL(url).hostname.replace(/^www\./,"");
-    if(/shopee\./.test(host))return "shopee";
+    if(/shopee\.|^shope\.ee$/.test(host))return "shopee";
     if(/mercadolivre\.|mercadolibre\./.test(host))return "mercadolivre";
     if(/amazon\.com\.br/.test(host))return "amazon_br";
-    if(/amazon\./.test(host))return "amazon_eua";
+    if(/amazon\.|^amzn\.to$/.test(host))return "amazon_eua";
     if(/magazineluiza\.|magalu\./.test(host))return "magalu";
     if(/shein\./.test(host))return "shein";
   }catch{}
