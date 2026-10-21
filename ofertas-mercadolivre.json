@@ -1,0 +1,25 @@
+{
+ "atualizadoEm": "2026-10-21T12:27:23.859Z",
+ "grupos": [
+  {
+   "id": "vip",
+   "nome": "Grupo VIP",
+   "ofertas": []
+  },
+  {
+   "id": "natal",
+   "nome": "Natal",
+   "ofertas": []
+  },
+  {
+   "id": "beleza",
+   "nome": "Beleza e acessórios",
+   "ofertas": []
+  },
+  {
+   "id": "kids",
+   "nome": "Kids",
+   "ofertas": []
+  }
+ ]
+}
