@@ -1,5 +1,5 @@
 {
- "atualizadoEm": "2026-10-21T15:06:21.936Z",
+ "atualizadoEm": "2026-10-21T15:15:13.767Z",
  "grupos": [
   {
    "id": "vip",
@@ -657,6 +657,243 @@
      "loja_nome": "Kittes Store"
     }
    ]
+  }
+ ],
+ "emAlta": [
+  {
+   "itemId": "54266461318",
+   "nome": "Papel Toalha de Natal Tripla folha Decoração 8 metros 40 guardanapos Natalinos Papai noel Bolachas",
+   "link": "https://s.shopee.com.br/7AeV8l4Wf3",
+   "loja": "shopee",
+   "preco": {
+    "min": 27,
+    "max": 62
+   },
+   "comissao": 11,
+   "valorComissao": 2.97,
+   "vendas": 471,
+   "nota": 4.9,
+   "desconto": 10,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820ll-ms6x427cf9504d",
+   "loja_nome": "Videira del Sur"
+  },
+  {
+   "itemId": "22797745923",
+   "nome": "Geladeira Portátil Para Caminhão Van Portátil 20 Litros Quadrivolt",
+   "link": "https://s.shopee.com.br/6fiEXq6Qfy",
+   "loja": "shopee",
+   "preco": 1140,
+   "comissao": 13,
+   "valorComissao": 148.2,
+   "vendas": 74,
+   "nota": 5,
+   "desconto": 12,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-7rdvg-lzjl0hf838ko19",
+   "loja_nome": "BEESHOP E-COMMERCE"
+  },
+  {
+   "itemId": "48166460578",
+   "nome": "Forma Retangular Cerâmico Antiaderente p/ Forno 2L 2,8L ou 4L Assadeira c/ Alça Oferta Envio Rápido!",
+   "link": "https://s.shopee.com.br/6q1ek95nL1",
+   "loja": "shopee",
+   "preco": {
+    "min": 108.7,
+    "max": 142.9
+   },
+   "comissao": 8,
+   "valorComissao": 8.696,
+   "vendas": 76,
+   "nota": 4.9,
+   "desconto": 58,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820lr-ms614mgkozyd6d",
+   "loja_nome": "Casa Dos Nichos pp"
+  },
+  {
+   "itemId": "58217124390",
+   "nome": "Petisqueira de Vidro 6 Peças com Bandeja de Bambu Tigelas Coração e Flor para Petiscos Doces e Frutas",
+   "link": "https://s.shopee.com.br/7faljg2ceC",
+   "loja": "shopee",
+   "preco": 66,
+   "comissao": 16,
+   "valorComissao": 10.56,
+   "vendas": 73,
+   "nota": 4.9,
+   "desconto": 61,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820me-msfa8f66spvqa4",
+   "loja_nome": "Casa Encanto_"
+  },
+  {
+   "itemId": "58215597944",
+   "nome": "Manta para Sofá 3,00m x 1,80m Cores de Natal Verde e Vermelha Proteção e Decoração",
+   "link": "https://s.shopee.com.br/7puBvz1zJF",
+   "loja": "shopee",
+   "preco": {
+    "min": 47.9,
+    "max": 59.9
+   },
+   "comissao": 18,
+   "valorComissao": 8.622,
+   "vendas": 35,
+   "nota": 5,
+   "desconto": 40,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820m2-mrh972ccqk1xd4",
+   "loja_nome": "Varal Brasil"
+  },
+  {
+   "itemId": "58218195463",
+   "nome": "Potes de Vidro Natalino 300/550 ml - Porta Biscoito- Porta Doces Decorativo",
+   "link": "https://s.shopee.com.br/7KxvL43tKA",
+   "loja": "shopee",
+   "preco": {
+    "min": 34.9,
+    "max": 85.9
+   },
+   "comissao": 13,
+   "valorComissao": 4.537,
+   "vendas": 74,
+   "nota": 4.7,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-825a2-mt5tefo46k942d",
+   "loja_nome": "BrincaMix"
+  },
+  {
+   "itemId": "22199064905",
+   "nome": "Jogo de Potes de Vidro Redondo cristal organizador armazenamentos de cozinha cantinho do café Tampa de Bambu",
+   "link": "https://s.shopee.com.br/6Alxwv8Kh5",
+   "loja": "shopee",
+   "preco": {
+    "min": 39.95,
+    "max": 164.95
+   },
+   "comissao": 15,
+   "valorComissao": 5.9925,
+   "vendas": 174,
+   "nota": 4.9,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820lt-mlhxul7mi3gm61",
+   "loja_nome": "Carmem Imports"
+  },
+  {
+   "itemId": "41584717212",
+   "nome": "Kit Sousplast Jogo Americano Caminho De Mesa Natalino Natal Mesa Posta Sofisticação Sublimação Digital Tecido Premium",
+   "link": "https://s.shopee.com.br/5fphM0AEhs",
+   "loja": "shopee",
+   "preco": {
+    "min": 27.9,
+    "max": 66.9
+   },
+   "comissao": 18,
+   "valorComissao": 5.022,
+   "vendas": 28,
+   "nota": 4.9,
+   "desconto": 32,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820m9-mttmiteg9dds35",
+   "loja_nome": "ARTE DIGITAL EM TECIDOS"
+  },
+  {
+   "itemId": "52718098361",
+   "nome": "Capa de Almofada de Natal 45x45cm Bordado 3D c/ Pompons - Pronta Entrega (s/ enchimento)",
+   "link": "https://s.shopee.com.br/5q97YJ9bMv",
+   "loja": "shopee",
+   "preco": 68,
+   "comissao": 3,
+   "valorComissao": 2.04,
+   "vendas": 6,
+   "nota": 5,
+   "desconto": 26,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-8259y-mtcj0v1kw35zd9",
+   "loja_nome": "hometreehd.br"
+  },
+  {
+   "itemId": "22799682291",
+   "nome": "Anjo de Natal em Malha com Vela de LED – Decoração Natalina",
+   "link": "https://s.shopee.com.br/5LCqxOBVNq",
+   "loja": "shopee",
+   "preco": {
+    "min": 28.78,
+    "max": 92.12
+   },
+   "comissao": 13,
+   "valorComissao": 3.7414,
+   "vendas": 63,
+   "nota": 4.8,
+   "desconto": 4,
+   "foto": "https://cf.shopee.com.br/file/br-11134201-820lq-mt5wolmwg4qt51",
+   "loja_nome": "Belladecor3D_"
+  },
+  {
+   "itemId": "58262778181",
+   "nome": "Bandeja para Café da Manhã Suporte Suco Petiscos Cerveja Copo Sofá Long Neck 30x20x6 Madeira Rústico",
+   "link": "https://s.shopee.com.br/7VHLXN3FzD",
+   "loja": "shopee",
+   "preco": 35.69,
+   "comissao": 13,
+   "valorComissao": 4.6397,
+   "vendas": 76,
+   "nota": 4.6,
+   "desconto": 35,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820l5-mpxt1310dyiqc0",
+   "loja_nome": "Líder Arte Home"
+  },
+  {
+   "itemId": "46560301686",
+   "nome": "Comedouro e Bebedouro Automático para Gatos e Cães Premium 1L Jelplast",
+   "link": "https://s.shopee.com.br/6VOoLX7417",
+   "loja": "shopee",
+   "preco": {
+    "min": 60.9,
+    "max": 61.9
+   },
+   "comissao": 18,
+   "valorComissao": 10.962,
+   "vendas": 71,
+   "nota": 5,
+   "desconto": 6,
+   "foto": "https://cf.shopee.com.br/file/br-11134207-820ma-mo396acb8ttwdd",
+   "loja_nome": "Select Life"
+  },
+  {
+   "itemId": "22598704412",
+   "nome": "Kit 2 Travesseiro Cervical Ortopédico Ergonômico Confortavel Alivia Dores Coluna Postura Macio Premi",
+   "link": "https://s.shopee.com.br/60SXkc8y22",
+   "loja": "shopee",
+   "preco": 160.55,
+   "comissao": 13,
+   "valorComissao": 20.8715,
+   "vendas": 352,
+   "nota": 4.7,
+   "desconto": 5,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-7rdxe-mbsapwvkbq6m54",
+   "loja_nome": "OrthoDream"
+  },
+  {
+   "itemId": "58261888023",
+   "nome": "Passadeira a Vapor Portátil 110V 800W para Roupas Tira Amassados ANJGG BRASIL",
+   "link": "https://s.shopee.com.br/9fLq7Lv0am",
+   "loja": "shopee",
+   "preco": {
+    "min": 63.99,
+    "max": 69.99
+   },
+   "comissao": 13,
+   "valorComissao": 8.3187,
+   "vendas": 984,
+   "nota": 4.7,
+   "desconto": 51,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-823pr-mp12851jzaq520",
+   "loja_nome": "ANJGG Brazil"
+  },
+  {
+   "itemId": "22193931315",
+   "nome": "Cantinho do Café Oasis Conjunto de Ceramica e Bambu Hauskraft Com Xicaras Para Café da Tarde Chá Capuccino",
+   "link": "https://s.shopee.com.br/5VWH9hAs2t",
+   "loja": "shopee",
+   "preco": 179,
+   "comissao": 9,
+   "valorComissao": 16.11,
+   "vendas": 49,
+   "nota": 4.9,
+   "desconto": 42,
+   "foto": "https://cf.shopee.com.br/file/sg-11134201-7ra3x-m5bwokqkg6lwcb",
+   "loja_nome": "NEJ SHOP"
   }
  ]
 }
