@@ -334,6 +334,10 @@
 </head>
 <body>
 <div class="wrap">
+  <div id="avisoAtualizacao" style="display:none;position:fixed;left:12px;right:12px;bottom:12px;z-index:50;background:#2b1720;color:#fff;border-radius:14px;padding:12px 14px;align-items:center;justify-content:space-between;gap:10px;box-shadow:0 8px 20px rgba(0,0,0,.25)">
+    <span style="font-size:13px">🔄 Tem uma versão nova do Painel.</span>
+    <button type="button" class="primary" style="width:auto;padding:8px 14px;font-size:13px" onclick="location.reload()">Atualizar</button>
+  </div>
   <section class="hero">
     <img src="icon-192.png" alt="Ícone do aplicativo">
     <div>
@@ -3670,12 +3674,12 @@ if("serviceWorker"in navigator){
     reg.update();
     setInterval(()=>reg.update(),30*60*1000);
   });
-  // Assim que uma versão nova assumir o controle, recarrega sozinho — sem precisar fechar/abrir o app.
-  let jaRecarregou=false;
+  // Avisa que tem versão nova, mas só recarrega quando a pessoa tocar — nunca no meio de uma anotação.
+  let jaAvisouAtualizacao=false;
   navigator.serviceWorker.addEventListener("controllerchange",()=>{
-    if(jaRecarregou)return;
-    jaRecarregou=true;
-    location.reload();
+    if(jaAvisouAtualizacao)return;
+    jaAvisouAtualizacao=true;
+    document.getElementById("avisoAtualizacao").style.display="flex";
   });
 }
 
